@@ -1,0 +1,14 @@
+{
+  "type": "electricadvantage:assembling",
+  "ingredients": [
+    {
+      "tag": "c:ingots",
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "minecraft:diamond"
+  },
+  "time": 2,
+  "power_cost": 1
+}

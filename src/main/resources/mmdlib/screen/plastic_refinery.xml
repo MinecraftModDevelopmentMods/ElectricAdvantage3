@@ -1,0 +1,7 @@
+<screen xmlns="https://moddev.zone/mmdlib/screen" title="block.electricadvantage.plastic_refinery" block-entity="zone.moddev.mc.electricadvantage.processing.ProcessingBlockEntity">
+  <vbox padding="8" spacing="4" align="center">
+    <gauge id="energy" orientation="horizontal" length="8s" color="#DCA92B" value="#screenEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
+    <hbox spacing="4"><slot index="0"/></hbox>
+<gauge id="input_fluid" orientation="horizontal" length="8s" value="#screenInputFluid" max="#screenFluidCapacity"/><progress value="#screenProgress" max="#screenDuration"/>
+  </vbox>
+</screen>

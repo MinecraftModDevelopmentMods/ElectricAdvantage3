@@ -1,0 +1,47 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ggg",
+    "xxx",
+    "ccc"
+  ],
+  "key": {
+    "g": {
+      "tag": "c:glass_panes"
+    },
+    "x": {
+      "tag": "electricadvantage:microchips"
+    },
+    "c": {
+      "tag": "c:wires"
+    }
+  },
+  "result": {
+    "id": "electricadvantage:led_bar",
+    "count": 3
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:glass_panes"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:wires"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "electricadvantage:microchips"
+      }
+    }
+  ]
+}

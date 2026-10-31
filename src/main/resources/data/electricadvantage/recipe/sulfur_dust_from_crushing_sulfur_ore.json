@@ -1,0 +1,10 @@
+{
+  "type": "mmdlib:crushing",
+  "ingredient": {
+    "item": "electricadvantage:sulfur_ore"
+  },
+  "result": {
+    "id": "electricadvantage:sulfur_dust",
+    "count": 4
+  }
+}

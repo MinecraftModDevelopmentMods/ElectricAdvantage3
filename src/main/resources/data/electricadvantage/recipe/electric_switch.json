@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " L ",
+    "pfp"
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:lever"
+    },
+    "p": {
+      "tag": "c:wires"
+    },
+    "f": {
+      "item": "poweradvantage:steel_frame"
+    }
+  },
+  "result": {
+    "id": "electricadvantage:electric_switch",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:wires"
+      }
+    }
+  ]
+}

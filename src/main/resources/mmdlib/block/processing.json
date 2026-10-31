@@ -1,0 +1,20 @@
+{
+  "factory": "electricadvantage:processing",
+  "template": {
+    "properties": {
+      "hardness": 3,
+      "blast_resistance": 10
+    },
+    "events": {
+      "block-right-click": "mmdlib:open_menu"
+    }
+  },
+  "part": {
+    "block_entity": {
+      "factory": "electricadvantage:processing",
+      "factory_data": {
+        "kind": "smelting"
+      }
+    }
+  }
+}

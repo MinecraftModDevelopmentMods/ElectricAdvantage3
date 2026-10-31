@@ -1,0 +1,11 @@
+{
+  "parent": "electricadvantage:block/electric_machine_base",
+  "textures": {
+    "front": "electricadvantage:block/machine_side",
+    "top": "electricadvantage:block/hydroelectric_generator_off",
+    "bottom": "electricadvantage:block/machine_top",
+    "back": "electricadvantage:block/machine_side",
+    "side": "electricadvantage:block/machine_side"
+  },
+  "render_type": "minecraft:cutout"
+}

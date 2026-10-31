@@ -1,0 +1,13 @@
+{
+  "type": "electricadvantage:assembling",
+  "ingredients": [
+    {
+      "item": "minecraft:honey_bottle"
+    }
+  ],
+  "result": {
+    "id": "minecraft:sugar"
+  },
+  "time": 2,
+  "power_cost": 2
+}

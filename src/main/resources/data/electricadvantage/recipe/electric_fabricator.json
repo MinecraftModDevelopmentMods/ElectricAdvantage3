@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "uX ",
+    "pmp"
+  ],
+  "key": {
+    "u": {
+      "tag": "electricadvantage:power_supply_units"
+    },
+    "X": {
+      "item": "minecraft:crafting_table"
+    },
+    "p": {
+      "tag": "c:plates/steel"
+    },
+    "m": {
+      "item": "poweradvantage:steel_frame"
+    }
+  },
+  "result": {
+    "id": "electricadvantage:electric_fabricator"
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:plates/steel"
+      }
+    }
+  ]
+}

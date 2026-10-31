@@ -1,0 +1,21 @@
+{
+  "module": "electricadvantage:processing",
+  "factory_data": {
+    "kind": "crushing",
+    "inputs": 3,
+    "outputs": 6,
+    "ticks": 200,
+    "cost": 12,
+    "capacity": 500,
+    "rate": 4096
+  },
+  "block_entity_data": {
+    "kind": "crushing",
+    "inputs": 3,
+    "outputs": 6,
+    "ticks": 200,
+    "cost": 12,
+    "capacity": 500,
+    "rate": 4096
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "uXY",
+    "pmp"
+  ],
+  "key": {
+    "u": {
+      "tag": "electricadvantage:power_supply_units"
+    },
+    "p": {
+      "tag": "c:plates/steel"
+    },
+    "m": {
+      "item": "poweradvantage:steel_frame"
+    },
+    "X": {
+      "tag": "c:glass_panes"
+    },
+    "Y": {
+      "tag": "electricadvantage:power_supply_units"
+    }
+  },
+  "result": {
+    "id": "electricadvantage:electric_oven"
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:glass_panes"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:plates/steel"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "electricadvantage:power_supply_units"
+      }
+    }
+  ]
+}

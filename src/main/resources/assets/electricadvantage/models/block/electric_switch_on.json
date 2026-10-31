@@ -1,0 +1,8 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "electricadvantage:block/electric_switch_on",
+    "particle": "electricadvantage:block/materials/machine_case"
+  },
+  "render_type": "minecraft:cutout"
+}

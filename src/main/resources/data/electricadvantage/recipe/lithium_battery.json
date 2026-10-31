@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "pXp",
+    "pYp",
+    "pZp"
+  ],
+  "key": {
+    "p": {
+      "tag": "c:plastics"
+    },
+    "X": {
+      "tag": "c:ingots/lithium"
+    },
+    "Y": {
+      "tag": "c:dusts/redstone"
+    },
+    "Z": {
+      "tag": "c:dusts/carbon"
+    }
+  },
+  "result": {
+    "id": "electricadvantage:lithium_battery"
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:dusts/carbon"
+      }
+    }
+  ]
+}

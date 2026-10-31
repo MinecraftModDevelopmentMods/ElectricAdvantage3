@@ -1,0 +1,49 @@
+{
+  "schema_version": 4,
+  "provider_modid": "electricadvantage",
+  "provider_revision": 1,
+  "ores": {
+    "electricadvantage:ore/lithium": {
+      "block": "electricadvantage:lithium_ore",
+      "enabled": true,
+      "source_mod": "electricadvantage",
+      "retrogen": false,
+      "dimensions": {
+        "minecraft:overworld": {
+          "enabled": true,
+          "min_y": 1,
+          "max_y": 32,
+          "frequency": 0.125,
+          "min_quantity": 6,
+          "max_quantity": 10,
+          "pattern": "vein",
+          "height_distribution": "uniform",
+          "host_tags": [
+            "minecraft:stone_ore_replaceables"
+          ]
+        }
+      }
+    },
+    "electricadvantage:ore/sulfur": {
+      "block": "electricadvantage:sulfur_ore",
+      "enabled": true,
+      "source_mod": "electricadvantage",
+      "retrogen": false,
+      "dimensions": {
+        "minecraft:overworld": {
+          "enabled": true,
+          "min_y": 1,
+          "max_y": 32,
+          "frequency": 1.0,
+          "min_quantity": 8,
+          "max_quantity": 24,
+          "pattern": "vein",
+          "height_distribution": "uniform",
+          "host_tags": [
+            "minecraft:stone_ore_replaceables"
+          ]
+        }
+      }
+    }
+  }
+}

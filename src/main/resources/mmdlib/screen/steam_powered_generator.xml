@@ -1,0 +1,6 @@
+<screen xmlns="https://moddev.zone/mmdlib/screen" title="block.electricadvantage.steam_powered_generator" block-entity="zone.moddev.mc.electricadvantage.generation.GenerationBlockEntity" inventory="none">
+  <vbox padding="8" spacing="5" align="center">
+    <gauge id="energy" orientation="horizontal" length="8s" color="#DCA92B" value="#screenEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
+    <gauge id="steam" orientation="horizontal" length="8s" value="#screenSteam" max="#screenSteamCapacity" tooltip="screen.electricadvantage.steam" tooltip-fallback="{value} / {max} mB steam"/>
+  </vbox>
+</screen>

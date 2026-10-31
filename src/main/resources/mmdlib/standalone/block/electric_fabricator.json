@@ -1,0 +1,12 @@
+{
+  "module": "electricadvantage:assembler",
+  "block_entity_data": {
+    "capacity": 5000,
+    "rate": 4096,
+    "default_time": 10,
+    "default_power_cost": 25,
+    "fe_per_electricity": 4,
+    "planning_steps": 2048,
+    "item_export": 16
+  }
+}

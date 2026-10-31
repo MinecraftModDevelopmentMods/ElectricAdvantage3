@@ -1,0 +1,15 @@
+{
+  "module": "electricadvantage:generation",
+  "factory_data": {
+    "kind": "solar",
+    "generation_per_tick": 5.140418,
+    "steam_per_electricity": 32,
+    "electricity_per_fe": 0.25
+  },
+  "block_entity_data": {
+    "kind": "solar",
+    "generation_per_tick": 5.140418,
+    "steam_per_electricity": 32,
+    "electricity_per_fe": 0.25
+  }
+}

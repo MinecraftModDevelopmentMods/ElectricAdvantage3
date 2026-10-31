@@ -1,0 +1,13 @@
+{
+  "type": "electricadvantage:assembling",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "result": {
+    "id": "minecraft:emerald"
+  },
+  "time": 3,
+  "power_cost": 5
+}

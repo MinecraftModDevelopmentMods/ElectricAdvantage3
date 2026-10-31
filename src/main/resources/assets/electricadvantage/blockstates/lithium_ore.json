@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "electricadvantage:block/lithium_ore"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "nonmetal",
+  "color": -1,
+  "hardness": 1.5,
+  "items": [
+    "dust"
+  ],
+  "blocks": [
+    "ore"
+  ],
+  "entities": [],
+  "has_fluid": false,
+  "harvest_tags": [
+    "minecraft:mineable/pickaxe"
+  ],
+  "special": {
+    "blast_resistance": 5
+  }
+}

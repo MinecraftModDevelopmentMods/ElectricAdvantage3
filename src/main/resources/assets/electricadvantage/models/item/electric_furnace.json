@@ -1,0 +1,4 @@
+{
+  "parent": "electricadvantage:block/electric_furnace_off",
+  "ambientocclusion": false
+}

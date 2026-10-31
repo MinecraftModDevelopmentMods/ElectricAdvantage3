@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "electricadvantage:lead_acid_battery",
+    "electricadvantage:nickel_hydride_battery",
+    "electricadvantage:alkaline_battery",
+    "electricadvantage:lithium_battery"
+  ]
+}

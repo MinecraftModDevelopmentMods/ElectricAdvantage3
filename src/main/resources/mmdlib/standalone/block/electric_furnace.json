@@ -1,0 +1,21 @@
+{
+  "module": "electricadvantage:processing",
+  "factory_data": {
+    "kind": "smelting",
+    "inputs": 4,
+    "outputs": 6,
+    "ticks": 200,
+    "cost": 8,
+    "capacity": 500,
+    "rate": 4096
+  },
+  "block_entity_data": {
+    "kind": "smelting",
+    "inputs": 4,
+    "outputs": 6,
+    "ticks": 200,
+    "cost": 8,
+    "capacity": 500,
+    "rate": 4096
+  }
+}

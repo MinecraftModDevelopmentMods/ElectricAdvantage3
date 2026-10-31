@@ -1,0 +1,11 @@
+{
+  "parent": "electricadvantage:block/electric_machine_base",
+  "textures": {
+    "front": "electricadvantage:block/electric_crusher_powered",
+    "top": "electricadvantage:block/machine_top",
+    "bottom": "electricadvantage:block/machine_top",
+    "back": "electricadvantage:block/machine_back",
+    "side": "electricadvantage:block/machine_side"
+  },
+  "render_type": "minecraft:cutout"
+}

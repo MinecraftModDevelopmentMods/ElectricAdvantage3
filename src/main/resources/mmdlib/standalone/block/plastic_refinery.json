@@ -1,0 +1,33 @@
+{
+  "module": "electricadvantage:processing",
+  "factory_data": {
+    "kind": "refining",
+    "outputs": 1,
+    "ticks": 100,
+    "cost": 12,
+    "fluid_capacity": 2000,
+    "fluid_per_item": 100,
+    "result_item": "electricadvantage:petrolplastic_ingot",
+    "accepted_fluids": [
+      "poweradvantage:crude_oil",
+      "poweradvantage:refined_oil"
+    ],
+    "capacity": 500,
+    "rate": 4096
+  },
+  "block_entity_data": {
+    "kind": "refining",
+    "outputs": 1,
+    "ticks": 100,
+    "cost": 12,
+    "fluid_capacity": 2000,
+    "fluid_per_item": 100,
+    "result_item": "electricadvantage:petrolplastic_ingot",
+    "accepted_fluids": [
+      "poweradvantage:crude_oil",
+      "poweradvantage:refined_oil"
+    ],
+    "capacity": 500,
+    "rate": 4096
+  }
+}

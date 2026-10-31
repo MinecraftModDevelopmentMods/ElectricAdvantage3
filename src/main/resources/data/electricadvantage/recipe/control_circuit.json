@@ -1,0 +1,42 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "electricadvantage:blank_circuit_boards"
+    },
+    {
+      "tag": "electricadvantage:microchips"
+    },
+    {
+      "tag": "electricadvantage:solders"
+    }
+  ],
+  "result": {
+    "id": "electricadvantage:control_circuit",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "electricadvantage:blank_circuit_boards"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "electricadvantage:microchips"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "electricadvantage:solders"
+      }
+    }
+  ]
+}

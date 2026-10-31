@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "electricadvantage:lithium_ore",
+    "electricadvantage:sulfur_ore",
+    "electricadvantage:electric_conduit",
+    "electricadvantage:electric_track",
+    "electricadvantage:electric_switch",
+    "electricadvantage:led_bar",
+    "electricadvantage:pump_pipe_electric",
+    "electricadvantage:photovoltaic_generator",
+    "electricadvantage:hydroelectric_generator",
+    "electricadvantage:steam_powered_generator",
+    "electricadvantage:electric_battery_array",
+    "electricadvantage:electric_furnace",
+    "electricadvantage:electric_crusher",
+    "electricadvantage:electric_oven",
+    "electricadvantage:electric_still",
+    "electricadvantage:plastic_refinery",
+    "electricadvantage:electric_fabricator"
+  ]
+}

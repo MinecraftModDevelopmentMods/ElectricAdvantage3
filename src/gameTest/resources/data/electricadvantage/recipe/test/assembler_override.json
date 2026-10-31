@@ -1,0 +1,14 @@
+{
+  "type": "electricadvantage:assembling",
+  "ingredients": [
+    {
+      "item": "minecraft:copper_ingot"
+    }
+  ],
+  "result": {
+    "id": "minecraft:emerald"
+  },
+  "time": 4,
+  "power_cost": 8,
+  "override": "electricadvantage:test/native_overridden"
+}

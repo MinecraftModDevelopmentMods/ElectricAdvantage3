@@ -1,0 +1,17 @@
+{
+  "module": "electricadvantage:processing",
+  "factory_data": {
+    "kind": "distilling",
+    "cost": 16,
+    "fluid_capacity": 1000,
+    "capacity": 500,
+    "rate": 4096
+  },
+  "block_entity_data": {
+    "kind": "distilling",
+    "cost": 16,
+    "fluid_capacity": 1000,
+    "capacity": 500,
+    "rate": 4096
+  }
+}

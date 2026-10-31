@@ -1,0 +1,10 @@
+{
+  "type": "mmdlib:crushing",
+  "ingredient": {
+    "item": "electricadvantage:lithium_ingot"
+  },
+  "result": {
+    "id": "electricadvantage:lithium_dust",
+    "count": 1
+  }
+}

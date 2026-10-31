@@ -1,0 +1,7 @@
+<screen xmlns="https://moddev.zone/mmdlib/screen" title="block.electricadvantage.electric_battery_array" block-entity="zone.moddev.mc.electricadvantage.generation.GenerationBlockEntity">
+  <vbox padding="8" spacing="5" align="center">
+    <gauge id="energy" orientation="horizontal" length="8s" color="#DCA92B" value="#screenEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
+    <hbox spacing="4"><slot index="0"/><slot index="1"/><slot index="2"/><slot index="3"/></hbox>
+<hbox spacing="4"><slot index="4"/><slot index="5"/><slot index="6"/><slot index="7"/></hbox>
+  </vbox>
+</screen>

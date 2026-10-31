@@ -1,0 +1,56 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ggg",
+    "sss",
+    "wuw"
+  ],
+  "key": {
+    "g": {
+      "tag": "c:glass_panes"
+    },
+    "s": {
+      "tag": "c:ingots/silicon"
+    },
+    "w": {
+      "tag": "c:wires"
+    },
+    "u": {
+      "tag": "electricadvantage:power_supply_units"
+    }
+  },
+  "result": {
+    "id": "electricadvantage:photovoltaic_generator"
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:glass_panes"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:ingots/silicon"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:wires"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "electricadvantage:power_supply_units"
+      }
+    }
+  ]
+}

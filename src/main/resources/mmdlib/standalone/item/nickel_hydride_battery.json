@@ -1,0 +1,6 @@
+{
+  "module": "electricadvantage:battery",
+  "factory_data": {
+    "capacity": 2000
+  }
+}

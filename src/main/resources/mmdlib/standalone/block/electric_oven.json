@@ -1,0 +1,21 @@
+{
+  "module": "electricadvantage:processing",
+  "factory_data": {
+    "kind": "oven",
+    "inputs": 1,
+    "outputs": 1,
+    "ticks": 100,
+    "cost": 4,
+    "capacity": 500,
+    "rate": 4096
+  },
+  "block_entity_data": {
+    "kind": "oven",
+    "inputs": 1,
+    "outputs": 1,
+    "ticks": 100,
+    "cost": 4,
+    "capacity": 500,
+    "rate": 4096
+  }
+}

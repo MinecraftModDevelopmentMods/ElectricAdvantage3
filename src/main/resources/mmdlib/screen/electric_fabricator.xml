@@ -1,0 +1,29 @@
+<screen xmlns="https://moddev.zone/mmdlib/screen"
+        title="block.electricadvantage.electric_fabricator"
+        block-entity="zone.moddev.mc.electricadvantage.assembler.AssemblerBlockEntity">
+  <vbox padding="7" spacing="4" align="center">
+    <gauge id="energy" orientation="horizontal" length="9s" color="#DCA92B"
+           value="#screenEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
+    <label text="screen.electricadvantage.assembler.selected_value" text-fallback="{value}" value="#screenRecipe"/>
+    <hbox spacing="8" align="center">
+      <group label="screen.electricadvantage.assembler.recipe" padding="4">
+        <vbox spacing="1">
+          <hbox spacing="1"><slot index="10" kind="ghost"/><slot index="11" kind="ghost"/><slot index="12" kind="ghost"/></hbox>
+          <hbox spacing="1"><slot index="13" kind="ghost"/><slot index="14" kind="ghost"/><slot index="15" kind="ghost"/></hbox>
+          <hbox spacing="1"><slot index="16" kind="ghost"/><slot index="17" kind="ghost"/><slot index="18" kind="ghost"/></hbox>
+        </vbox>
+      </group>
+      <progress value="#screenProgress" max="#screenTime"/>
+      <group label="screen.electricadvantage.assembler.output" padding="4"><slot index="9" size="large"/></group>
+    </hbox>
+    <label text="screen.electricadvantage.assembler.cost_value" text-fallback="{value}" value="#screenCost"/>
+    <hbox spacing="3">
+      <button text="screen.electricadvantage.assembler.previous" tooltip="screen.electricadvantage.assembler.previous_tip" on-click="electricadvantage:assembler_previous"/>
+      <button text="screen.electricadvantage.assembler.next" tooltip="screen.electricadvantage.assembler.next_tip" on-click="electricadvantage:assembler_next"/>
+      <button text="screen.electricadvantage.assembler.clear" tooltip="screen.electricadvantage.assembler.clear_tip" on-click="electricadvantage:assembler_clear"/>
+    </hbox>
+    <group label="screen.electricadvantage.assembler.parts" padding="3">
+      <hbox spacing="0"><slot index="0"/><slot index="1"/><slot index="2"/><slot index="3"/><slot index="4"/><slot index="5"/><slot index="6"/><slot index="7"/><slot index="8"/></hbox>
+    </group>
+  </vbox>
+</screen>

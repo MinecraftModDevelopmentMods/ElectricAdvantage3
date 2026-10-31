@@ -1,0 +1,19 @@
+{
+  "events": [
+    {
+      "type": "gui-click",
+      "id": "electricadvantage:assembler_next",
+      "handler": "zone.moddev.mc.electricadvantage.assembler.AssemblerSystems#next"
+    },
+    {
+      "type": "gui-click",
+      "id": "electricadvantage:assembler_previous",
+      "handler": "zone.moddev.mc.electricadvantage.assembler.AssemblerSystems#previous"
+    },
+    {
+      "type": "gui-click",
+      "id": "electricadvantage:assembler_clear",
+      "handler": "zone.moddev.mc.electricadvantage.assembler.AssemblerSystems#clear"
+    }
+  ]
+}

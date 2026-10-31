@@ -1,0 +1,99 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+
+version = mod_version
+group = mod_group_id
+base { archivesName = "ElectricAdvantage-${minecraft_version}" }
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    withSourcesJar()
+}
+
+sourceSets.main.resources.srcDir 'src/generated/resources'
+
+// Opt-in integration tests run in a separate server and stay out of release JARs.
+if (providers.gradleProperty('gameTests').isPresent()) {
+    sourceSets.create('gameTest') {
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+    configurations.gameTestImplementation.extendsFrom configurations.implementation
+    configurations.gameTestRuntimeOnly.extendsFrom configurations.runtimeOnly
+}
+
+
+neoForge {
+    version = project.neo_version
+
+    runs {
+        client {
+            client()
+            if (providers.gradleProperty('clientSmoke').isPresent()) {
+                systemProperty 'electricadvantage.clientSmoke', 'true'
+                gameDirectory = file('build/client-smoke')
+            }
+        }
+        if (providers.gradleProperty('gameTests').isPresent()) {
+            gameTestServer {
+                type = 'gameTestServer'
+                gameDirectory = file('build/gametest-run')
+                systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            }
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id, '--all',
+                    '--output', file('src/generated/resources').absolutePath,
+                    '--existing', file('src/main/resources').absolutePath
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+            if (providers.gradleProperty('gameTests').isPresent()) sourceSet(sourceSets.gameTest)
+        }
+    }
+}
+
+repositories {
+    maven {
+        name = 'ModDevZone'
+        url = uri('https://maven.moddev.zone/releases')
+        content {
+            includeGroup 'zone.moddev.mc.orespawn'
+        }
+    }
+}
+
+dependencies {
+    // Temporary local dependencies; replace with Maven coordinates when available.
+    // implementation supplies both the compile classpath and development runtime.
+    implementation files('libs/mmdlib-2.0.0-alpha.jar')
+    implementation files('libs/PowerAdvantage-1.21.1-3.0.0.jar')
+    implementation "zone.moddev.mc.orespawn:OreSpawn:${orespawn_version}"
+}
+
+var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    var properties = [mod_id: mod_id, mod_name: mod_name, mod_version: mod_version]
+    inputs.properties properties
+    expand properties
+    from 'src/main/templates'
+    into layout.buildDirectory.dir('generated/sources/modMetadata')
+}
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+tasks.named('jar', Jar) {
+    manifest.attributes('Implementation-Version': project.version)
+}

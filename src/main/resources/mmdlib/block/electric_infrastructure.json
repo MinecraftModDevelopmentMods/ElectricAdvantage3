@@ -1,0 +1,22 @@
+{
+  "factory": "electricadvantage:electric_infrastructure",
+  "factory_data": {
+    "kind": "cable"
+  },
+  "template": {
+    "properties": {
+      "hardness": 0.75,
+      "blast_resistance": 3,
+      "occlusion": false
+    },
+    "has_item": true
+  },
+  "part": {
+    "block_entity": {
+      "factory": "electricadvantage:electric_infrastructure",
+      "factory_data": {
+        "kind": "cable"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "ingredient": {
+    "item": "electricadvantage:solder_mix"
+  },
+  "result": {
+    "id": "electricadvantage:solder"
+  },
+  "experience": 0.5,
+  "cookingtime": 200
+}

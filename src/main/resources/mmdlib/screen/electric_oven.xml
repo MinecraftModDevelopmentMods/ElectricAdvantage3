@@ -1,0 +1,8 @@
+<screen xmlns="https://moddev.zone/mmdlib/screen" title="block.electricadvantage.electric_oven" block-entity="zone.moddev.mc.electricadvantage.processing.ProcessingBlockEntity">
+  <vbox padding="8" spacing="4" align="center">
+    <gauge id="energy" orientation="horizontal" length="8s" color="#DCA92B" value="#screenEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
+    <hbox spacing="4"><vbox spacing="2" align="center"><slot index="0"/><progress value="#screenProgress0" max="#screenDuration"/></vbox></hbox>
+<hbox spacing="4"><slot index="1"/></hbox>
+
+  </vbox>
+</screen>

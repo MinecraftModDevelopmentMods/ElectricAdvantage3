@@ -1,0 +1,14 @@
+{
+  "type": "electricadvantage:assembling",
+  "ingredients": [
+    {
+      "item": "minecraft:milk_bucket",
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "minecraft:sugar"
+  },
+  "time": 2,
+  "power_cost": 3
+}

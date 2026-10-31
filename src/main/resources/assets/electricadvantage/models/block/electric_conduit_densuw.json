@@ -1,0 +1,8 @@
+{
+  "parent": "poweradvantage:block/pipe2_densuw",
+  "textures": {
+    "texture": "electricadvantage:block/electric_conduit",
+    "particle": "electricadvantage:block/materials/machine_case"
+  },
+  "render_type": "minecraft:cutout"
+}

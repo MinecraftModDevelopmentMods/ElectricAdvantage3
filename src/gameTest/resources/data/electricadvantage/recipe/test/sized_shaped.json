@@ -1,0 +1,23 @@
+{
+  "type": "electricadvantage:assembling",
+  "pattern": [
+    "AB",
+    " A"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot",
+      "count": 3
+    },
+    "B": {
+      "item": "minecraft:copper_ingot",
+      "count": 2
+    }
+  },
+  "result": {
+    "id": "minecraft:diamond",
+    "count": 2
+  },
+  "time": 6,
+  "power_cost": 11
+}

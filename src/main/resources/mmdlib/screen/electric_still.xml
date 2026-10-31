@@ -1,0 +1,6 @@
+<screen xmlns="https://moddev.zone/mmdlib/screen" title="block.electricadvantage.electric_still" block-entity="zone.moddev.mc.electricadvantage.processing.ProcessingBlockEntity" inventory="none">
+  <vbox padding="8" spacing="4" align="center">
+    <gauge id="energy" orientation="horizontal" length="8s" color="#DCA92B" value="#screenEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
+    <gauge id="input_fluid" orientation="horizontal" length="8s" value="#screenInputFluid" max="#screenFluidCapacity"/><progress value="#screenProgress" max="#screenDuration"/><gauge id="output_fluid" orientation="horizontal" length="8s" value="#screenOutputFluid" max="#screenFluidCapacity"/>
+  </vbox>
+</screen>

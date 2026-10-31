@@ -1,0 +1,24 @@
+{
+  "type": "metal",
+  "color": -1,
+  "hardness": 2.5,
+  "items": [
+    "ingot",
+    "dust",
+    "nugget",
+    "electricadvantage:battery"
+  ],
+  "blocks": [
+    "ore"
+  ],
+  "entities": [],
+  "has_fluid": false,
+  "harvest_tags": [
+    "minecraft:mineable/pickaxe",
+    "minecraft:needs_stone_tool"
+  ],
+  "special": {
+    "blast_resistance": 10,
+    "battery_capacity": 8000
+  }
+}

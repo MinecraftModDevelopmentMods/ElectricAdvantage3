@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "electricadvantage:solder",
+    {
+      "id": "#c:ingots/lead",
+      "required": false
+    },
+    {
+      "id": "#c:ingots/tin",
+      "required": false
+    },
+    {
+      "id": "#c:ingots/silver",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "xx",
+    "cc"
+  ],
+  "key": {
+    "x": {
+      "tag": "c:plastics"
+    },
+    "c": {
+      "tag": "c:rods/copper"
+    }
+  },
+  "result": {
+    "id": "electricadvantage:electric_conduit",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:plastics"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:rods/copper"
+      }
+    }
+  ]
+}

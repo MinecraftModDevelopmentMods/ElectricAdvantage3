@@ -1,0 +1,11 @@
+{
+  "factory": "electricadvantage:pump_pipe",
+  "template": {
+    "properties": {
+      "hardness": 5,
+      "blast_resistance": 10,
+      "occlusion": false
+    },
+    "has_item": true
+  }
+}

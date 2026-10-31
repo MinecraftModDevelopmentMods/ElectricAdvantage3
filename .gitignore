@@ -1,2 +1,12 @@
-other_docs
+/.gradle/
+/build/
+/run/
+/run-data/
+/repo/
+/.idea/
+*.iml
+/.classpath
+/.project
+/.settings/
+/bin/
 gradle

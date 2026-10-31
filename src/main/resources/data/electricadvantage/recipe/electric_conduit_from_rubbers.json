@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "xxx",
+    "ccc",
+    "xxx"
+  ],
+  "key": {
+    "x": {
+      "tag": "c:rubbers"
+    },
+    "c": {
+      "tag": "c:ingots/copper"
+    }
+  },
+  "result": {
+    "id": "electricadvantage:electric_conduit",
+    "count": 6
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:ingots/copper"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:rubbers"
+      }
+    }
+  ]
+}

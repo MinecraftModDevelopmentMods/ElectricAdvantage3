@@ -1,0 +1,8 @@
+{
+  "parent": "poweradvantage:block/pipe2_nuw",
+  "textures": {
+    "texture": "electricadvantage:block/led_bar_off",
+    "particle": "electricadvantage:block/materials/machine_case"
+  },
+  "render_type": "minecraft:cutout"
+}

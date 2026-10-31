@@ -1,0 +1,51 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "uXY",
+    "pmp"
+  ],
+  "key": {
+    "u": {
+      "tag": "electricadvantage:power_supply_units"
+    },
+    "p": {
+      "tag": "c:plates/steel"
+    },
+    "m": {
+      "item": "poweradvantage:steel_frame"
+    },
+    "X": {
+      "tag": "c:gears"
+    },
+    "Y": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "result": {
+    "id": "electricadvantage:electric_crusher"
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:gears"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:plates/steel"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "electricadvantage:power_supply_units"
+      }
+    }
+  ]
+}

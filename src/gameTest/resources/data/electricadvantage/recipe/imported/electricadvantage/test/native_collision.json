@@ -1,0 +1,13 @@
+{
+  "type": "electricadvantage:assembling",
+  "ingredients": [
+    {
+      "item": "minecraft:stick"
+    }
+  ],
+  "result": {
+    "id": "minecraft:diamond"
+  },
+  "time": 4,
+  "power_cost": 7
+}

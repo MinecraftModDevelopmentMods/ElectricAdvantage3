@@ -1,0 +1,24 @@
+{
+  "factory": "electricadvantage:generation",
+  "factory_data": {
+    "kind": "solar"
+  },
+  "template": {
+    "properties": {
+      "hardness": 3,
+      "blast_resistance": 10,
+      "occlusion": true
+    },
+    "events": {
+      "block-right-click": "mmdlib:open_menu"
+    }
+  },
+  "part": {
+    "block_entity": {
+      "factory": "electricadvantage:generation",
+      "factory_data": {
+        "kind": "solar"
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "module": "electricadvantage:electric_infrastructure",
+  "factory_data": {
+    "kind": "led",
+    "capacity": 4,
+    "rate": 4
+  },
+  "block_entity_data": {
+    "kind": "led",
+    "capacity": 4,
+    "rate": 4
+  }
+}

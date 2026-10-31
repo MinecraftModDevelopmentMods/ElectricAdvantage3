@@ -1,0 +1,49 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "pXp",
+    "pYp",
+    "pZp"
+  ],
+  "key": {
+    "p": {
+      "tag": "c:plastics"
+    },
+    "X": {
+      "tag": "c:ingots/nickel"
+    },
+    "Y": {
+      "tag": "c:dusts/redstone"
+    },
+    "Z": {
+      "item": "minecraft:water_bucket"
+    }
+  },
+  "result": {
+    "id": "electricadvantage:nickel_hydride_battery"
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:dusts/redstone"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:ingots/nickel"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:plastics"
+      }
+    }
+  ]
+}

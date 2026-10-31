@@ -1,0 +1,13 @@
+{
+  "module": "electricadvantage:electric_infrastructure",
+  "factory_data": {
+    "kind": "cable",
+    "capacity": 4096,
+    "rate": 4096
+  },
+  "block_entity_data": {
+    "kind": "cable",
+    "capacity": 4096,
+    "rate": 4096
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "parent": "electricadvantage:block/electric_still_off",
+  "ambientocclusion": false
+}

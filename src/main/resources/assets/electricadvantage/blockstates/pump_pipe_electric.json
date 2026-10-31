@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "electricadvantage:block/pump_pipe_electric"
+    }
+  }
+}
