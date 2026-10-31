@@ -1,0 +1,19 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:cocoa_beans"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/jungle_log"
+  },
+  "time": 300,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:cocoa_beans",
+        "count": 2
+      },
+      "bonus_per_fertility": 0.5
+    }
+  ]
+}

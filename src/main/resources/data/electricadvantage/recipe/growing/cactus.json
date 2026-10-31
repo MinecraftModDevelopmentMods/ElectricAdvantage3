@@ -1,0 +1,18 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:cactus"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/sand"
+  },
+  "time": 800,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:cactus"
+      },
+      "bonus_per_fertility": 0.5
+    }
+  ]
+}

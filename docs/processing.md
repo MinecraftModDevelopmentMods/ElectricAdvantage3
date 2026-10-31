@@ -76,8 +76,8 @@ Client bootstrap checks asset loading rather than actual machine interaction.
 Interactive machine appearance, connected screen synchronization, real external
 material providers and unload/reload stress remain pending.
 
-The other six processing/automation entries remain unimplemented: redesigned automatic
-assembler, moving mining drill, laser turret, growth chamber, growth controller
-and pump. The hidden hostile turret variant also remains pending. These are
+The assembler is documented in [assembler.md](assembler.md) and the growth chamber
+and controller in [farming.md](farming.md). The remaining processing/automation
+entries are the moving mining drill, laser turret and pump. The hidden hostile turret variant also remains pending. These are
 tracked individually in TODO.md; this first batch does not claim full parity for
 the processing/automation section.

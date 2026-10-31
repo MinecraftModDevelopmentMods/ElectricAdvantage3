@@ -1,0 +1,49 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:dark_oak_sapling"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/dirt"
+  },
+  "time": 1200,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:dark_oak_log",
+        "count": 4
+      },
+      "bonus_per_fertility": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:dark_oak_sapling"
+      },
+      "chance": 0.5,
+      "bonus_per_fertility": 0.25
+    },
+    {
+      "item": {
+        "id": "minecraft:apple"
+      },
+      "chance": 0.2,
+      "chance_per_fertility": 0.05
+    },
+    {
+      "item": {
+        "id": "minecraft:dark_oak_leaves",
+        "count": 4
+      },
+      "bonus_per_fertility": 0.5,
+      "upgrade": "shearing"
+    },
+    {
+      "item": {
+        "id": "minecraft:stick",
+        "count": 2
+      },
+      "chance": 0.5,
+      "upgrade": "shearing"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:sugar_cane"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/sugar_cane"
+  },
+  "time": 800,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:sugar_cane"
+      },
+      "bonus_per_fertility": 0.5
+    }
+  ]
+}

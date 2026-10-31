@@ -1,0 +1,18 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:torchflower_seeds"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/dirt"
+  },
+  "time": 300,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:torchflower"
+      },
+      "bonus_per_fertility": 0.5
+    }
+  ]
+}

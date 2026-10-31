@@ -1,0 +1,25 @@
+{
+  "values": {
+    "minecraft:mud": {
+      "fertility": 1
+    },
+    "minecraft:rooted_dirt": {
+      "fertility": 1
+    },
+    "minecraft:podzol": {
+      "fertility": 1
+    },
+    "minecraft:mycelium": {
+      "fertility": 1
+    },
+    "minecraft:moss_block": {
+      "fertility": 1
+    },
+    "minecraft:crimson_nylium": {
+      "fertility": 1
+    },
+    "minecraft:warped_nylium": {
+      "fertility": 1
+    }
+  }
+}

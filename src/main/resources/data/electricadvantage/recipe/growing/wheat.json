@@ -1,0 +1,25 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:wheat_seeds"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/dirt"
+  },
+  "time": 800,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:wheat"
+      },
+      "bonus_per_fertility": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:wheat_seeds"
+      },
+      "chance": 0.6,
+      "bonus_per_fertility": 0.5
+    }
+  ]
+}

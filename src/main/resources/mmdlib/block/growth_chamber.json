@@ -1,0 +1,18 @@
+{
+  "factory": "electricadvantage:growth_chamber",
+  "template": {
+    "properties": {
+      "hardness": 3,
+      "blast_resistance": 10
+    },
+    "events": {
+      "block-right-click": "mmdlib:open_menu"
+    }
+  },
+  "part": {
+    "block_entity": {
+      "factory": "electricadvantage:growth_chamber",
+      "factory_data": {}
+    }
+  }
+}

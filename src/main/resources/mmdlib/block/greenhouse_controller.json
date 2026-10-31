@@ -1,0 +1,18 @@
+{
+  "factory": "electricadvantage:greenhouse_controller",
+  "template": {
+    "properties": {
+      "hardness": 3,
+      "blast_resistance": 10
+    },
+    "events": {
+      "block-right-click": "mmdlib:open_menu"
+    }
+  },
+  "part": {
+    "block_entity": {
+      "factory": "electricadvantage:greenhouse_controller",
+      "factory_data": {}
+    }
+  }
+}

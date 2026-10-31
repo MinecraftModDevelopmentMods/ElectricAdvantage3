@@ -203,15 +203,35 @@ Current first-batch implementation and behavior: [processing.md](docs/processing
 - [ ] `electric_fabricator` — Automated Assembler; redesigned from EA2's recursive fabricator by user direction.
   - [x] Design agreed: vanilla-style 3×3 ghost recipe grid, one real output slot, and one row of nine real parts-buffer slots consumed by crafting.
   - [x] Design agreed: dedicated assembler recipe type/catalog; import vanilla `minecraft:crafting_shaped` and `minecraft:crafting_shapeless` recipes, excluding source recipe IDs whose path ends with `_manual_only` (an ID suffix, not an item/block tag).
-  - [ ] Implement imported recipe wrappers with stable IDs and source-recipe provenance; leave the source crafting recipes unchanged and refresh imports after initial recipe loading and every successful server datapack reload.
-  - [ ] Support explicit assembler recipes; define deterministic precedence for explicit overrides of imported recipes.
-  - [ ] Implement selection/ghost display, ingredient allocation from the nine-slot buffer, energy/progress, full-output waiting, crafting remainders, persistence, automation, XML screen and tests. No recursive intermediate crafting is required by this redesign.
-  - [ ] Test shaped/shapeless imports, `_manual_only` exclusion, reload removal/replacement, ingredient alternatives, container remainders and full-buffer/output conservation.
+  - [x] Imported wrappers use stable `electricadvantage:imported/<ns>/<path>` IDs with source provenance; source recipes are unchanged. The catalog is invalidated on each datapack reload and rebuilt lazily after all reload listeners (including KubeJS/CraftTweaker) have applied.
+  - [x] Explicit `electricadvantage:assembling` recipes (shaped/shapeless, sized cells, time, power, `override`) are registered as recipe type + serializer. Explicit recipes win over imports, and duplicate overrides are rejected. Recipes are `isSpecial` so they stay out of the vanilla recipe book. Format and script usage: [assembler.md](docs/assembler.md).
+  - [x] Selection/ghost display, alternate cycling, bounded allocation planner, energy/progress, full-output waiting, remainders, persistence, output-only export, MMDLib XML screen implemented.
+  - [x] Game tests pass for shaped/shapeless imports, `_manual_only` exclusion, explicit precedence, reload removal/replacement, real datapack reload, ingredient alternatives, sized cells, container remainders, full-buffer/output conservation, redstone and power gating.
+  - [ ] Verify interactive appearance, connected GUI synchronization (ghost clicks, buttons, labels), real external automation, unload/reload behavior, and KubeJS/CraftTweaker scripts in a modpack environment.
+  - [ ] Post-parity (deferred with PA3/SA integrations): dedicated KubeJS recipe schema / CraftTweaker manager, recipe-viewer (JEI/EMI) category, and a script/datapack way to exclude a specific import without renaming it.
   - EA2 reference only: [crafting utilities](EA2/src/main/java/cyano/electricadvantage/util/crafting).
 - [ ] `electric_drill` — Electric Mining Drill (`ElectricDrill*`; field `laser_drill`); directional laser mining up to 64 blocks, hardness-dependent progress, drops and inventory export, movement along electric scaffold, state/inventory transfer during movement, beam damage, renderer, and drill GUI.
 - [ ] `laser_turret` — Laser Turret (`LaserTurret*`); hostile targeting, owner handling, aiming/beam renderer, laser damage/sound, power use, and redstone behavior.
-- [ ] `growth_chamber` — Growth Chamber (`GrowthChamber*`); three crop inputs, six output slots, virtual crop growth/harvesting, controller-supplied greenhouse power, progress, and chamber GUI. See [VirtualCrop.java](EA2/src/main/java/cyano/electricadvantage/util/farming/VirtualCrop.java).
-- [ ] `growth_chamber_controller` — Growth Chamber Control Unit (`GrowthChamberController*`); electricity + water + dirt/grass converted into greenhouse-network power; soil/water/energy storage, automation, and controller GUI.
+- [ ] `growth_chamber` — Growth Chamber; redesigned from EA2's seed-only chamber by user direction (Garden Cloche-style, three growth slots).
+  - [x] Design agreed: three growth slots, each a soil slot and a seed slot (6 input slots), plus one shared bank of 6 output slots and one upgrade slot.
+  - [x] Design agreed: soil and seed are permanent catalysts and are never consumed (expensive modded soils such as Mystical Agriculture's Insanium farmland must not be used up). Each greenhouse-powered machine tick advances growth; there are no world random ticks.
+  - [x] Design agreed: data-driven `electricadvantage:growing` recipes (seed ingredient, allowed-soil ingredient, growth time, results). Soils carry a data-defined fertility value that acts like luck/looting, adding the recipe-defined per-result bonus drops. Recipes can restrict soils (e.g. soul sand for nether wart, sand for cactus).
+  - [x] Design agreed: no automatic import of arbitrary crops; modded crops are added by datapack recipes. Bundled recipes cover all vanilla crops: wheat, carrot, potato, beetroot, pumpkin, melon, sugar cane, cactus, sweet berries, nether wart, red and brown mushrooms, bamboo, and trees (saplings as seeds).
+  - [x] Design agreed: EA2 plant duplication kept for backwards compatibility: saplings, flowers, tall grass, vines, lily pads, mushrooms, cactus, sugar cane and the grass block.
+  - [x] Design agreed: soil requirements beyond ordinary soils: chorus requires end stone; kelp, coral and seagrass require a water bucket as the (permanent) soil.
+  - [x] Design agreed: trees yield logs and saplings; oak and dark oak also yield apples. Leaves and possibly sticks only with an upgrade.
+  - [x] Design agreed: cocoa beans require a jungle log as soil, echoing vanilla's placement. Glow berries are included alongside the kept vines. Crimson/warped fungi grow on netherrack, or on nylium as an alternative soil. Moss is excluded: in vanilla it converts its soil.
+  - [x] Design agreed: one upgrade slot per chamber (so it applies to that chamber's crops, not network-wide from the controller). The only upgrade for now is a "shearing" upgrade that adds tree leaves and possibly sticks. Wider upgrade paths are deferred until the whole mod's upgrades are planned.
+  - [ ] Open: shearing upgrade recipe and texture (deferred; the item exists with the shears texture as a placeholder).
+  - [x] Design agreed: a harvest that does not fit entirely in the outputs waits; nothing is spilled or lost.
+  - [x] Implemented `electricadvantage:growing` recipe type/serializer, soil fertility data map, soil/upgrade tags, 38 bundled vanilla recipes, per-lane growth and progress, greenhouse power use, held harvests, persistence, automation rules, XML screen with upgrade side tab, and placeholder Shearing Upgrade item. `FarmingGameTests` pass. See [farming.md](docs/farming.md).
+  - [ ] Verify interactive appearance, connected GUI synchronization, real external automation and unload/reload behavior.
+  - EA2 reference only: [VirtualCrop.java](EA2/src/main/java/cyano/electricadvantage/util/farming/VirtualCrop.java). Its save/reload stage loss, ~12.5%-capped progress bar and overflow spawning at world origin are bugs, not behavior to preserve.
+- [ ] `growth_chamber_controller` — Growth Chamber Control Unit; redesigned by user direction: electricity + water + **fertilizer** (replacing EA2's dirt) converted into greenhouse power.
+  - [x] Design agreed: fertilizer values are data-defined (bone meal and modded fertilizers), so packs can add them. EA2's 8 electricity and 2 mB water per greenhouse unit are the starting costs, plus a fertilizer amount per unit.
+  - [x] Design agreed: no greenhouse cable, matching EA2. A controller powers the chambers it touches and chambers touching those (a bounded connected cluster), sharing power fairly. The placement restriction is intentional.
+  - [x] Implemented FE/water/fertilizer storage and conversion (fertilizer data map), bounded touching-chamber cluster with equal sharing, redstone stop, EA2 comparator, automation capabilities, XML screen and tests.
+  - [ ] Verify interactive appearance, connected GUI synchronization, real external automation and unload/reload behavior.
 - [ ] `electric_pump` — Electric Pump (`ElectricPump*`); extends pump pipe downward, locates and consumes fluid source blocks, stores fluid, exports through Power Advantage's fluid network, and pump GUI.
 - [ ] `electric_still` — Electric Distiller (`ElectricStill*`); Power Advantage distillation recipes, separate input/output tanks, electricity consumption, fluid routing, and distiller GUI.
   - [x] PA3 distillation recipes, role-separated tanks, recipe-duration/energy use, saved pending output, fluid export, recipe/assets and MMDLib XML screen implemented.
@@ -230,7 +250,7 @@ Current first-batch implementation and behavior: [processing.md](docs/processing
 
 - [ ] Register electricity and greenhouse network types and integrate generators, consumers, cables, switching, priorities, and storage with Power Advantage 3.
   - [x] Electricity uses PA3 transport discovery/routing/fair budgets and MMDLib storage/capabilities; cable/scaffold/switch/LED implementation and live transport tests pass.
-  - [ ] Integrate future generators/storage/machines and implement greenhouse power.
+  - [ ] Integrate future generators/storage/machines. Greenhouse power is implemented as touching-chamber clusters, not a cable network or PA3 network type; see `growth_chamber_controller`.
 - [ ] Recreate required block items, placement/orientation, shapes, break/drop behavior, active/lit states, and creative-tab placement.
 - [ ] Port machine inventories, item/fluid automation, redstone controls and comparator behavior where implemented; verify full-output and empty-input conditions without duplication/loss.
 - [ ] Port machine menus/screens, gauges/progress, server-side interaction validation, synchronization, and state persistence through save/reload and chunk unloading.

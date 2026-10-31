@@ -1,0 +1,16 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "tag": "electricadvantage:growable/corals"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/water"
+  },
+  "time": 800,
+  "results": [
+    {
+      "copy_seed": true,
+      "bonus_per_fertility": 0.5
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:vine"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/dirt"
+  },
+  "time": 800,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:vine"
+      },
+      "bonus_per_fertility": 0.5
+    }
+  ]
+}

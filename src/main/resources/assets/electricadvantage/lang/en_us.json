@@ -48,5 +48,17 @@
   "screen.electricadvantage.assembler.clear": "Clear",
   "screen.electricadvantage.assembler.previous_tip": "Select the previous alternate for this pattern; clear the grid to browse all recipes.",
   "screen.electricadvantage.assembler.next_tip": "Select the next alternate for this pattern; clear the grid to browse all recipes.",
-  "screen.electricadvantage.assembler.clear_tip": "Clear the selected recipe and ghost pattern. Stored ingredients stay in the buffer."
+  "screen.electricadvantage.assembler.clear_tip": "Clear the selected recipe and ghost pattern. Stored ingredients stay in the buffer.",
+  "block.electricadvantage.growth_chamber": "Growth Chamber",
+  "block.electricadvantage.growth_chamber_controller": "Growth Chamber Control Unit",
+  "item.electricadvantage.shearing_upgrade": "Shearing Upgrade",
+  "screen.electricadvantage.greenhouse.power": "Greenhouse power: {value} / {max}",
+  "screen.electricadvantage.greenhouse.fertilizer": "Fertilizer: {value} / {max}",
+  "screen.electricadvantage.greenhouse.fertilizer_slot": "Fertilizer such as bone meal. Each item refills the fertilizer store.",
+  "screen.electricadvantage.greenhouse.chambers": "Growth chambers connected: %s / %s",
+  "screen.electricadvantage.growth_chamber.lanes": "Seed and soil (never used up)",
+  "screen.electricadvantage.growth_chamber.output": "Harvest",
+  "screen.electricadvantage.growth_chamber.seed": "Seed: stays in place and keeps producing",
+  "screen.electricadvantage.growth_chamber.soil": "Soil: stays in place; richer soils increase the harvest",
+  "screen.electricadvantage.growth_chamber.upgrade": "Upgrade slot. Shearing Upgrade: tree harvests also give leaves and sticks."
 }

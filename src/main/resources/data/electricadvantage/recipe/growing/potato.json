@@ -1,0 +1,25 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:potato"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/dirt"
+  },
+  "time": 800,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:potato",
+        "count": 2
+      },
+      "bonus_per_fertility": 0.57
+    },
+    {
+      "item": {
+        "id": "minecraft:poisonous_potato"
+      },
+      "chance": 0.02
+    }
+  ]
+}

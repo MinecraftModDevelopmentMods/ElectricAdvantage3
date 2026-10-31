@@ -1,0 +1,19 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:sweet_berries"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/dirt"
+  },
+  "time": 400,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:sweet_berries",
+        "count": 2
+      },
+      "bonus_per_fertility": 0.5
+    }
+  ]
+}

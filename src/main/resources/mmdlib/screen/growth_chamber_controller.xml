@@ -1,0 +1,19 @@
+<screen xmlns="https://moddev.zone/mmdlib/screen"
+        title="block.electricadvantage.growth_chamber_controller"
+        block-entity="zone.moddev.mc.electricadvantage.farming.GreenhouseControllerBlockEntity">
+  <vbox padding="7" spacing="4" align="center">
+    <gauge id="energy" orientation="horizontal" length="8s" color="#DCA92B"
+           value="#screenEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
+    <hbox spacing="8" align="center">
+      <vbox spacing="2" align="center">
+        <slot index="0" tooltip="screen.electricadvantage.greenhouse.fertilizer_slot"/>
+        <meter orientation="horizontal" thickness="5" length="1s" color="#E8E2C8"
+               value="#screenFertilizer" max="#screenFertilizerCapacity" tooltip="screen.electricadvantage.greenhouse.fertilizer"/>
+      </vbox>
+      <gauge id="water" orientation="vertical" length="3s" value="#screenWater" max="#screenWaterCapacity"/>
+      <gauge id="greenhouse" orientation="vertical" length="3s" color="#5DAE3A"
+             value="#screenGreenhouse" max="#screenGreenhouseCapacity" tooltip="screen.electricadvantage.greenhouse.power"/>
+    </hbox>
+    <label text="screen.electricadvantage.greenhouse.chambers_value" text-fallback="{value}" value="#screenChambers"/>
+  </vbox>
+</screen>

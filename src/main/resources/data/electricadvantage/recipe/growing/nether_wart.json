@@ -1,0 +1,19 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:nether_wart"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/nether_wart"
+  },
+  "time": 400,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:nether_wart",
+        "count": 3
+      },
+      "bonus_per_fertility": 0.5
+    }
+  ]
+}

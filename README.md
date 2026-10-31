@@ -39,6 +39,8 @@ Four generation/storage machines now share data-driven settings and MMDLib XML
 screens; see [generation and storage](docs/generation-storage.md).
 The furnace, crusher, oven, distiller and refinery now share a processing core;
 see [processing behavior and remaining machines](docs/processing.md).
+The Growth Chamber and its Control Unit are redesigned data-driven greenhouse machines;
+see [growth chamber and control unit](docs/farming.md).
 Conditional recipes require compatible material tags; remaining automation machines, recipe modes,
 and complete survival acquisition remain pending.
 Track implementation and verification in [TODO.md](TODO.md).

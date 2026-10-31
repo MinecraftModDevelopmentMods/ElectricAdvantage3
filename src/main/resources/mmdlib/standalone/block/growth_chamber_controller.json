@@ -1,0 +1,16 @@
+{
+  "module": "electricadvantage:greenhouse_controller",
+  "block_entity_data": {
+    "energy_capacity": 10000,
+    "rate": 4096,
+    "water_capacity": 4000,
+    "fertilizer_capacity": 1000,
+    "buffer": 1000,
+    "production": 16,
+    "fe_per_unit": 32,
+    "water_per_unit": 2,
+    "fertilizer_per_unit": 1,
+    "max_chambers": 16,
+    "scan_interval": 20
+  }
+}

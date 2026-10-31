@@ -1,0 +1,26 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:chorus_flower"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/end_stone"
+  },
+  "time": 600,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:chorus_fruit",
+        "count": 2
+      },
+      "bonus_per_fertility": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:chorus_flower"
+      },
+      "chance": 0.2,
+      "chance_per_fertility": 0.05
+    }
+  ]
+}

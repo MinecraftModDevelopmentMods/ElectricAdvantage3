@@ -1,0 +1,28 @@
+<screen xmlns="https://moddev.zone/mmdlib/screen"
+        title="block.electricadvantage.growth_chamber"
+        block-entity="zone.moddev.mc.electricadvantage.farming.GrowthChamberBlockEntity">
+  <vbox padding="7" spacing="4" align="center">
+    <gauge id="greenhouse" orientation="horizontal" length="9s" color="#5DAE3A"
+           value="#screenGreenhouse" max="#screenGreenhouseCapacity" tooltip="screen.electricadvantage.greenhouse.power"/>
+    <hbox spacing="8" align="center">
+      <group label="screen.electricadvantage.growth_chamber.lanes" padding="4">
+        <hbox spacing="6">
+          <vbox spacing="1" align="center"><slot index="3" tooltip="screen.electricadvantage.growth_chamber.seed"/><slot index="0" tooltip="screen.electricadvantage.growth_chamber.soil"/><progress value="#screenProgress0" max="#screenTime0"/></vbox>
+          <vbox spacing="1" align="center"><slot index="4" tooltip="screen.electricadvantage.growth_chamber.seed"/><slot index="1" tooltip="screen.electricadvantage.growth_chamber.soil"/><progress value="#screenProgress1" max="#screenTime1"/></vbox>
+          <vbox spacing="1" align="center"><slot index="5" tooltip="screen.electricadvantage.growth_chamber.seed"/><slot index="2" tooltip="screen.electricadvantage.growth_chamber.soil"/><progress value="#screenProgress2" max="#screenTime2"/></vbox>
+        </hbox>
+      </group>
+      <group label="screen.electricadvantage.growth_chamber.output" padding="4">
+        <vbox spacing="0">
+          <hbox spacing="0"><slot index="6"/><slot index="7"/><slot index="8"/></hbox>
+          <hbox spacing="0"><slot index="9"/><slot index="10"/><slot index="11"/></hbox>
+        </vbox>
+      </group>
+    </hbox>
+  </vbox>
+  <side-tab edge="right">
+    <vbox spacing="2">
+      <slot index="12" kind="upgrade" tooltip="screen.electricadvantage.growth_chamber.upgrade"/>
+    </vbox>
+  </side-tab>
+</screen>

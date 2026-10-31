@@ -1,0 +1,42 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:birch_sapling"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/dirt"
+  },
+  "time": 1200,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:birch_log",
+        "count": 4
+      },
+      "bonus_per_fertility": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:birch_sapling"
+      },
+      "chance": 0.5,
+      "bonus_per_fertility": 0.25
+    },
+    {
+      "item": {
+        "id": "minecraft:birch_leaves",
+        "count": 4
+      },
+      "bonus_per_fertility": 0.5,
+      "upgrade": "shearing"
+    },
+    {
+      "item": {
+        "id": "minecraft:stick",
+        "count": 2
+      },
+      "chance": 0.5,
+      "upgrade": "shearing"
+    }
+  ]
+}

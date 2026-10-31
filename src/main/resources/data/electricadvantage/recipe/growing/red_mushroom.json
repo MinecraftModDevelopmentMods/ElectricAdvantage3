@@ -1,0 +1,18 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:red_mushroom"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/mushroom"
+  },
+  "time": 800,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:red_mushroom"
+      },
+      "bonus_per_fertility": 0.5
+    }
+  ]
+}

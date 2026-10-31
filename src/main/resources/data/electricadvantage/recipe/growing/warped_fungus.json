@@ -1,0 +1,41 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:warped_fungus"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/warped_fungus"
+  },
+  "time": 1200,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:warped_stem",
+        "count": 4
+      },
+      "bonus_per_fertility": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:warped_fungus"
+      },
+      "chance": 0.5,
+      "bonus_per_fertility": 0.25
+    },
+    {
+      "item": {
+        "id": "minecraft:warped_wart_block",
+        "count": 3
+      },
+      "bonus_per_fertility": 0.5,
+      "upgrade": "shearing"
+    },
+    {
+      "item": {
+        "id": "minecraft:shroomlight"
+      },
+      "chance": 0.3,
+      "upgrade": "shearing"
+    }
+  ]
+}

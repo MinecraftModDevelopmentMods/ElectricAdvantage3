@@ -1,0 +1,25 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:beetroot_seeds"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/dirt"
+  },
+  "time": 400,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:beetroot"
+      },
+      "bonus_per_fertility": 0.5
+    },
+    {
+      "item": {
+        "id": "minecraft:beetroot_seeds"
+      },
+      "chance": 0.6,
+      "bonus_per_fertility": 0.5
+    }
+  ]
+}

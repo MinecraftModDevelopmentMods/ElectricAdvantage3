@@ -1,0 +1,44 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "uXY",
+    "pmp"
+  ],
+  "key": {
+    "u": {
+      "tag": "electricadvantage:power_supply_units"
+    },
+    "p": {
+      "tag": "c:plates/steel"
+    },
+    "m": {
+      "item": "poweradvantage:steel_frame"
+    },
+    "X": {
+      "item": "minecraft:flower_pot"
+    },
+    "Y": {
+      "tag": "electricadvantage:microchips"
+    }
+  },
+  "result": {
+    "id": "electricadvantage:growth_chamber"
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "c:plates/steel"
+      }
+    },
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "electricadvantage:power_supply_units"
+      }
+    }
+  ]
+}

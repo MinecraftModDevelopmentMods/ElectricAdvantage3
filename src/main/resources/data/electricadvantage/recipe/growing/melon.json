@@ -1,0 +1,18 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:melon_seeds"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/dirt"
+  },
+  "time": 800,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:melon"
+      },
+      "bonus_per_fertility": 0.25
+    }
+  ]
+}

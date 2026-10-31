@@ -1,0 +1,7 @@
+{
+  "module": "electricadvantage:growth_chamber",
+  "block_entity_data": {
+    "capacity": 200,
+    "item_export": 16
+  }
+}

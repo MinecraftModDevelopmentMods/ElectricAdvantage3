@@ -1,0 +1,24 @@
+{
+  "type": "electricadvantage:growing",
+  "seed": {
+    "item": "minecraft:stick"
+  },
+  "soil": {
+    "tag": "electricadvantage:growth_soils/dirt"
+  },
+  "time": 5,
+  "results": [
+    {
+      "item": {
+        "id": "minecraft:diamond"
+      },
+      "bonus_per_fertility": 1.0
+    },
+    {
+      "item": {
+        "id": "minecraft:emerald"
+      },
+      "upgrade": "shearing"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#electricadvantage:growth_soils/dirt",
+    "#electricadvantage:growth_soils/sand",
+    "minecraft:gravel"
+  ]
+}
