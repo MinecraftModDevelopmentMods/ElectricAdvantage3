@@ -25,6 +25,7 @@ public final class AssemblerGameTests {
         h.assertTrue(manager.byKey(id("test/blocked_manual_only")).isPresent()&&!catalog.byId().containsKey(imported("test/blocked_manual_only")),"Manual-only recipe stays available by hand but is not imported");
         h.assertTrue(!catalog.byId().get(imported("test/native_collision")).imported(),"Explicit recipe wins an exact imported-ID collision");
         h.assertTrue(!catalog.byId().containsKey(imported("test/native_overridden"))&&catalog.byId().containsKey(id("test/assembler_override")),"Explicit override suppresses only its corresponding import");
+        h.assertTrue(manager.byKey(id("test/assembler_priority")).orElseThrow().value().isSpecial(),"Assembler recipes stay out of the vanilla recipe book");
         var be=place(h);var player=player(h,be);
         be.setScreenGhost(player,10,new ItemStack(Items.IRON_INGOT));
         h.assertTrue(be.selectedRecipe().equals(id("test/assembler_priority")),"Explicit matching recipes are selected before imported alternatives");

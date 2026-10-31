@@ -33,6 +33,7 @@ public final class AssemblerCatalog {
     public static ResourceLocation importedId(ResourceLocation source){return ResourceLocation.fromNamespaceAndPath("electricadvantage","imported/"+source.getNamespace()+"/"+source.getPath());}
     public static synchronized Snapshot get(RecipeManager manager){return SNAPSHOTS.computeIfAbsent(manager,AssemblerCatalog::build);}
     public static synchronized Snapshot rebuild(RecipeManager manager){var snapshot=build(manager);SNAPSHOTS.put(manager,snapshot);return snapshot;}
+    public static synchronized void invalidate(RecipeManager manager){SNAPSHOTS.remove(manager);}
     public static synchronized void clear(){SNAPSHOTS.clear();}
     private static Snapshot build(RecipeManager manager){
         var entries=new HashMap<ResourceLocation,Entry>();

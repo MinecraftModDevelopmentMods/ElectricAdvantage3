@@ -114,6 +114,8 @@ public record AssemblerRecipe(List<String> pattern, Map<String,SizedIngredient> 
     @Override public ItemStack getResultItem(HolderLookup.Provider registries){return result.copy();}
     @Override public boolean canCraftInDimensions(int width,int height){return pattern.isEmpty()?width*height>=ingredients.size():width>=pattern.getFirst().length()&&height>=pattern.size();}
     @Override public NonNullList<Ingredient> getIngredients(){var list=NonNullList.<Ingredient>create();cells().forEach(cell->list.add(cell.ingredient()));return list;}
+    // Machine-only recipe: keeps it out of the vanilla recipe book, which has no category for this type.
+    @Override public boolean isSpecial(){return true;}
     @Override public RecipeSerializer<?> getSerializer(){return AssemblerSystems.SERIALIZER.get();}
     @Override public RecipeType<?> getType(){return AssemblerSystems.TYPE.get();}
 }

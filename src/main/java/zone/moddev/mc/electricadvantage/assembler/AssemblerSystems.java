@@ -52,7 +52,9 @@ public final class AssemblerSystems {
         });
         NeoForge.EVENT_BUS.addListener((AddReloadListenerEvent event)->{
             var manager=event.getServerResources().getRecipeManager();
-            event.addListener((ResourceManagerReloadListener)resources->AssemblerCatalog.rebuild(manager));
+            // Invalidate only: script mods (e.g. CraftTweaker) edit this manager from their own reload listeners,
+            // so the catalog is built lazily on first use, after every listener has applied.
+            event.addListener((ResourceManagerReloadListener)resources->AssemblerCatalog.invalidate(manager));
         });
         NeoForge.EVENT_BUS.addListener((ServerStoppedEvent event)->AssemblerCatalog.clear());
     }
