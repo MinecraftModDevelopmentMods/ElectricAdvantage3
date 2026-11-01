@@ -1,0 +1,4 @@
+{
+  "parent": "electricadvantage:block/electric_drill_off",
+  "ambientocclusion": false
+}

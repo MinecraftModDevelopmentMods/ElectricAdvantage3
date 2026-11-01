@@ -27,10 +27,14 @@ import zone.moddev.mc.lib.common.factories.BlockEntityFactory;
 import zone.moddev.mc.lib.common.types.*;
 
 public final class FarmingSystems {
-    /** Item data map: a soil's fertility level; soils without an entry have fertility 0. */
-    public record SoilFertility(int fertility){
+    /**
+     * Item data map: a soil's fertility level and yield factor; soils without an entry have fertility 0
+     * and yield 1. Every harvested count is multiplied by the yield, rolling the fractional part.
+     */
+    public record SoilFertility(int fertility,float yield){
         public static final Codec<SoilFertility> CODEC=RecordCodecBuilder.create(i->i.group(
-                Codec.intRange(0,100).fieldOf("fertility").forGetter(SoilFertility::fertility)).apply(i,SoilFertility::new));
+                Codec.intRange(0,100).optionalFieldOf("fertility",0).forGetter(SoilFertility::fertility),
+                Codec.floatRange(0,64).optionalFieldOf("yield",1f).forGetter(SoilFertility::yield)).apply(i,SoilFertility::new));
     }
     /** Item data map: greenhouse fertilizer units supplied by one item. */
     public record Fertilizer(int value){
@@ -50,9 +54,14 @@ public final class FarmingSystems {
         @Override public MapCodec<GrowingRecipe> codec(){return GrowingRecipe.CODEC;}
         @Override public StreamCodec<RegistryFriendlyByteBuf,GrowingRecipe> streamCodec(){return GrowingRecipe.STREAM_CODEC;}
     });
+    public static final DeferredHolder<RecipeSerializer<?>,RecipeSerializer<ToolShapelessRecipe>> TOOL_SHAPELESS=SERIALIZERS.register("crafting_shapeless_tool",()->new RecipeSerializer<>(){
+        @Override public MapCodec<ToolShapelessRecipe> codec(){return ToolShapelessRecipe.CODEC;}
+        @Override public StreamCodec<RegistryFriendlyByteBuf,ToolShapelessRecipe> streamCodec(){return ToolShapelessRecipe.STREAM_CODEC;}
+    });
     private FarmingSystems(){}
     private static ResourceLocation id(String path){return ResourceLocation.fromNamespaceAndPath("electricadvantage",path);}
     public static int fertility(ItemStack soil){var data=soil.getItemHolder().getData(SOIL_FERTILITY);return data==null?0:data.fertility();}
+    public static float yield(ItemStack soil){var data=soil.getItemHolder().getData(SOIL_FERTILITY);return data==null?1f:data.yield();}
     public static int fertilizer(ItemStack stack){if(stack.isEmpty())return 0;var data=stack.getItemHolder().getData(FERTILIZER);return data==null?0:data.value();}
 
     public static void register(IEventBus bus){

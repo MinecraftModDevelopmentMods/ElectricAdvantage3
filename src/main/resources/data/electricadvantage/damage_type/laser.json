@@ -1,0 +1,6 @@
+{
+  "message_id": "electricadvantage.laser",
+  "scaling": "never",
+  "exhaustion": 0.1,
+  "effects": "burning"
+}

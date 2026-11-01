@@ -1,0 +1,15 @@
+{
+  "type": "electricadvantage:crafting_shapeless_tool",
+  "category": "misc",
+  "ingredients": [
+    { "tag": "minecraft:hoes" },
+    [
+      { "item": "minecraft:dirt" },
+      { "item": "minecraft:grass_block" },
+      { "item": "minecraft:dirt_path" }
+    ]
+  ],
+  "result": {
+    "id": "minecraft:farmland"
+  }
+}

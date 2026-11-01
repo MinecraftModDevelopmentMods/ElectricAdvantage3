@@ -72,7 +72,9 @@ public final class GrowthChamberBlockEntity extends BlockEntity implements Scree
         int remaining=be.settings.itemExport();
         for(int n=0;n<6&&remaining>0;n++){
             var side=Direction.values()[(int)((level.getGameTime()+n)%6)];
-            if(level.hasChunkAt(pos.relative(side)))remaining-=Transfer.pushItems(level,pos,side,be.items.view(IoMode.OUTPUT),remaining);
+            // Chambers touch each other in a cluster; harvested seeds and soils must not fill a neighbour's catalyst slots.
+            if(level.hasChunkAt(pos.relative(side))&&!(level.getBlockEntity(pos.relative(side)) instanceof GrowthChamberBlockEntity))
+                remaining-=Transfer.pushItems(level,pos,side,be.items.view(IoMode.OUTPUT),remaining);
         }
     }
     private boolean growLane(int lane,boolean disabled){
@@ -92,7 +94,7 @@ public final class GrowthChamberBlockEntity extends BlockEntity implements Scree
         var recipe=found.get().value();
         if(progress[lane]>=recipe.time()){
             progress[lane]=0;
-            var harvest=recipe.harvest(seed,FarmingSystems.fertility(soil),items.getStackInSlot(UPGRADE),level.random);
+            var harvest=recipe.harvest(seed,FarmingSystems.fertility(soil),FarmingSystems.yield(soil),items.getStackInSlot(UPGRADE),level.random);
             if(!emit(harvest))pending.get(lane).addAll(harvest);
         }
         return true;

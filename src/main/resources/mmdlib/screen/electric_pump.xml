@@ -1,0 +1,8 @@
+<screen xmlns="https://moddev.zone/mmdlib/screen" title="block.electricadvantage.electric_pump" block-entity="zone.moddev.mc.electricadvantage.pump.PumpBlockEntity" inventory="none">
+  <vbox padding="8" spacing="4" align="center">
+    <gauge id="energy" orientation="horizontal" length="9s" color="#DCA92B" value="#screenEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
+    <gauge id="tank" orientation="horizontal" length="9s" value="#screenFluid" max="#screenFluidCapacity" tooltip="screen.electricadvantage.pump.tank"/>
+    <label text="screen.electricadvantage.pump.status_value" text-fallback="{value}" value="#screenStatus"/>
+    <label text="screen.electricadvantage.pump.depth_value" text-fallback="{value}" value="#screenDepth"/>
+  </vbox>
+</screen>

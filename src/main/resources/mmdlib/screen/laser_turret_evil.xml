@@ -1,0 +1,7 @@
+<screen xmlns="https://moddev.zone/mmdlib/screen" title="block.electricadvantage.laser_turret_evil" block-entity="zone.moddev.mc.electricadvantage.turret.LaserTurretBlockEntity" inventory="none">
+  <vbox padding="8" spacing="4" align="center">
+    <gauge id="energy" orientation="horizontal" length="9s" color="#DCA92B" value="#screenEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
+    <label text="screen.electricadvantage.turret.status_value" text-fallback="{value}" value="#screenStatus"/>
+    <label text="screen.electricadvantage.turret.team_value" text-fallback="{value}" value="#screenTeam"/>
+  </vbox>
+</screen>

@@ -61,6 +61,32 @@ public final class FarmingGameTests {
         h.succeed();
     }
     @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure")
+    public static void farmlandYieldsHalfAgainAndIsCraftable(GameTestHelper h){
+        var farmland=new ItemStack(Items.FARMLAND);
+        h.assertTrue(FarmingSystems.yield(farmland)==1.5f&&FarmingSystems.yield(new ItemStack(Items.DIRT))==1f,"Farmland has yield 1.5; soils without one have 1");
+        var be=chamber(h,4,3,4);
+        be.items.setStackInSlot(0,farmland);be.items.setStackInSlot(3,new ItemStack(Items.STICK));
+        powered(h,be,5);
+        h.assertTrue(count(be,Items.DIAMOND)==1||count(be,Items.DIAMOND)==2,"Farmland is a dirt soil: one diamond, with a 50% chance of a second");
+        var recipe=(zone.moddev.mc.electricadvantage.farming.GrowingRecipe)h.getLevel().getRecipeManager().byKey(id("test/growing_fixed")).orElseThrow().value();
+        var random=net.minecraft.util.RandomSource.create(42);int total=0;
+        for(int n=0;n<1000;n++)for(var stack:recipe.harvest(new ItemStack(Items.STICK),0,1.5f,ItemStack.EMPTY,random))total+=stack.getCount();
+        h.assertTrue(total>=1400&&total<=1600,"Over many harvests yield 1.5 gives half as much again: "+total);
+        total=0;
+        for(var stack:recipe.harvest(new ItemStack(Items.STICK),1,2f,ItemStack.EMPTY,random))total+=stack.getCount();
+        h.assertTrue(total==4,"Yield scales the count after the fertility bonus: (1 + 1) x 2");
+        var level=h.getLevel();
+        var input=net.minecraft.world.item.crafting.CraftingInput.of(2,1,java.util.List.of(new ItemStack(Items.DIRT),new ItemStack(Items.WOODEN_HOE)));
+        var crafting=level.getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,input,level).orElseThrow().value();
+        h.assertTrue(crafting.assemble(input,level.registryAccess()).is(Items.FARMLAND),"Dirt and a hoe craft farmland");
+        var hoe=crafting.getRemainingItems(input).get(1);
+        h.assertTrue(hoe.is(Items.WOODEN_HOE)&&hoe.getDamageValue()==1,"The hoe comes back with one point of damage");
+        var worn=new ItemStack(Items.WOODEN_HOE);worn.setDamageValue(worn.getMaxDamage()-1);
+        var last=net.minecraft.world.item.crafting.CraftingInput.of(2,1,java.util.List.of(new ItemStack(Items.GRASS_BLOCK),worn));
+        h.assertTrue(crafting.matches(last,level)&&crafting.getRemainingItems(last).get(1).isEmpty(),"Grass works too; a hoe on its last point breaks");
+        h.succeed();
+    }
+    @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure")
     public static void fullOutputHoldsHarvestAcrossReload(GameTestHelper h){
         var be=chamber(h,4,3,4);
         be.items.setStackInSlot(0,new ItemStack(Items.DIRT));be.items.setStackInSlot(3,new ItemStack(Items.STICK));
@@ -109,9 +135,37 @@ public final class FarmingGameTests {
         controller.items.setStackInSlot(0,new ItemStack(Items.BONE_MEAL,2));
         GreenhouseControllerBlockEntity.tick(h.getLevel(),controller.getBlockPos(),controller.getBlockState(),controller);
         h.assertTrue(controller.chambers().size()==2,"Only chambers touching the controller or its cluster connect");
-        h.assertTrue(controller.fertilizer()==184&&controller.items.getStackInSlot(0).getCount()==1,"One bone meal adds 200 fertilizer; 16 units use 16");
+        h.assertTrue(controller.fertilizer()==984&&controller.items.getStackInSlot(0).getCount()==1,"One bone meal adds 1000 fertilizer; 16 units use 16");
         h.assertTrue(controller.energy.stored()==10000-16*32&&controller.screenWater().getAmount()==4000-16*2,"Each unit costs 32 FE and 2 mB of water");
         h.assertTrue(a.greenhouse()==8&&b.greenhouse()==8&&far.greenhouse()==0,"Power is shared equally across the cluster");
+        h.succeed();
+    }
+    /** Live ticking: a line of chambers away from the controller, then up a stack, all growing. */
+    @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure",timeoutTicks=200,batch="greenhouse_chain")
+    public static void powerReachesTheFarEndOfAChamberChain(GameTestHelper h){
+        var controller=controller(h,1,2,5);
+        controller.energy.setStored(10000);controller.fluidCapability().fill(new FluidStack(Fluids.WATER,4000),FluidAction.EXECUTE);
+        controller.items.setStackInSlot(0,new ItemStack(Items.BONE_MEAL,4));
+        var chain=new java.util.ArrayList<GrowthChamberBlockEntity>();
+        for(int x=2;x<=7;x++)chain.add(chamber(h,x,2,5));
+        for(int y=3;y<=5;y++)chain.add(chamber(h,7,y,5));
+        for(var be:chain){be.items.setStackInSlot(0,new ItemStack(Items.DIRT));be.items.setStackInSlot(3,new ItemStack(Items.WHEAT_SEEDS));}
+        h.runAtTickTime(100,()->{
+            h.assertTrue(controller.chambers().size()==chain.size(),"Every chamber in the chain connects: "+controller.chambers().size());
+            for(int n=0;n<chain.size();n++)h.assertTrue(chain.get(n).screenProgress0()>0,"Chamber "+(n+1)+" of "+chain.size()+" grows");
+            h.succeed();
+        });
+    }
+    @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure")
+    public static void exportSkipsNeighbouringChambers(GameTestHelper h){
+        var be=chamber(h,4,3,4);var neighbour=chamber(h,5,3,4);
+        h.setBlock(3,3,4,Blocks.CHEST);
+        be.items.setStackInSlot(6,new ItemStack(Items.WHEAT_SEEDS,8));be.items.setStackInSlot(7,new ItemStack(Items.DIRT,8));
+        ticks(h,be,6);
+        for(int slot=0;slot<6;slot++)h.assertTrue(neighbour.items.getStackInSlot(slot).isEmpty(),"Harvested seeds and soils never fill a neighbouring chamber's catalyst slots");
+        var chest=h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,h.absolutePos(new BlockPos(3,3,4)),null);
+        int moved=0;for(int slot=0;slot<chest.getSlots();slot++)moved+=chest.getStackInSlot(slot).getCount();
+        h.assertTrue(moved==16&&count(be,Items.WHEAT_SEEDS)==0,"Outputs still go to other neighbours");
         h.succeed();
     }
     @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure")

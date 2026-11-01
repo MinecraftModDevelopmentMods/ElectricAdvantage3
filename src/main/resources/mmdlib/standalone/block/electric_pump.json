@@ -1,0 +1,15 @@
+{
+  "module": "electricadvantage:pump",
+  "block_entity_data": {
+    "capacity": 40000,
+    "rate": 4096,
+    "tank_capacity": 4000,
+    "pump_interval": 20,
+    "pipe_interval": 11,
+    "pipe_cost": 400,
+    "pump_cost": 4000,
+    "depth_cost": 128,
+    "fluid_export": 1000,
+    "infinite_recheck": 1200
+  }
+}

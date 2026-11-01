@@ -46,13 +46,19 @@ public record GrowingRecipe(Ingredient seed, Ingredient soil, int time, List<Res
                 :DataResult.error(()->"A growing result needs exactly one of \"item\" or \"copy_seed\""));
         public Result { item=item.map(ItemStack::copy); }
         public TagKey<Item> upgradeTag(){return upgrade.map(name->TagKey.create(Registries.ITEM,ResourceLocation.fromNamespaceAndPath("electricadvantage","growth_chamber_upgrades/"+name))).orElse(null);}
-        /** Rolls this entry; {@code item} entries keep their own count, {@code copy_seed} entries use {@code count}. */
-        public ItemStack roll(ItemStack seed,int fertility,RandomSource random){
+        /**
+         * Rolls this entry; {@code item} entries keep their own count, {@code copy_seed} entries use {@code count}.
+         * The soil's yield then scales the count, and its fractional part is the chance of one more.
+         */
+        public ItemStack roll(ItemStack seed,int fertility,float yield,RandomSource random){
             if(random.nextFloat()>=Math.min(1f,chance+chancePerFertility*fertility))return ItemStack.EMPTY;
             var stack=item.map(ItemStack::copy).orElseGet(()->seed.copyWithCount(count));
             int amount=stack.getCount();
             for(int n=0;n<fertility;n++)if(random.nextFloat()<bonusPerFertility)amount++;
-            return stack.copyWithCount(amount);
+            float scaled=amount*yield;
+            amount=(int)scaled;
+            if(random.nextFloat()<scaled-amount)amount++;
+            return amount>0?stack.copyWithCount(amount):ItemStack.EMPTY;
         }
     }
     public static final MapCodec<GrowingRecipe> CODEC=RecordCodecBuilder.mapCodec(i->i.group(
@@ -65,12 +71,12 @@ public record GrowingRecipe(Ingredient seed, Ingredient soil, int time, List<Res
 
     public GrowingRecipe { results=List.copyOf(results); }
     /** Rolls every entry, skipping upgrade entries the installed upgrade does not grant. */
-    public List<ItemStack> harvest(ItemStack seed,int fertility,ItemStack upgrade,RandomSource random){
+    public List<ItemStack> harvest(ItemStack seed,int fertility,float yield,ItemStack upgrade,RandomSource random){
         var harvest=new ArrayList<ItemStack>();
         for(var result:results){
             var tag=result.upgradeTag();
             if(tag!=null&&!upgrade.is(tag))continue;
-            var stack=result.roll(seed,fertility,random);
+            var stack=result.roll(seed,fertility,yield,random);
             while(!stack.isEmpty()){int part=Math.min(stack.getCount(),stack.getMaxStackSize());harvest.add(stack.copyWithCount(part));stack.shrink(part);}
         }
         return harvest;

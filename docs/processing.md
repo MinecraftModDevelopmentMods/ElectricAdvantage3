@@ -78,6 +78,6 @@ material providers and unload/reload stress remain pending.
 
 The assembler is documented in [assembler.md](assembler.md) and the growth chamber
 and controller in [farming.md](farming.md). The remaining processing/automation
-entries are the moving mining drill, laser turret and pump. The hidden hostile turret variant also remains pending. These are
+entry is the moving mining drill; the pump is in [pump.md](pump.md) and the laser turret in [turret.md](turret.md). The hidden hostile turret variant also remains pending. These are
 tracked individually in TODO.md; this first batch does not claim full parity for
 the processing/automation section.

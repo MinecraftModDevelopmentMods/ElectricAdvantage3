@@ -20,6 +20,9 @@
     },
     "minecraft:warped_nylium": {
       "fertility": 1
+    },
+    "minecraft:farmland": {
+      "yield": 1.5
     }
   }
 }

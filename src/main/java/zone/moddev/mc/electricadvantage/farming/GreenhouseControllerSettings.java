@@ -10,7 +10,7 @@ public record GreenhouseControllerSettings(long energyCapacity,int rate,int wate
             Codec.LONG.validate(v->v>0?com.mojang.serialization.DataResult.success(v):com.mojang.serialization.DataResult.error(()->"Capacity must be positive")).optionalFieldOf("energy_capacity",10000L).forGetter(GreenhouseControllerSettings::energyCapacity),
             Codec.intRange(1,Integer.MAX_VALUE).optionalFieldOf("rate",4096).forGetter(GreenhouseControllerSettings::rate),
             Codec.intRange(1,1000000).optionalFieldOf("water_capacity",4000).forGetter(GreenhouseControllerSettings::waterCapacity),
-            Codec.intRange(1,1000000).optionalFieldOf("fertilizer_capacity",1000).forGetter(GreenhouseControllerSettings::fertilizerCapacity),
+            Codec.intRange(1,1000000).optionalFieldOf("fertilizer_capacity",2000).forGetter(GreenhouseControllerSettings::fertilizerCapacity),
             Codec.intRange(1,1000000).optionalFieldOf("buffer",1000).forGetter(GreenhouseControllerSettings::buffer),
             Codec.intRange(1,1000000).optionalFieldOf("production",16).forGetter(GreenhouseControllerSettings::production),
             Codec.intRange(0,1000000).optionalFieldOf("fe_per_unit",32).forGetter(GreenhouseControllerSettings::fePerUnit),

@@ -1,0 +1,14 @@
+{
+  "module": "electricadvantage:drill",
+  "block_entity_data": {
+    "capacity": 2000,
+    "rate": 4096,
+    "progress_cost": 96,
+    "move_cost": 1000,
+    "range": 64,
+    "mining_time_factor": 32.0,
+    "update_interval": 8,
+    "beam_damage": 2.0,
+    "burn_seconds": 3
+  }
+}

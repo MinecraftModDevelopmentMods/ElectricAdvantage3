@@ -41,6 +41,12 @@ The furnace, crusher, oven, distiller and refinery now share a processing core;
 see [processing behavior and remaining machines](docs/processing.md).
 The Growth Chamber and its Control Unit are redesigned data-driven greenhouse machines;
 see [growth chamber and control unit](docs/farming.md).
+The Electric Pump extends its pipe, traces connected fluid and treats large water/lava bodies as infinite;
+see [electric pump](docs/pump.md).
+The Laser Turret and its hidden player-targeting variant are ported from EA2;
+see [laser turret](docs/turret.md).
+The Electric Mining Drill is ported from EA2: it mines 3×3 faces and moves along Electric Scaffold;
+see [electric drill](docs/drill.md).
 Conditional recipes require compatible material tags; remaining automation machines, recipe modes,
 and complete survival acquisition remain pending.
 Track implementation and verification in [TODO.md](TODO.md).

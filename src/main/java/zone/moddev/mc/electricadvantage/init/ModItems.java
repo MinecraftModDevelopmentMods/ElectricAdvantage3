@@ -28,6 +28,9 @@ public final class ModItems {
         zone.moddev.mc.electricadvantage.processing.ProcessingSystems.register();
         zone.moddev.mc.electricadvantage.generation.GenerationSystems.register();
         zone.moddev.mc.electricadvantage.farming.FarmingSystems.register(modBus);
+        zone.moddev.mc.electricadvantage.pump.PumpSystems.register();
+        zone.moddev.mc.electricadvantage.turret.TurretSystems.register();
+        zone.moddev.mc.electricadvantage.drill.DrillSystems.register();
         blockEntities = DeferredRegister.create(
                 Registries.BLOCK_ENTITY_TYPE, ElectricAdvantage.MOD_ID);
         blockEntities.register(modBus);
@@ -40,10 +43,15 @@ public final class ModItems {
         modBus.addListener(this::queueDefinitions);
         modBus.addListener(this::capabilities);
         // Generated pump shafts retain EA2's search-only item visibility.
-        modBus.addListener((net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent event) ->
+        modBus.addListener((net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent event) -> {
                 event.getParentEntries().stream().filter(stack -> stack.getItem() instanceof net.minecraft.world.item.BlockItem item
                         && item.getBlock() instanceof zone.moddev.mc.electricadvantage.infrastructure.PumpPipeBlock)
-                        .toList().forEach(stack -> event.remove(stack, net.minecraft.world.item.CreativeModeTab.TabVisibility.PARENT_TAB_ONLY)));
+                        .toList().forEach(stack -> event.remove(stack, net.minecraft.world.item.CreativeModeTab.TabVisibility.PARENT_TAB_ONLY));
+                // EA2 hid the player-targeting turret from every creative tab, search included.
+                var evil = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(ElectricAdvantage.MOD_ID, "laser_turret_evil");
+                event.getParentEntries().stream().filter(stack -> net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).equals(evil))
+                        .toList().forEach(stack -> event.remove(stack, net.minecraft.world.item.CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS));
+        });
     }
 
     private void queueDefinitions(NewRegistryEvent event) {
@@ -87,6 +95,20 @@ public final class ModItems {
                 var binding = handle.binding().as(zone.moddev.mc.electricadvantage.farming.GreenhouseControllerBlockEntity.class);
                 event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
                 event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, binding.type().get(), (be, side) -> be.fluidCapability());
+                event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
+            }
+            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.pump.PumpBlockEntity.class) {
+                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.pump.PumpBlockEntity.class);
+                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
+                event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, binding.type().get(), (be, side) -> be.fluidCapability());
+            }
+            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.turret.LaserTurretBlockEntity.class) {
+                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.turret.LaserTurretBlockEntity.class);
+                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
+            }
+            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.drill.DrillBlockEntity.class) {
+                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.drill.DrillBlockEntity.class);
+                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
                 event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
             }
             if (handle.prepared().blockEntityClass() == ElectricBlockEntity.class) {

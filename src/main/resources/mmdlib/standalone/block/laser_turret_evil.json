@@ -1,0 +1,19 @@
+{
+  "module": "electricadvantage:laser_turret",
+  "block_entity_data": {
+    "capacity": 8000,
+    "rate": 4096,
+    "shot_cost": 4000,
+    "idle_cost": 4,
+    "damage": 7.0,
+    "burn_seconds": 3,
+    "target_range": 16,
+    "attack_range": 32,
+    "charge_time": 31,
+    "hit_time": 7,
+    "blast_time": 10,
+    "scan_interval": 4,
+    "ignite_ground": true,
+    "evil": true
+  }
+}

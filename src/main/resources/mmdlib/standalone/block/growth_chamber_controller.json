@@ -4,7 +4,7 @@
     "energy_capacity": 10000,
     "rate": 4096,
     "water_capacity": 4000,
-    "fertilizer_capacity": 1000,
+    "fertilizer_capacity": 2000,
     "buffer": 1000,
     "production": 16,
     "fe_per_unit": 32,

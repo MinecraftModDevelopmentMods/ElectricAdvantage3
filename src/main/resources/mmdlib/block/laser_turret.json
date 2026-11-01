@@ -1,0 +1,19 @@
+{
+  "factory": "electricadvantage:laser_turret",
+  "template": {
+    "properties": {
+      "hardness": 5,
+      "blast_resistance": 100,
+      "occlusion": false
+    },
+    "events": {
+      "block-right-click": "mmdlib:open_menu"
+    }
+  },
+  "part": {
+    "block_entity": {
+      "factory": "electricadvantage:laser_turret",
+      "factory_data": {}
+    }
+  }
+}

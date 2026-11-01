@@ -11,7 +11,8 @@ public final class ElectricAdvantage {
     public static final String MOD_ID = "electricadvantage";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public ElectricAdvantage(IEventBus modBus) {
+    public ElectricAdvantage(IEventBus modBus, net.neoforged.fml.ModContainer container) {
+        container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, Config.SPEC);
         new ModItems(modBus);
         LOGGER.info("Initializing Electric Advantage");
     }

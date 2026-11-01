@@ -9,7 +9,7 @@ Garden Cloche, powered by a separate Control Unit, as in EA2.
 | --- | --- |
 | 0–2 | Soil, one per growth lane. Never consumed. Automation may insert, not extract. |
 | 3–5 | Seed, one per lane, above its soil. Never consumed. Same automation rules. |
-| 6–11 | Shared harvest outputs, exported to neighbours (16 items/tick) and extractable. |
+| 6–11 | Shared harvest outputs, exported to neighbours (16 items/tick) and extractable. Other growth chambers are never export targets, so clustered chambers don't fill each other's seed and soil slots. |
 | 12 | Upgrade, in the screen's right-hand side tab. Player-only. |
 
 Each lane looks up an `electricadvantage:growing` recipe for its seed and soil.
@@ -29,7 +29,9 @@ The Control Unit takes electricity (FE), water (4,000 mB tank, water only) and
 fertilizer (one input slot). It produces up to 16 greenhouse units per tick
 into a 1,000-unit buffer. Each unit costs 32 FE (EA2's 8 electricity), 2 mB of
 water and 1 fertilizer. A fertilizer item is taken only when its whole value
-fits in the 1,000-unit fertilizer store. Bone meal is worth 200.
+fits in the 2,000-unit fertilizer store. Bone meal is worth 1,000, EA2's value
+for the block of dirt it used instead of fertilizer: about 1.25 wheat harvests
+per bone meal.
 
 There is no greenhouse cable. Each tick the Control Unit shares its buffer
 equally between the chambers it touches, directly or through other touching
@@ -67,10 +69,22 @@ All numbers are `block_entity_data` in the two
 | `upgrade` | Drops only while the upgrade slot holds an item tagged `electricadvantage:growth_chamber_upgrades/<name>`. |
 
 Soil fertility is the item data map `electricadvantage:soil_fertility`
-(`{"fertility": n}`). Soils without an entry have fertility 0. Mud, rooted
-dirt, podzol, mycelium, moss and both nyliums are 1. Expensive modded soils
-should get higher values by datapack. Fertilizer is the item data map
-`electricadvantage:fertilizer` (`{"value": n}`).
+(`{"fertility": n, "yield": x}`, both optional). Soils without an entry have
+fertility 0 and yield 1. Mud, rooted dirt, podzol, mycelium, moss and both
+nyliums are fertility 1. Expensive modded soils should get higher values by
+datapack. Fertilizer is the item data map `electricadvantage:fertilizer`
+(`{"value": n}`).
+
+`yield` multiplies every result's count after the fertility bonus, and the
+fractional part is the chance of one more item. For example, 1 wheat at yield
+1.5 gives 1, with a 50% chance of 2. Unlike fertility, yield applies the same
+way to every recipe.
+
+Farmland is a dirt soil with yield 1.5, so it gives half as much again as dirt.
+Farmland can't be picked up in survival, so EA3 adds a crafting recipe: a hoe
+plus dirt, a grass block or a dirt path gives farmland, and the hoe comes back
+with one point of damage. It uses the `electricadvantage:crafting_shapeless_tool`
+recipe type, a shapeless recipe that damages tools instead of using them up.
 
 Allowed soils are the `electricadvantage:growth_soils/*` item tags, so packs
 can add soils without editing recipes. The upgrade slot accepts
@@ -112,7 +126,9 @@ python3 scripts/validate_resources.py
 ```
 
 `FarmingGameTests` covers: wheat timing with catalysts kept; soil restrictions
-and slot rules; fertility bonus and upgrade gating; full-output holding across
+and slot rules; fertility bonus and upgrade gating; farmland's 1.5 yield (in the
+chamber and over 1,000 seeded harvests), yield applying after the fertility
+bonus, and the farmland recipe with hoe damage and breakage; full-output holding across
 save/reload; progress across reload, power loss and redstone; seed-copy
 duplication; Control Unit costs, cluster connection and equal sharing; input
 filters, comparator and redstone; and menu slot binding.

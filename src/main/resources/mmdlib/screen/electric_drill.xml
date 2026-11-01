@@ -1,0 +1,9 @@
+<screen xmlns="https://moddev.zone/mmdlib/screen" title="block.electricadvantage.electric_drill" block-entity="zone.moddev.mc.electricadvantage.drill.DrillBlockEntity">
+  <vbox padding="8" spacing="4" align="center">
+    <gauge id="energy" orientation="horizontal" length="8s" color="#DCA92B" value="#screenEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
+    <progress value="#screenProgress" max="#screenProgressGoal"/>
+    <hbox spacing="4"><slot index="0"/><slot index="1"/><slot index="2"/></hbox>
+    <hbox spacing="4"><slot index="3"/><slot index="4"/><slot index="5"/></hbox>
+    <label text="screen.electricadvantage.drill.status_value" text-fallback="{value}" value="#screenStatus"/>
+  </vbox>
+</screen>

@@ -1,0 +1,19 @@
+{
+  "factory": "electricadvantage:drill",
+  "template": {
+    "properties": {
+      "hardness": 0.75,
+      "blast_resistance": 3.75,
+      "occlusion": false
+    },
+    "events": {
+      "block-right-click": "mmdlib:open_menu"
+    }
+  },
+  "part": {
+    "block_entity": {
+      "factory": "electricadvantage:drill",
+      "factory_data": {}
+    }
+  }
+}
