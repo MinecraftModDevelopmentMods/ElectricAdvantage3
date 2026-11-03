@@ -34,5 +34,14 @@
   "block.electricadvantage.electric_oven": "\u7535\u70e4\u7bb1",
   "block.electricadvantage.electric_still": "\u96fb\u71b1\u84b8\u993e\u6c34",
   "block.electricadvantage.plastic_refinery": "\u5851\u6599\u7149\u6cb9\u5ee0",
-  "block.electricadvantage.electric_fabricator": "\u81ea\u52a8\u6c47\u7f16"
+  "block.electricadvantage.electric_fabricator": "\u81ea\u52a8\u6c47\u7f16",
+  "block.electricadvantage.laser_turret": "\u6fc0\u5149\u9632\u5fa1\u70ae\u5854",
+  "block.electricadvantage.laser_turret_evil": "\u6fc0\u5149\u9632\u5fa1\u70ae\u5854",
+  "block.electricadvantage.electric_drill": "\u7535\u77ff\u94bb",
+  "block.electricadvantage.growth_chamber": "\u751f\u957f\u7bb1",
+  "block.electricadvantage.growth_chamber_controller": "\u751f\u957f\u7bb1\u63a7\u5236\u5355\u5143",
+  "death.attack.electricadvantage.laser": "\uff051$s\u84b8\u53d1",
+  "death.attack.electricadvantage.laser.player": "\uff052$s\u6c7d\u5316\uff051$s",
+  "block.electricadvantage.electric_pump": "\u96fb\u52d5\u6cf5",
+  "tooltip.electricadvantage.battery.charge": "\u5145\u7535: %s%% (%s / %s FE)"
 }

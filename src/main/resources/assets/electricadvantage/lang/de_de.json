@@ -34,5 +34,14 @@
   "block.electricadvantage.electric_oven": "Elektro-Ofen",
   "block.electricadvantage.electric_still": "Elektro Brennerei",
   "block.electricadvantage.plastic_refinery": "Kunststoff-Raffinerie",
-  "block.electricadvantage.electric_fabricator": "Automatisierte Fabrik"
+  "block.electricadvantage.electric_fabricator": "Automatisierte Fabrik",
+  "block.electricadvantage.laser_turret": "Laser-Verteidigung Waffe",
+  "block.electricadvantage.laser_turret_evil": "Laser-Verteidigung Waffe",
+  "block.electricadvantage.electric_drill": "Laser Bohrer",
+  "block.electricadvantage.growth_chamber": "Wachstumskammer",
+  "block.electricadvantage.growth_chamber_controller": "Wachstumskammer Steuereinheit",
+  "death.attack.electricadvantage.laser": "%1$s verdampft",
+  "death.attack.electricadvantage.laser.player": "%2$s verdampft %1$s",
+  "block.electricadvantage.electric_pump": "Elektropumpe",
+  "tooltip.electricadvantage.battery.charge": "Lade: %s%% (%s / %s FE)"
 }

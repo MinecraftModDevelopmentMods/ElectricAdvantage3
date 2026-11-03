@@ -34,5 +34,14 @@
   "block.electricadvantage.electric_oven": "\uc804\uae30 \uc624\ube10",
   "block.electricadvantage.electric_still": "\uc804\uae30 \uc99d\ub958\uae30",
   "block.electricadvantage.plastic_refinery": "\ud50c\ub77c\uc2a4\ud2f1 \uc815\uc720",
-  "block.electricadvantage.electric_fabricator": "\uc790\ub3d9 \uc5b4\uc148\ube14\ub7ec"
+  "block.electricadvantage.electric_fabricator": "\uc790\ub3d9 \uc5b4\uc148\ube14\ub7ec",
+  "block.electricadvantage.laser_turret": "\ub808\uc774\uc800 \ubc29\uc5b4 \ud130\ub81b",
+  "block.electricadvantage.laser_turret_evil": "\ub808\uc774\uc800 \ubc29\uc5b4 \ud130\ub81b",
+  "block.electricadvantage.electric_drill": "\uc804\uae30 \ub9c8\uc774\ub2dd \ub4dc\ub9b4",
+  "block.electricadvantage.growth_chamber": "\uc131\uc7a5 \uc0c1\uacf5 \ud68c\uc758\uc18c",
+  "block.electricadvantage.growth_chamber_controller": "\uc131\uc7a5 \ucc54\ubc84 \uc81c\uc5b4 \uc7a5\uce58",
+  "death.attack.electricadvantage.laser": "%1$s\uc774 (\uac00) \uc99d\ubc1c",
+  "death.attack.electricadvantage.laser.player": "%2$s\uc758 \uc99d\ubc1c %1$s",
+  "block.electricadvantage.electric_pump": "\uc804\uae30 \ud38c\ud504",
+  "tooltip.electricadvantage.battery.charge": "\uc694\uae08: %s%% (%s / %s FE)"
 }

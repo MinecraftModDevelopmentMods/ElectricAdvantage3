@@ -34,5 +34,14 @@
   "block.electricadvantage.electric_oven": "Electric Oven",
   "block.electricadvantage.electric_still": "Electric Distiller",
   "block.electricadvantage.plastic_refinery": "Petro-Plastic Refinery",
-  "block.electricadvantage.electric_fabricator": "Automated Assembler"
+  "block.electricadvantage.electric_fabricator": "Automated Assembler",
+  "block.electricadvantage.laser_turret": "Laser Turret",
+  "block.electricadvantage.laser_turret_evil": "Laser Turret",
+  "block.electricadvantage.electric_drill": "Electric Mining Drill",
+  "block.electricadvantage.growth_chamber": "Growth Chamber",
+  "block.electricadvantage.growth_chamber_controller": "Growth Chamber Control Unit",
+  "death.attack.electricadvantage.laser": "%1$s vaporized",
+  "death.attack.electricadvantage.laser.player": "%2$s vaporized %1$s",
+  "block.electricadvantage.electric_pump": "Electric Pump",
+  "tooltip.electricadvantage.battery.charge": "Charge: %s%% (%s / %s FE)"
 }

@@ -34,5 +34,14 @@
   "block.electricadvantage.electric_oven": "Forno El\u00e9trico",
   "block.electricadvantage.electric_still": "Destilador El\u00e9trico",
   "block.electricadvantage.plastic_refinery": "Refinaria de Pl\u00e1stico",
-  "block.electricadvantage.electric_fabricator": "F\u00e1brica Automatizada"
+  "block.electricadvantage.electric_fabricator": "F\u00e1brica Automatizada",
+  "block.electricadvantage.laser_turret": "Torre de Arma a Laser",
+  "block.electricadvantage.laser_turret_evil": "Torre de Arma a Laser",
+  "block.electricadvantage.electric_drill": "Broca Minera\u00e7\u00e3o El\u00e9trica",
+  "block.electricadvantage.growth_chamber": "C\u00e2mara de Crescimento",
+  "block.electricadvantage.growth_chamber_controller": "Unidade de Controle de Crescimento C\u00e2mara",
+  "death.attack.electricadvantage.laser": "%1$S vaporizado",
+  "death.attack.electricadvantage.laser.player": "%2$s vaporizados %1$s",
+  "block.electricadvantage.electric_pump": "Bomba El\u00e9trica",
+  "tooltip.electricadvantage.battery.charge": "Carga: %s%% (%s / %s FE)"
 }

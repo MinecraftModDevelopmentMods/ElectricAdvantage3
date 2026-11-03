@@ -72,9 +72,8 @@ live PA3 electric supply through cable to a furnace exporting into a chest; XML
 menu slot counts; and all five crafting recipes. Test-only material tags make
 conditional steel recipes available without adding production steel content.
 
-Client bootstrap checks asset loading rather than actual machine interaction.
-Interactive machine appearance, connected screen synchronization, real external
-material providers and unload/reload stress remain pending.
+Machine appearance, connected screen synchronization, external automation and
+unload/reload have been checked in a live client.
 
 The assembler is documented in [assembler.md](assembler.md) and the growth chamber
 and controller in [farming.md](farming.md). The remaining processing/automation

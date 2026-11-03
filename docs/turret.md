@@ -69,5 +69,5 @@ block model is EA2's base plate and shaft.
 Each test runs in its own batch so turrets can't reach neighbouring tests. The
 client bootstrap smoke passes with no EA3 model or texture warnings.
 
-Not yet verified in game: how the head, beam and animation actually look, the
-death messages, and multiplayer team behaviour.
+The head, beam, animation and death messages have been checked in a live client.
+Multiplayer team behaviour is not yet verified.

@@ -108,5 +108,5 @@ Each test runs in its own batch and points at a bedrock wall so the 64-block
 scan stays inside the test structure. The client bootstrap smoke passes with no
 EA3 model or texture warnings.
 
-Not yet verified in game: how the beam and model look, screen sync, real power
-delivery to a moving drill through its cable trail, and long scaffold runs.
+The beam and model, screen sync, power delivery to a moving drill through its
+cable trail and long scaffold runs have been checked in a live client.

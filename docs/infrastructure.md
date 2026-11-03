@@ -92,7 +92,6 @@ Existing material/battery tests remain part of the same suite. The resource
 validator checks model parents and inherited texture references against local
 library JARs, including modern atlas paths.
 
-Interactive appearance, switch/LED lighting over a real client connection, actual
-new-chunk ore distribution, external automation, unload/reload stress and large
-network performance remain separate checks. Pump and mining-drill integration
-remain pending those machines.
+Appearance, ore mining, switch/LED lighting and external automation have been
+checked in a live client. Actual new-chunk ore distribution, network
+unload/reload stress and large-network performance remain separate checks.

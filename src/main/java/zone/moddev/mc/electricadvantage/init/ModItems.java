@@ -31,6 +31,7 @@ public final class ModItems {
         zone.moddev.mc.electricadvantage.pump.PumpSystems.register();
         zone.moddev.mc.electricadvantage.turret.TurretSystems.register();
         zone.moddev.mc.electricadvantage.drill.DrillSystems.register();
+        zone.moddev.mc.electricadvantage.trades.TradeSystems.register();
         blockEntities = DeferredRegister.create(
                 Registries.BLOCK_ENTITY_TYPE, ElectricAdvantage.MOD_ID);
         blockEntities.register(modBus);

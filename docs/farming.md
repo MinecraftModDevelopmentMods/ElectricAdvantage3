@@ -115,8 +115,6 @@ Growth times follow EA2's 100 ticks per stage (wheat 800, trees 1,200).
   and uses the vanilla shears texture as a placeholder.
 - No JEI category or script integration; that is deferred until after
   parity.
-- Interactive appearance, connected-screen sync, real pipe/conveyor automation
-  and chunk unload/reload are not yet verified in game.
 
 ## Verification
 

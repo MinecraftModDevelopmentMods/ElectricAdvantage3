@@ -75,5 +75,6 @@ Which fluids can be infinite is the fluid tag
 - tank fluid mismatch blocking pumping, external fill refused and drain allowed
 - redstone, the comparator, and persistence
 
-Not yet verified in game: appearance and screen sync, real PA3 pipe export,
-and the one-tick cost of counting very large bodies such as oceans.
+Appearance, screen sync and real PA3 pipe export have been checked in a live
+client. The one-tick cost of counting very large bodies such as oceans is not
+yet measured.

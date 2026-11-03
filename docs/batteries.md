@@ -43,5 +43,5 @@ buffer, crafting outputs, and bucket remainders. Test-only common tags map vanil
 items to the missing external ingredients, allowing recipes to be tested without
 adding production materials; those fixtures are excluded from the release JAR.
 
-Interactive client appearance/tooltips, real external material providers, and the
-battery-array machine remain separate parity checks.
+Appearance and tooltips have been checked in a live client. Crafting with real
+external material providers is not yet verified.

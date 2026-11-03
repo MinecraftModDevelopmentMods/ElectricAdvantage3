@@ -66,8 +66,8 @@ Models/textures and translated block names are ported from EA2. Recipes use the
 existing PSU, cable and silicon components with PA3 frames/pipes and common tags.
 The retired steam governor ingredient is represented by the existing control
 circuit. Machines requiring steel plates remain conditional on a material provider
-supplying `c:plates/steel`; no substitute steel content is added to EA3. Solar's
-apocalyptic-mode crafting restriction remains part of the pending recipe-mode work.
+supplying `c:plates/steel`; no substitute steel content is added to EA3. EA2's
+apocalyptic-mode solar restriction is dropped: EA3 has no recipe modes.
 
 ## Verification
 
@@ -89,6 +89,6 @@ chests are test-only and excluded from release artifacts.
 The optional client smoke uses `build/client-smoke`, handles first-run onboarding,
 and exits after reaching the title screen. It checks client bootstrap and asset
 loading, not actual in-world turbine rendering or a connected screen session.
-Interactive appearance, live screen synchronization and automation/unload stress
-remain separate checks. The supplied PA3 JAR also reports missing `still_on` /
+Appearance, live screen synchronization and automation/unload have since been
+checked in a live client. The supplied PA3 JAR also reports missing `still_on` /
 `still_off` model resources during client loading; these belong to its distillery.
