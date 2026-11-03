@@ -10,7 +10,7 @@ ModDevZone Maven (`https://maven.moddev.zone/releases`):
 - `zone.moddev.mc.poweradvantage:PowerAdvantage:3.1.1.121012+Neo` (Power Advantage 3.1)
 - `zone.moddev.mc.orespawn:OreSpawn:4.1.0.121012` (MMD OreSpawn 4)
 
-MMDLib and Power Advantage versions are set in `gradle.properties`. These
+Dependency versions are set in `gradle.properties`. These
 dependencies are not bundled into the mod JAR. Install them alongside
 Electric Advantage in a regular Minecraft instance.
 
@@ -25,6 +25,17 @@ Use Java 21 and the checked-in Gradle wrapper:
 
 The dedicated server requires accepting Minecraft's EULA in `run/eula.txt`.
 Build artifacts are written to `build/libs/`.
+
+The build follows the MMD mod template. GitHub Actions builds every push and
+pull request. Pushing a tag publishes a release. The tag is the mod version,
+formatted as `major.minor.bug` followed by the Minecraft version without dots
+and a loader digit (`2` for NeoForge); for example, `3.0.0.121012`. Local
+builds are versioned `<mod_version>-development`. On a tag, the publish
+workflow uploads to the ModDevZone Maven if the `MAVEN_UPLOAD_URL`,
+`MAVEN_UPLOAD_USERNAME`, and `MAVEN_UPLOAD_PASSWORD` secrets are set. It also
+creates a GitHub release. It uploads to CurseForge (project `curseforge_id` in
+`gradle.properties`) when the `CURSEFORGE_TOKEN` secret is set. Add each
+release to `update.json` so NeoForge's update checker can announce it.
 
 All 17 electronics/material and battery items and the seven ore/infrastructure
 blocks are implemented with textures, translations, tags, and initial recipes.

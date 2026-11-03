@@ -1,0 +1,10 @@
+{
+  "homepage": "https://www.curseforge.com/projects/240985",
+  "promos": {
+    "1.21.1-latest": "3.0.0.121012",
+    "1.21.1-recommended": "3.0.0.121012"
+  },
+  "1.21.1": {
+    "3.0.0.121012": "Initial 1.21.1 release."
+  }
+}

@@ -1,24 +1,28 @@
 modLoader="javafml"
-loaderVersion="[4,)"
-license="LGPL-2.1-only"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+issueTrackerURL="${issue_url}"
 
 [[mods]]
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
-description='''Electrical machines and power systems for Power Advantage.'''
+displayURL="${curseforge_url}"
+updateJSONURL="${update_url}"
+authors="${mod_authors}"
+description='''${mod_description}'''
 
 [[dependencies.${mod_id}]]
 modId="neoforge"
 type="required"
-versionRange="[21.1.265,21.2)"
+versionRange="${neoforge_version_range}"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.${mod_id}]]
 modId="minecraft"
 type="required"
-versionRange="[1.21.1,1.21.2)"
+versionRange="${minecraft_version_range}"
 ordering="NONE"
 side="BOTH"
 

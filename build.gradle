@@ -1,15 +1,24 @@
 plugins {
     id 'java-library'
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
     id 'net.neoforged.moddev' version '2.0.148'
 }
 
-version = mod_version
-group = mod_group_id
-base { archivesName = "ElectricAdvantage-${minecraft_version}" }
+def env = System.getenv()
+def tag = providers.environmentVariable('TAG')
+version = tag.orElse("${mod_version}-development").get()
+group = mod_group
+
+base {
+    archivesName = mod_archive_name
+}
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
     withSourcesJar()
+    withJavadocJar()
 }
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
@@ -24,11 +33,18 @@ if (providers.gradleProperty('gameTests').isPresent()) {
     configurations.gameTestRuntimeOnly.extendsFrom configurations.runtimeOnly
 }
 
-
 neoForge {
-    version = project.neo_version
+    version = neoforge_version
+
+    parchment {
+        minecraftVersion = parchment_minecraft_version
+        mappingsVersion = parchment_mappings_version
+    }
 
     runs {
+        configureEach {
+            gameDirectory = file('run')
+        }
         client {
             client()
             if (providers.gradleProperty('clientSmoke').isPresent()) {
@@ -64,36 +80,82 @@ neoForge {
 }
 
 repositories {
+    mavenCentral()
     maven {
         name = 'ModDevZone'
         url = uri('https://maven.moddev.zone/releases')
         content {
             includeGroup 'zone.moddev.mc.orespawn'
+            includeGroup 'zone.moddev.mc.lib'
+            includeGroup 'zone.moddev.mc.poweradvantage'
         }
     }
 }
 
 dependencies {
-    // Temporary local dependencies; replace with Maven coordinates when available.
-    // implementation supplies both the compile classpath and development runtime.
-    implementation files('libs/mmdlib-2.0.0-alpha.jar')
-    implementation files('libs/PowerAdvantage-1.21.1-3.1.0.jar')
+    implementation "zone.moddev.mc.lib:mmdlib:${mmdlib_version}"
+    implementation "zone.moddev.mc.poweradvantage:PowerAdvantage:${poweradvantage_version}"
     implementation "zone.moddev.mc.orespawn:OreSpawn:${orespawn_version}"
 }
 
-var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
-    var properties = [mod_id: mod_id, mod_name: mod_name, mod_version: mod_version]
+tasks.named('processResources', ProcessResources) {
+    def properties = [
+            minecraft_version_range: minecraft_version_range,
+            neoforge_version_range: neoforge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id,
+            mod_name: mod_name,
+            mod_license: mod_license,
+            mod_version: project.version,
+            mod_authors: mod_authors,
+            mod_description: mod_description,
+            curseforge_url: "https://www.curseforge.com/projects/${curseforge_id}",
+            issue_url: issue_url,
+            update_url: update_url
+    ]
     inputs.properties properties
-    expand properties
-    from 'src/main/templates'
-    into layout.buildDirectory.dir('generated/sources/modMetadata')
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand properties
+    }
 }
-sourceSets.main.resources.srcDir generateModMetadata
-neoForge.ideSyncTask generateModMetadata
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
+
 tasks.named('jar', Jar) {
     manifest.attributes('Implementation-Version': project.version)
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = mod_archive_name
+            from components.java
+        }
+    }
+    repositories {
+        if (env.MAVEN_UPLOAD_URL) {
+            maven {
+                url = uri(env.MAVEN_UPLOAD_URL)
+                credentials {
+                    username = env.MAVEN_UPLOAD_USERNAME
+                    password = env.MAVEN_UPLOAD_PASSWORD
+                }
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        downloadSources = true
+    }
+}
+
+eclipse {
+    classpath {
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }
