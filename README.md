@@ -3,17 +3,16 @@
 Minecraft 1.21.1 mod using NeoForge 21.1.265, ModDevGradle, and Java 21.
 Root Java package: `zone.moddev.mc.electricadvantage`.
 
-Required dependencies (compile and development runtime):
+Required dependencies (compile and development runtime), all from the
+ModDevZone Maven (`https://maven.moddev.zone/releases`):
 
-- `libs/mmdlib-2.0.0-alpha.jar` (MMDLib 2.0)
-- `libs/PowerAdvantage-1.21.1-3.0.0.jar` (Power Advantage 3.0)
-- `zone.moddev.mc.orespawn:OreSpawn:4.1.0.121012` (MMD OreSpawn 4, from ModDevZone Maven)
+- `zone.moddev.mc.lib:mmdlib:2.0.0.12102+Neo` (MMDLib 2.0)
+- `zone.moddev.mc.poweradvantage:PowerAdvantage:3.1.1.121012+Neo` (Power Advantage 3.1)
+- `zone.moddev.mc.orespawn:OreSpawn:4.1.0.121012` (MMD OreSpawn 4)
 
-These dependencies are not bundled into the mod JAR. Install them alongside
-Electric Advantage in a regular Minecraft instance. Replace the file dependencies
-in `build.gradle` with Maven coordinates when MMDLib and Power Advantage are published.
-The ModDevZone repository is configured with an OreSpawn-only group filter; expand
-that filter alongside the dependency changes once their coordinates are known.
+MMDLib and Power Advantage versions are set in `gradle.properties`. These
+dependencies are not bundled into the mod JAR. Install them alongside
+Electric Advantage in a regular Minecraft instance.
 
 Use Java 21 and the checked-in Gradle wrapper:
 
@@ -47,7 +46,7 @@ The Laser Turret and its hidden player-targeting variant are ported from EA2;
 see [laser turret](docs/turret.md).
 The Electric Mining Drill is ported from EA2: it mines 3×3 faces and moves along Electric Scaffold;
 see [electric drill](docs/drill.md).
-Conditional recipes require compatible material tags; remaining automation machines, recipe modes,
+Conditional recipes require compatible material tags; remaining automation machines
 and complete survival acquisition remain pending.
 Track implementation and verification in [TODO.md](TODO.md).
 
