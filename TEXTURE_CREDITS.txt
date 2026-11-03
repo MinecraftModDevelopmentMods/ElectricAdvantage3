@@ -1,0 +1,146 @@
+
+Vanilla-style 16x assets for Electric Advantage
+
+==============================================================================
+LICENSE
+==============================================================================
+
+This mod does NOT have a single license. Different files are under different
+terms:
+
+1. futureazoo-derived files ONLY - CC BY-NC-SA 4.0
+   The files listed under "[A] Used directly" below contain futureazoo's
+   textures (unchanged or modified). Those files, and ONLY those files, are
+   licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+   International (CC BY-NC-SA 4.0), as futureazoo's license requires:
+       https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+2. Code and the group's own textures - LGPL 2.1
+   The mod's code and the textures drawn for this pack are licensed under
+   the GNU Lesser General Public License, version 2.1 (LGPL 2.1):
+       https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+   These textures belong to Minecraft Mod Development group. This includes
+   the textures under "[B]": they were drawn for this pack and contain none
+   of futureazoo's artwork, so they fall under this point, not point 1.
+   The files in point 1 stay CC BY-NC-SA 4.0 and are NOT LGPL 2.1.
+
+3. Not covered by either license
+   Minecraft assets and anything derived from them remain the property of
+   Mojang Studios.
+
+==============================================================================
+FUTUREAZOO - ATTRIBUTION
+==============================================================================
+
+Artist:  futureazoo
+Source:  TextureRepository, https://github.com/Futureazoo/TextureRepository
+         (folder: futureazoo/)
+License: CC BY-NC-SA 4.0
+
+futureazoo's work is used in two ways in this pack:
+  [A] used directly: the texture appears in the pack, unchanged or modified
+      as noted. These files are CC BY-NC-SA 4.0.
+  [B] palette and style: colours were sampled from futureazoo's textures and
+      used in textures drawn for this pack. Credited as thanks; these files
+      contain none of futureazoo's artwork and are LGPL 2.1, not CC BY-NC-SA.
+
+------------------------------------------------------------------------------
+[A] Used directly - Electric Advantage (assets/electricadvantage/textures/)
+------------------------------------------------------------------------------
+
+Unchanged:
+  block/machine_side.png           <- blocks/tech/iron_furnace_side
+  block/machine_top.png            <- blocks/tech/iron_furnace_top
+  block/materials/machine_case.png        <- blocks/tech/iron_furnace_top
+  block/machine_back.png           <- blocks/tech/iron_noteblock_side
+  block/electric_furnace_off.png   <- blocks/tech/iron_furnace_front_off
+  block/electric_crusher_off.png   <- blocks/tech/iron_macerator_front_off
+  block/electric_oven_off.png      <- blocks/tech/iron_blastfurnace_front_off
+  block/electric_still_off.png     <- blocks/tech/durasteel_eblastfurnace_front_off
+  block/plastic_refinery_off.png   <- blocks/tech/durasteel_furnace_front_off
+  block/electric_pump_off.png      <- blocks/tech/iron_compressor_front
+  block/steam_powered_generator_off.png <- blocks/tech/iron_compressor_front
+  item/alkaline_battery.png        <- items/tech/battery_large
+  item/lithium_battery.png         <- items/tech/battery_lithium_ion
+  item/blank_circuit_board.png     <- items/tech/chipset_copper
+  item/integrated_circuit.png      <- items/tech/integrated_circuit
+  item/psu.png                     <- items/tech/motor
+  item/petrolplastic_ingot.png     <- items/tech/plastic_bar
+  item/silicon_ingot.png           <- items/tech/silicon
+  item/solder.png                  <- spritesheets/Tech1.png, sprite at x=144 y=176
+  item/control_circuit.png         <- spritesheets/Tech1.png, sprite at x=384 y=320
+
+Modified - green power-indicator LED added (2px, top centre):
+  block/electric_furnace_powered.png  <- iron_furnace_front_off
+  block/electric_furnace_on.png       <- iron_furnace_front_on
+  block/electric_oven_powered.png     <- iron_blastfurnace_front_off
+  block/electric_oven_on.png          <- iron_blastfurnace_front_on
+  block/electric_still_powered.png    <- durasteel_eblastfurnace_front_off
+  block/electric_still_on.png         <- durasteel_eblastfurnace_front_on
+  block/plastic_refinery_on.png       <- durasteel_furnace_front_on
+  block/electric_pump_on.png          <- iron_compressor_front
+  block/steam_powered_generator_on.png <- iron_compressor_front
+
+Modified - LED added, plus other changes:
+  block/electric_crusher_powered.png  <- iron_macerator_front_off
+  block/electric_crusher_on.png       <- iron_macerator_front_off, with
+                                          hand-drawn grinding sparks in the slot
+
+Modified - recoloured / composited:
+  block/electric_fabricator_off.png, _powered.png, _on.png
+        <- blocks/tech/crafting_interface_light; cyan screen dimmed for the
+           off and powered states; LED added to powered and on
+  block/electric_battery_array.png
+        <- blocks/tech/durasteel_anvil_top_0 layered over iron_furnace_top
+  block/electric_switch_off.png
+        <- blocks/tech/durasteel_anvil_top_5 layered over iron_furnace_top
+  block/electric_switch_on.png
+        <- blocks/tech/durasteel_anvil_top_2 layered over iron_furnace_top
+  block/electric_drill_off.png, _on.png
+        <- blocks/tech/durasteel_eblastfurnace_top; hand-drawn cyan core
+           added to on
+  block/laser_drill_optic.png, _on.png
+        <- blocks/tech/durasteel_eblastfurnace_bottom with a hand-drawn
+           lens (dark when off, red when on)
+  block/hydroelectric_generator_off.png, _on.png
+        <- blocks/tech/iron_blastfurnace_top; hand-drawn water at the hub
+           when on
+  block/growth_chamber_off.png, _powered.png, _on.png,
+  block/growth_chamber_controller.png
+        <- blocks/tech/iron_furnace_top with a hand-drawn green window
+           (sprouts when on, a leaf on the controller); LED on powered/on
+
+------------------------------------------------------------------------------
+[B] Palette and style
+------------------------------------------------------------------------------
+
+Iron and durasteel - the iron ramp (353535 to e5e5e5) and the bluish
+durasteel ramp (525660 to e9eaec) were sampled from futureazoo's iron and
+durasteel machine sets. Used in block/laser_turret_base.png (durasteel
+plate).
+
+Cable - the rubber and copper colours of block/electric_conduit.png come
+from futureazoo's insulated_cable_copper.
+
+==============================================================================
+OTHER MATERIAL
+==============================================================================
+
+Drawn for this pack (Minecraft Mod Development group; LGPL 2.1): the solar
+panel, conduit, LED bar, lead-acid and nickel-metal-hydride batteries and
+laser turret base.
+(Hand-drawn overlays inside the [A] files are part of those files, so those
+files as a whole are CC BY-NC-SA 4.0.)
+
+Minecraft (Mojang Studios) - not covered by this pack's license:
+  - Lithium and sulfur ore use the vanilla iron ore texture with the ore
+    pixels recoloured.
+  - The lithium ingot, nugget and powder, silicon mix, solder mix and sulfur
+    powder follow vanilla item shapes (iron ingot, iron nugget, glowstone
+    dust) with new colours.
+  - Many colours elsewhere were sampled from vanilla textures.
+
+Electric Advantage is a mod by DrCyano.
+
+This pack is not affiliated with or endorsed by Mojang Studios, Microsoft,
+DrCyano or futureazoo.
