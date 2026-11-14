@@ -3,7 +3,7 @@
         block-entity="zone.moddev.mc.electricadvantage.assembler.AssemblerBlockEntity">
   <vbox padding="7" spacing="4" align="center">
     <gauge id="energy" orientation="horizontal" length="9s" color="#DCA92B"
-           value="#screenEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
+           value="#screenStoredEnergy" max="#screenCapacity" tooltip="screen.electricadvantage.energy" tooltip-fallback="{value} / {max} FE"/>
     <label text="screen.electricadvantage.assembler.selected_value" text-fallback="{value}" value="#screenRecipe"/>
     <hbox spacing="8" align="center">
       <group label="screen.electricadvantage.assembler.recipe" padding="4">

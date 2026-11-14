@@ -232,7 +232,7 @@ public final class DrillBlockEntity extends BlockEntity implements ScreenHost {
     private void sync(){if(level!=null&&!level.isClientSide)level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(),3);}
 
     @Override public ItemStorage screenItems(){return items;}
-    public long screenEnergy(){return energy.stored();}
+    public long screenStoredEnergy(){return energy.stored();}
     public long screenCapacity(){return energy.capacity();}
     public int screenProgress(){return progress;}
     public int screenProgressGoal(){return Math.max(1,progressGoal);}

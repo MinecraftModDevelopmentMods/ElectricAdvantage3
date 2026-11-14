@@ -91,20 +91,25 @@ public final class AssemblerGameTests {
         h.assertTrue(countBuffer(be,Items.BUCKET)==2&&be.items.getStackInSlot(9).is(Items.SUGAR),"Each consumed container in a sized cell returns its remainder");
         h.succeed();
     }
+    private static zone.moddev.mc.lib.gui.model.elements.SlotElement slotElement(MachineMenu menu,int index,boolean ghost){
+        return menu.elements.stream().filter(e->e instanceof zone.moddev.mc.lib.gui.model.elements.SlotElement slot&&slot.index()==index&&slot.ghost()==ghost)
+            .map(zone.moddev.mc.lib.gui.model.elements.SlotElement.class::cast).findFirst().orElseThrow();
+    }
     @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure")
     public static void mmdlibGhostSelectionAndAlternateControls(GameTestHelper h){
         var be=place(h);var player=player(h,be);
         var menu=new MachineMenu(9,player.getInventory(),be);var previous=player.containerMenu;player.containerMenu=menu;
         try{
-            h.assertTrue(be.items.getSlots()==10&&menu.slots.size()==55,"Nine buffer slots, one output, nine ghosts, and player inventory");
-            var ghost=menu.elements.stream().filter(e->e instanceof zone.moddev.mc.lib.gui.model.Element.Slot slot&&slot.index()==10).findFirst().orElseThrow();
+            h.assertTrue(be.items.getSlots()==10&&menu.slots.size()==19+41,"Nine buffer slots, one output, nine ghosts, and the 41-slot player inventory (with armor and offhand)");
+            var ghost=slotElement(menu,10,true);var part=slotElement(menu,0,false);
+            var inventory=menu.components().requireCapability(zone.moddev.mc.lib.gui.runtime.component.InventoryAccess.class);
             menu.setCarried(new ItemStack(Items.IRON_INGOT,12));
-            h.assertTrue(menu.ghost(player,menu.index(ghost),menu.getCarried())&&menu.getCarried().getCount()==12,"Ghost selection consumes no cursor items");
+            h.assertTrue(inventory.ghost(ghost,player,menu.getCarried())&&menu.getCarried().getCount()==12,"Ghost selection consumes no cursor items");
             h.assertTrue(be.selectedRecipe().equals(id("test/assembler_priority")),"Authored recipe is the initial matching choice");
             var found=new HashSet<ResourceLocation>();
             for(int n=0;n<30;n++){found.add(be.selectedRecipe());be.cycleRecipe(1);}
             h.assertTrue(found.contains(imported("test/imported_shapeless"))&&found.contains(imported("test/alternate")),"Alternate outputs can both be selected for the same grid");
-            h.assertTrue(!menu.ghost(player,menu.index(ghost)+10000,new ItemStack(Items.DIRT)),"Invalid ghost element index is rejected");
+            h.assertTrue(!inventory.ghost(part,player,new ItemStack(Items.DIRT)),"Ghost selection on a real parts slot is rejected");
             be.items.setStackInSlot(0,new ItemStack(Items.IRON_INGOT));be.clearRecipe();
             h.assertTrue(be.items.getStackInSlot(0).getCount()==1&&be.screenGhost(10).isEmpty(),"Clearing selection preserves real parts");
         }finally{player.containerMenu=previous;}

@@ -178,7 +178,7 @@ public final class ProcessingBlockEntity extends BlockEntity implements ScreenHo
         }
         setChanged();return true;
     }
-    public long screenEnergy(){return energy.stored();}
+    public long screenStoredEnergy(){return energy.stored();}
     public long screenCapacity(){return energy.capacity();}
     public int screenDuration(){return distiller()?Math.max(1,fluidDuration):settings.ticks();}
     public int screenProgress(){return fluidProgress;}

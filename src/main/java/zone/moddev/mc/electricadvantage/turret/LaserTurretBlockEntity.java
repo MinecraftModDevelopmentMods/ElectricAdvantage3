@@ -179,7 +179,7 @@ public final class LaserTurretBlockEntity extends BlockEntity implements ScreenH
     public int comparator(){return locked()?15:(int)(8*energy.stored()/Math.max(1,energy.capacity()));}
 
     @Override public ItemStorage screenItems(){return noItems;}
-    public long screenEnergy(){return energy.stored();}
+    public long screenStoredEnergy(){return energy.stored();}
     public long screenCapacity(){return energy.capacity();}
     public Component screenStatus(){
         var target=target();

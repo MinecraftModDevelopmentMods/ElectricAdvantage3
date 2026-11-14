@@ -169,8 +169,8 @@ public final class GenerationBlockEntity extends BlockEntity implements ScreenHo
         if (level != null && getBlockState().getValue(GenerationBlock.ACTIVE) != active)
             level.setBlock(worldPosition, getBlockState().setValue(GenerationBlock.ACTIVE, active), 3);
     }
-    public int comparator() { return (int)Math.clamp(15 * (settings.kind().equals("solar") ? lastOutput / Math.max(0.00001, settings.generation()) : screenEnergy() / (double)Math.max(1, screenCapacity())), 0, 15); }
-    public long screenEnergy() { return array() ? batteryTotal(false) : energy.stored(); }
+    public int comparator() { return (int)Math.clamp(15 * (settings.kind().equals("solar") ? lastOutput / Math.max(0.00001, settings.generation()) : screenStoredEnergy() / (double)Math.max(1, screenCapacity())), 0, 15); }
+    public long screenStoredEnergy() { return array() ? batteryTotal(false) : energy.stored(); }
     public long screenCapacity() { return array() ? batteryTotal(true) : energy.capacity(); }
     public FluidStack screenSteam() { return steam.getFluidInTank(0); }
     public int screenSteamCapacity() { return settings.steamCapacity(); }

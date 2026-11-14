@@ -142,7 +142,7 @@ public final class AssemblerBlockEntity extends BlockEntity implements ScreenHos
         @Override public int getSlotLimit(int slot){return slot==0?items.getSlotLimit(9):0;}
         @Override public boolean isItemValid(int slot,ItemStack stack){return false;}
     };}
-    public long screenEnergy(){return energy.stored();}
+    public long screenStoredEnergy(){return energy.stored();}
     public long screenCapacity(){return energy.capacity();}
     public int screenProgress(){return progress;}
     public int screenTime(){syncCatalog();return current==null?settings.defaultTime():current.time(settings);}

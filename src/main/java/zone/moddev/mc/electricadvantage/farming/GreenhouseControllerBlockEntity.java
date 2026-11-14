@@ -116,7 +116,7 @@ public final class GreenhouseControllerBlockEntity extends BlockEntity implement
     }
 
     @Override public ItemStorage screenItems(){return items;}
-    public long screenEnergy(){return energy.stored();}
+    public long screenStoredEnergy(){return energy.stored();}
     public long screenCapacity(){return energy.capacity();}
     public FluidStack screenWater(){return water.getFluidInTank(0);}
     public int screenWaterCapacity(){return settings.waterCapacity();}

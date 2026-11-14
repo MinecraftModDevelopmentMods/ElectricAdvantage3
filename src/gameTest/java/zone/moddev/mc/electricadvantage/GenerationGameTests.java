@@ -63,12 +63,12 @@ public final class GenerationGameTests {
         second.items.setStackInSlot(0,empty);
         h.setBlock(3,3,3,block("electric_conduit"));
         h.runAfterDelay(35,()->{
-            h.assertTrue(first.screenEnergy()==1000 && second.screenEnergy()==0,"Connected arrays must not exchange energy");
+            h.assertTrue(first.screenStoredEnergy()==1000 && second.screenStoredEnergy()==0,"Connected arrays must not exchange energy");
             h.setBlock(3,3,4,block("electric_conduit"));
             h.setBlock(4,3,4,block("led_bar"));
             h.runAfterDelay(35,()->{
                 h.assertBlockProperty(new BlockPos(4,3,4),ElectricBlock.LIT,true);
-                h.assertTrue(first.screenEnergy()<1000 && second.screenEnergy()==0,"Backup powers loads without charging another array");
+                h.assertTrue(first.screenStoredEnergy()<1000 && second.screenStoredEnergy()==0,"Backup powers loads without charging another array");
                 h.setBlock(2,3,2,Blocks.REDSTONE_BLOCK);
                 h.runAfterDelay(50,()->{
                     h.assertBlockProperty(new BlockPos(4,3,4),ElectricBlock.LIT,false);
@@ -92,7 +92,7 @@ public final class GenerationGameTests {
         var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());
         var restored=(GenerationBlockEntity)be.getType().create(be.getBlockPos(),be.getBlockState());
         restored.loadWithComponents(saved,h.getLevel().registryAccess());
-        h.assertTrue(restored.screenEnergy()==7766 && restored.screenCapacity()==9000,"Inventory and charge persist");
+        h.assertTrue(restored.screenStoredEnergy()==7766 && restored.screenCapacity()==9000,"Inventory and charge persist");
         h.assertTrue(restored.capability().receiveEnergy(Integer.MAX_VALUE,false)==1234,"Array charging stops at battery capacity");
         h.succeed();
     }
@@ -155,7 +155,7 @@ public final class GenerationGameTests {
             var menu = new zone.moddev.mc.lib.gui.runtime.MachineMenu(1,player.getInventory(),be);
             h.assertTrue(menu.stillValid(player),"MMDLib menu binds to the placed machine");
             if(be.array()) {
-                h.assertTrue(menu.slots.size()==44,"Eight real battery slots plus player inventory");
+                h.assertTrue(menu.slots.size()==8+41,"Eight real battery slots plus the 41-slot player inventory (with armor and offhand)");
                 h.assertTrue(menu.getSlot(0).mayPlace(stack("lithium_battery"))
                         && !menu.getSlot(0).mayPlace(new ItemStack(Items.DIRT)),"Battery menu respects item filters");
             }
@@ -183,7 +183,7 @@ public final class GenerationGameTests {
         var plate=new ItemStack(Items.IRON_INGOT);
         var frame=new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("poweradvantage:steel_frame")));
         var pipe=new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("poweradvantage:fluid_pipe")));
-        var gear=new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("mmdlib:iron_gear")));
+        var gear=new ItemStack(Items.IRON_BARS);
         craft(h,"steam_powered_generator",java.util.List.of(psu,pipe,circuit,plate,frame,plate));
         craft(h,"hydroelectric_generator",java.util.List.of(psu,gear,gear,plate,frame,plate));
         craft(h,"electric_battery_array",java.util.List.of(psu,new ItemStack(Items.CHEST),ItemStack.EMPTY,plate,frame,plate));

@@ -126,7 +126,7 @@ public final class ProcessingGameTests {
     public static void processingMenusAndRecipes(GameTestHelper h){
         var player=net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
         var frame=new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("poweradvantage:steel_frame")));
-        var gear=new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("mmdlib:iron_gear")));
+        var gear=new ItemStack(Items.IRON_BARS);
         var psu=stack("psu");var plate=new ItemStack(Items.IRON_INGOT);var bricks=new ItemStack(Items.BRICKS);var bucket=new ItemStack(Items.BUCKET);
         var inputs=java.util.Map.of(
             "electric_furnace",java.util.List.of(bricks,bricks,bricks,bricks,psu,bricks,bricks,bricks,bricks),
@@ -138,7 +138,7 @@ public final class ProcessingGameTests {
             var be=place(h,entry.getKey());
             h.assertTrue(zone.moddev.mc.lib.gui.Screens.get(id(entry.getKey())).isPresent(),"Processing XML loads: "+entry.getKey());
             var menu=new zone.moddev.mc.lib.gui.runtime.MachineMenu(1,player.getInventory(),be);
-            h.assertTrue(menu.slots.size()==be.items.getSlots()+(be.items.getSlots()>0?36:0),"Screen declares every machine slot: "+entry.getKey());
+            h.assertTrue(menu.slots.size()==be.items.getSlots()+(be.items.getSlots()>0?41:0),"Screen declares every machine slot: "+entry.getKey());
             var input=net.minecraft.world.item.crafting.CraftingInput.of(3,entry.getValue().size()/3,entry.getValue());
             var recipe=h.getLevel().getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING,input,h.getLevel()).orElseThrow();
             h.assertTrue(recipe.value().assemble(input,h.getLevel().registryAccess()).is(stack(entry.getKey()).getItem()),"Machine crafting recipe: "+entry.getKey());

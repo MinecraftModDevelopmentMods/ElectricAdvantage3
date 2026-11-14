@@ -133,7 +133,7 @@ public final class PumpBlockEntity extends BlockEntity implements ScreenHost {
     public int comparator(){var fluid=tank.getFluidInTank(0);return fluid.isEmpty()?0:Math.max(1,15*fluid.getAmount()/settings.tankCapacity());}
 
     @Override public ItemStorage screenItems(){return noItems;}
-    public long screenEnergy(){return energy.stored();}
+    public long screenStoredEnergy(){return energy.stored();}
     public long screenCapacity(){return energy.capacity();}
     public FluidStack screenFluid(){return tank.getFluidInTank(0);}
     public int screenFluidCapacity(){return settings.tankCapacity();}
