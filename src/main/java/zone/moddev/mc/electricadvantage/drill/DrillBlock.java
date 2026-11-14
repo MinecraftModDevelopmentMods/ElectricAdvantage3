@@ -1,9 +1,7 @@
 package zone.moddev.mc.electricadvantage.drill;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -25,8 +23,5 @@ public final class DrillBlock extends MaterialEntityBlock<DrillBlockEntity> {
     @Override public BlockState getStateForPlacement(BlockPlaceContext context){return defaultBlockState().setValue(FACING,context.getClickedFace().getOpposite());}
     @Override protected BlockState rotate(BlockState state,Rotation rotation){return state.setValue(FACING,rotation.rotate(state.getValue(FACING)));}
     @Override protected BlockState mirror(BlockState state,Mirror mirror){return state.rotate(mirror.getRotation(state.getValue(FACING)));}
-    @Override protected void onRemove(BlockState state,Level level,BlockPos pos,BlockState next,boolean moving){
-        if(!level.isClientSide && state.getBlock()!=next.getBlock() && level.getBlockEntity(pos) instanceof DrillBlockEntity be) be.items.dropAll(level,pos);
-        super.onRemove(state,level,pos,next,moving);
-    }
+    // MaterialEntityBlock drops the contents through MMDLib's BaseMachine lifecycle.
 }

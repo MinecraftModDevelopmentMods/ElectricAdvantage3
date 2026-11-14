@@ -1,0 +1,6 @@
+{
+  "parent": "electricadvantage:block/electric_machine_front",
+  "textures": {
+    "front": "electricadvantage:block/electric_still_on"
+  }
+}

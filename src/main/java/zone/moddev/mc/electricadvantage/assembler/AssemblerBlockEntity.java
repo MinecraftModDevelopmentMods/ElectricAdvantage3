@@ -11,16 +11,25 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 import zone.moddev.mc.lib.api.capabilities.*;
-import zone.moddev.mc.lib.gui.runtime.ScreenHost;
+import zone.moddev.mc.lib.api.automation.AutomationInventory;
+import zone.moddev.mc.lib.machine.neoforge.BaseMachine;
+import zone.moddev.mc.lib.machine.neoforge.MachineInventoryLifecycle;
 import java.util.*;
 
-public final class AssemblerBlockEntity extends BlockEntity implements ScreenHost {
+/**
+ * Automated Assembler: crafts the selected recipe from a nine-slot parts buffer into one output slot.
+ *
+ * <p>Built on MMDLib's {@link BaseMachine}, which owns storage persistence, client sync and dropping contents; it stays
+ * Java because its recipe catalog imports crafting recipes and returns container remainders, which MMDLib machine
+ * recipes cannot express. Save layout: items under {@code Items} as in 3.0, recipe, progress and ghost pattern
+ * top-level, the buffer under MMDLib's {@code energy} key (3.0's {@code Energy} is still read).
+ */
+public final class AssemblerBlockEntity extends BaseMachine {
     public final AssemblerSettings settings;
     public final EnergyBuffer energy;
     public final ItemStorage items;
@@ -32,13 +41,20 @@ public final class AssemblerBlockEntity extends BlockEntity implements ScreenHos
     private AssemblerPlanner planner;
     private String recipeFingerprint="",workFingerprint="",plannedWorkFingerprint="";
     private int progress;
+    private final MachineInventoryLifecycle inventory;
 
     public AssemblerBlockEntity(BlockEntityType<?> type,BlockPos pos,BlockState state,AssemblerSettings settings){
         super(type,pos,state);this.settings=settings;Arrays.fill(ghosts,ItemStack.EMPTY);
         energy=new EnergyBuffer(settings.capacity(),settings.rate()).onChange(this::setChanged);energyInput=energy.view(IoMode.INPUT);
         // Buffer slots remain extractable so automation can retrieve containers; only slot 9 is auto-exported.
         items=new ItemStorage(10).role(Role.OUTPUT,9).onChange(()->{inventoryRevision++;setChanged();});
+        // No automation groups: EA3 registers this machine's capabilities itself.
+        inventory=genericInventory(new AutomationInventory(this,List.of())).items("Items",items);
     }
+    @Override protected EnergyBuffer powerStorage(){return energy;}
+    @Override protected MachineInventoryLifecycle machineInventory(){return inventory;}
+    /** No tanks, so nothing but items (dropped by MMDLib) is displaced when the assembler breaks. */
+    @Override protected void recoverResources(Level level,BlockPos pos,CompoundTag payload){}
     public IEnergyStorage energyCapability(){return energyInput;}
     public IItemHandler itemCapability(){return items.view(IoMode.BOTH);}
     private AssemblerCatalog.Snapshot catalog(){return AssemblerCatalog.get(level.getRecipeManager());}
@@ -92,8 +108,9 @@ public final class AssemblerBlockEntity extends BlockEntity implements ScreenHos
     @Override public ItemStorage screenItems(){return items;}
     @Override public int[] screenDestinations(ItemStack stack){return new int[]{0,1,2,3,4,5,6,7,8};}
 
-    public static void tick(Level world,BlockPos pos,BlockState state,AssemblerBlockEntity be){
-        if(!(world instanceof ServerLevel level))return;
+    public static void tick(Level world,BlockPos pos,BlockState state,AssemblerBlockEntity be){be.serverTick();}
+    @Override protected void afterMachineTick(){
+        var level=(ServerLevel)this.level;var pos=worldPosition;var be=this;
         be.syncCatalog();
         boolean active=!level.hasNeighborSignal(pos)&&be.craftTick();
         var updated=be.getBlockState().setValue(AssemblerBlock.ACTIVE,active).setValue(AssemblerBlock.POWERED,
@@ -152,17 +169,15 @@ public final class AssemblerBlockEntity extends BlockEntity implements ScreenHos
         return Component.translatable("screen.electricadvantage.assembler.selected",result.getCount(),result.getHoverName());
     }
     public Component screenCost(){syncCatalog();return current==null?Component.empty():Component.translatable("screen.electricadvantage.assembler.cost",current.time(settings),current.power(settings),current.feCost(settings));}
-    @Override protected void saveAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.saveAdditional(tag,registries);tag.put("Energy",energy.serializeNBT(registries));tag.put("Items",items.serializeNBT(registries));
+    @Override protected void saveMachineData(CompoundTag tag,HolderLookup.Provider registries){
         if(selected!=null)tag.putString("Recipe",selected.toString());
         tag.putInt("Progress",progress);tag.putString("RecipeFingerprint",recipeFingerprint);tag.putString("WorkFingerprint",workFingerprint);
         for(int n=0;n<9;n++)if(!ghosts[n].isEmpty())tag.put("Ghost"+n,ghosts[n].save(registries));
     }
-    @Override protected void loadAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.loadAdditional(tag,registries);
-        if(tag.contains("Energy"))energy.deserializeNBT(registries,tag.get("Energy"));
-        if(tag.contains("Items"))items.deserializeNBT(registries,tag.getCompound("Items"));
-        selected=ResourceLocation.tryParse(tag.getString("Recipe"));progress=Math.clamp(tag.getInt("Progress"),0,1000000);
+    @Override protected void loadMachineData(CompoundTag tag,HolderLookup.Provider registries){
+        // 3.0 saved the buffer as "Energy"; MMDLib's lifecycle has already read "energy" if present.
+        if(!tag.contains("energy")&&tag.contains("Energy"))energy.deserializeNBT(registries,tag.get("Energy"));
+        selected=tag.contains("Recipe")?ResourceLocation.tryParse(tag.getString("Recipe")):null;progress=Math.clamp(tag.getInt("Progress"),0,1000000);
         recipeFingerprint=tag.getString("RecipeFingerprint");workFingerprint=tag.getString("WorkFingerprint");
         for(int n=0;n<9;n++)ghosts[n]=tag.contains("Ghost"+n)?ItemStack.parseOptional(registries,tag.getCompound("Ghost"+n)):ItemStack.EMPTY;
         current=null;catalogRevision=-1;planner=null;plannedInventory=-1;

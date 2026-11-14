@@ -10,7 +10,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BucketPickup;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -22,14 +21,20 @@ import net.minecraft.world.level.material.Fluid;
 import java.util.ArrayList;
 import zone.moddev.mc.electricadvantage.infrastructure.PumpPipeBlock;
 import zone.moddev.mc.lib.api.capabilities.*;
-import zone.moddev.mc.lib.gui.runtime.ScreenHost;
+import zone.moddev.mc.lib.api.automation.AutomationInventory;
+import zone.moddev.mc.lib.machine.neoforge.BaseMachine;
+import zone.moddev.mc.lib.machine.neoforge.MachineInventoryLifecycle;
 
 /**
  * Extends a pump pipe down through air, then takes one bucket per pump interval from the source
  * feeding its tip. A body of tagged fluid with enough connected sources is treated as naturally
  * infinite and keeps its source blocks. Fluid tracing is Power Advantage's {@link FluidSearch}.
+ *
+ * <p>Built on MMDLib's {@link BaseMachine}, which owns storage persistence and client sync; the pump stays Java because
+ * MMDLib XML machines cannot give a comparator signal. Save layout: the tank under {@code Tank} as in 3.0, pump state
+ * top-level, the buffer under MMDLib's {@code energy} key (3.0's {@code Energy} is still read).
  */
-public final class PumpBlockEntity extends BlockEntity implements ScreenHost {
+public final class PumpBlockEntity extends BaseMachine {
     public enum Status {IDLE,EXTENDING,PUMPING_INFINITE,PUMPING,NO_FLUID,TANK_FULL,NO_POWER,DISABLED}
     private static final java.util.function.Supplier<net.minecraft.world.level.block.Block> PIPE=com.google.common.base.Suppliers.memoize(
             ()->net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("electricadvantage","pump_pipe_electric")));
@@ -50,19 +55,27 @@ public final class PumpBlockEntity extends BlockEntity implements ScreenHost {
     private boolean verdictInfinite;
     private long verdictUntil;
     private Status status=Status.IDLE;
+    private final MachineInventoryLifecycle inventory;
 
     public PumpBlockEntity(BlockEntityType<?> type,BlockPos pos,BlockState state,PumpSettings settings){
         super(type,pos,state);this.settings=settings;
         energy=new EnergyBuffer(settings.capacity(),settings.rate()).onChange(this::setChanged);energyInput=energy.view(IoMode.INPUT);
         tank.addTank(settings.tankCapacity(),Role.OUTPUT);tank.onChange(this::setChanged);
+        // No automation groups: EA3 registers this machine's capabilities itself.
+        inventory=genericInventory(new AutomationInventory(this,java.util.List.of())).fluids("Tank",tank);
     }
+    @Override protected EnergyBuffer powerStorage(){return energy;}
+    @Override protected MachineInventoryLifecycle machineInventory(){return inventory;}
+    /** Fluid left in a broken pump is discarded, as it always was. */
+    @Override protected void recoverResources(Level level,BlockPos pos,CompoundTag payload){}
     public IEnergyStorage energyCapability(){return energyInput;}
     public IFluidHandler fluidCapability(){return tank.view(IoMode.BOTH);}
     public Status status(){return status;}
     public int depth(){return depth;}
 
-    public static void tick(Level world,BlockPos pos,BlockState state,PumpBlockEntity be){
-        if(!(world instanceof ServerLevel level))return;
+    public static void tick(Level world,BlockPos pos,BlockState state,PumpBlockEntity be){be.serverTick();}
+    @Override protected void afterMachineTick(){
+        var level=(ServerLevel)this.level;var pos=worldPosition;var be=this;
         boolean active=be.work(level);
         var updated=be.getBlockState().setValue(PumpBlock.ACTIVE,active).setValue(PumpBlock.POWERED,be.energy.stored()>=be.settings.pumpCost());
         if(updated!=be.getBlockState())level.setBlock(pos,updated,3);
@@ -140,15 +153,12 @@ public final class PumpBlockEntity extends BlockEntity implements ScreenHost {
     public Component screenStatus(){return Component.translatable("screen.electricadvantage.pump.status."+status.name().toLowerCase(java.util.Locale.ROOT));}
     public Component screenDepth(){return Component.translatable("screen.electricadvantage.pump.depth",depth);}
 
-    @Override protected void saveAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.saveAdditional(tag,registries);
-        tag.put("Energy",energy.serializeNBT(registries));tag.put("Tank",tank.serializeNBT(registries));
+    @Override protected void saveMachineData(CompoundTag tag,HolderLookup.Provider registries){
         tag.putInt("Cooldown",cooldown);tag.putInt("Depth",depth);tag.putString("Status",status.name());
     }
-    @Override protected void loadAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.loadAdditional(tag,registries);
-        if(tag.contains("Energy"))energy.deserializeNBT(registries,tag.get("Energy"));
-        if(tag.contains("Tank"))tank.deserializeNBT(registries,tag.getCompound("Tank"));
+    @Override protected void loadMachineData(CompoundTag tag,HolderLookup.Provider registries){
+        // 3.0 saved the buffer as "Energy"; MMDLib's lifecycle has already read "energy" if present.
+        if(!tag.contains("energy")&&tag.contains("Energy"))energy.deserializeNBT(registries,tag.get("Energy"));
         cooldown=Math.clamp(tag.getInt("Cooldown"),0,1200);depth=Math.max(0,tag.getInt("Depth"));
         try{status=Status.valueOf(tag.getString("Status"));}catch(IllegalArgumentException missing){status=Status.IDLE;}
         // Fluid bodies change while unloaded; always trace again.

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " h ",
+    "isi",
+    " i "
+  ],
+  "key": {
+    "h": { "item": "minecraft:hopper" },
+    "s": { "tag": "poweradvantage:sprockets" },
+    "i": { "tag": "c:ingots/iron" }
+  },
+  "result": { "id": "electricadvantage:item_intake_port" },
+  "group": "item_ports"
+}

@@ -11,19 +11,24 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 import zone.moddev.mc.lib.api.capabilities.*;
-import zone.moddev.mc.lib.gui.runtime.ScreenHost;
+import zone.moddev.mc.lib.api.automation.AutomationInventory;
+import zone.moddev.mc.lib.machine.neoforge.BaseMachine;
+import zone.moddev.mc.lib.machine.neoforge.MachineInventoryLifecycle;
 import java.util.*;
 
 /**
  * Three growth lanes, each a soil (slot 0-2) and a seed (slot 3-5); both are catalysts and are
  * never consumed. Slots 6-11 are shared outputs and slot 12 is the chamber's upgrade.
+ *
+ * <p>Built on MMDLib's {@link BaseMachine}, which owns storage persistence, client sync and dropping contents; it stays
+ * Java because MMDLib XML machines have one processor (the chamber has three lanes) and cannot filter slots by tag.
+ * Save layout: items under {@code Items} as in 3.0, lane state top-level.
  */
-public final class GrowthChamberBlockEntity extends BlockEntity implements ScreenHost {
+public final class GrowthChamberBlockEntity extends BaseMachine {
     public static final int LANES=3,SEED=3,OUTPUT=6,OUTPUTS=6,UPGRADE=12;
     public final GrowthChamberSettings settings;
     public final ItemStorage items;
@@ -33,6 +38,7 @@ public final class GrowthChamberBlockEntity extends BlockEntity implements Scree
     private final ItemStack[] workSeeds=new ItemStack[LANES],workSoils=new ItemStack[LANES];
     // A finished harvest is rolled once and held until all of it fits, so nothing is spilled or re-rolled.
     private final List<List<ItemStack>> pending=new ArrayList<>();
+    private final MachineInventoryLifecycle inventory;
 
     public GrowthChamberBlockEntity(BlockEntityType<?> type,BlockPos pos,BlockState state,GrowthChamberSettings settings){
         super(type,pos,state);this.settings=settings;
@@ -43,7 +49,12 @@ public final class GrowthChamberBlockEntity extends BlockEntity implements Scree
                 .filter(this::isSoil,0,1,2).filter(this::isSeed,3,4,5)
                 .role(Role.OUTPUT,6,7,8,9,10,11)
                 .role(Role.MANUAL,UPGRADE).filter(stack->stack.is(FarmingSystems.UPGRADES),UPGRADE);
+        // No automation groups: EA3 registers this machine's capabilities itself.
+        inventory=genericInventory(new AutomationInventory(this,List.of())).items("Items",items);
     }
+    @Override protected MachineInventoryLifecycle machineInventory(){return inventory;}
+    /** No tanks, so nothing but items (dropped by MMDLib) is displaced when the chamber breaks. */
+    @Override protected void recoverResources(Level level,BlockPos pos,CompoundTag payload){}
     private List<RecipeHolder<GrowingRecipe>> recipes(){return level==null?List.of():level.getRecipeManager().getAllRecipesFor(FarmingSystems.TYPE.get());}
     public boolean isSoil(ItemStack stack){return recipes().stream().anyMatch(r->r.value().soil().test(stack));}
     public boolean isSeed(ItemStack stack){return recipes().stream().anyMatch(r->r.value().seed().test(stack));}
@@ -63,8 +74,9 @@ public final class GrowthChamberBlockEntity extends BlockEntity implements Scree
         if(level==null||seed.isEmpty()||soil.isEmpty())return Optional.empty();
         return level.getRecipeManager().getRecipeFor(FarmingSystems.TYPE.get(),new GrowingRecipe.Input(seed,soil),level);
     }
-    public static void tick(Level world,BlockPos pos,BlockState state,GrowthChamberBlockEntity be){
-        if(!(world instanceof ServerLevel level))return;
+    public static void tick(Level world,BlockPos pos,BlockState state,GrowthChamberBlockEntity be){be.serverTick();}
+    @Override protected void afterMachineTick(){
+        var level=(ServerLevel)this.level;var pos=worldPosition;var be=this;
         boolean disabled=level.hasNeighborSignal(pos),active=false;
         for(int lane=0;lane<LANES;lane++)active|=be.growLane(lane,disabled);
         var updated=be.getBlockState().setValue(GrowthChamberBlock.ACTIVE,active).setValue(GrowthChamberBlock.POWERED,be.greenhouse>0);
@@ -124,8 +136,9 @@ public final class GrowthChamberBlockEntity extends BlockEntity implements Scree
         return remaining.isEmpty();
     }
     public List<ItemStack> pendingHarvest(int lane){return pending.get(lane).stream().map(ItemStack::copy).toList();}
-    public void dropContents(Level level,BlockPos pos){
-        items.dropAll(level,pos);
+    /** MMDLib drops the slots; held harvests are dropped here. */
+    @Override public void dropContents(Level level,BlockPos pos){
+        super.dropContents(level,pos);
         for(var lane:pending)for(var stack:lane)net.minecraft.world.Containers.dropItemStack(level,pos.getX(),pos.getY(),pos.getZ(),stack.copy());
         pending.forEach(List::clear);
     }
@@ -147,9 +160,8 @@ public final class GrowthChamberBlockEntity extends BlockEntity implements Scree
     public int screenTime1(){return time(1);}
     public int screenTime2(){return time(2);}
 
-    @Override protected void saveAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.saveAdditional(tag,registries);
-        tag.put("Items",items.serializeNBT(registries));tag.putLong("Greenhouse",greenhouse);tag.putIntArray("Progress",progress);
+    @Override protected void saveMachineData(CompoundTag tag,HolderLookup.Provider registries){
+        tag.putLong("Greenhouse",greenhouse);tag.putIntArray("Progress",progress);
         for(int lane=0;lane<LANES;lane++){
             if(recipeIds[lane]!=null){
                 tag.putString("Recipe"+lane,recipeIds[lane].toString());
@@ -161,14 +173,13 @@ public final class GrowthChamberBlockEntity extends BlockEntity implements Scree
             }
         }
     }
-    @Override protected void loadAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.loadAdditional(tag,registries);
-        if(tag.contains("Items"))items.deserializeNBT(registries,tag.getCompound("Items"));
+    @Override protected void loadMachineData(CompoundTag tag,HolderLookup.Provider registries){
         greenhouse=Math.clamp(tag.getLong("Greenhouse"),0,settings.capacity());
         var saved=tag.getIntArray("Progress");
         for(int lane=0;lane<LANES;lane++){
             progress[lane]=lane<saved.length?Math.clamp(saved[lane],0,1000000):0;
-            recipeIds[lane]=ResourceLocation.tryParse(tag.getString("Recipe"+lane));
+            // An idle lane saves no recipe; tryParse("") would give "minecraft:", not null.
+            recipeIds[lane]=tag.contains("Recipe"+lane)?ResourceLocation.tryParse(tag.getString("Recipe"+lane)):null;
             workSeeds[lane]=tag.contains("Seed"+lane)?ItemStack.parseOptional(registries,tag.getCompound("Seed"+lane)):ItemStack.EMPTY;
             workSoils[lane]=tag.contains("Soil"+lane)?ItemStack.parseOptional(registries,tag.getCompound("Soil"+lane)):ItemStack.EMPTY;
             pending.get(lane).clear();

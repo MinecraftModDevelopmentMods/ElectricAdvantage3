@@ -45,6 +45,11 @@ public final class ModItems {
         modBus.addListener(this::capabilities);
         // Generated pump shafts retain EA2's search-only item visibility.
         modBus.addListener((net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent event) -> {
+                // XML machines are registered by MMDLib rather than this registrar, so they join its tab here.
+                if (event.getTabKey().location().equals(ResourceLocation.fromNamespaceAndPath(ElectricAdvantage.MOD_ID, "materials")))
+                    zone.moddev.mc.lib.machine.neoforge.MachineContent.definitions().keySet().stream()
+                            .filter(id -> id.getNamespace().equals(ElectricAdvantage.MOD_ID)).sorted()
+                            .forEach(id -> event.accept(zone.moddev.mc.lib.machine.neoforge.MachineContent.item(id)));
                 event.getParentEntries().stream().filter(stack -> stack.getItem() instanceof net.minecraft.world.item.BlockItem item
                         && item.getBlock() instanceof zone.moddev.mc.electricadvantage.infrastructure.PumpPipeBlock)
                         .toList().forEach(stack -> event.remove(stack, net.minecraft.world.item.CreativeModeTab.TabVisibility.PARENT_TAB_ONLY));
@@ -80,8 +85,7 @@ public final class ModItems {
             if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.processing.ProcessingBlockEntity.class) {
                 var binding = handle.binding().as(zone.moddev.mc.electricadvantage.processing.ProcessingBlockEntity.class);
                 event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
-                event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.items.getSlots()>0 ? be.itemCapability() : null);
-                event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, binding.type().get(), (be, side) -> be.fluidMachine() ? be.fluidCapability() : null);
+                event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
             }
             if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.assembler.AssemblerBlockEntity.class) {
                 var binding = handle.binding().as(zone.moddev.mc.electricadvantage.assembler.AssemblerBlockEntity.class);
@@ -117,6 +121,8 @@ public final class ModItems {
                 event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.input());
             }
         });
+        runtime.items().forEach((id, holder) ->
+                zone.moddev.mc.electricadvantage.automation.ItemPorts.registerCapabilities(event, id, holder.get()));
         runtime.items().values().forEach(holder -> {
             if (holder.get() instanceof BatteryItem battery) {
                 event.registerItem(Capabilities.EnergyStorage.ITEM,

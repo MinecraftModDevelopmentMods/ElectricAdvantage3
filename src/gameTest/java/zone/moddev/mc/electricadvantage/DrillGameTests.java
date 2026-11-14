@@ -97,6 +97,8 @@ public final class DrillGameTests {
         var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());
         var restored=(DrillBlockEntity)be.getType().create(be.getBlockPos(),be.getBlockState());restored.loadWithComponents(saved,h.getLevel().registryAccess());
         h.assertTrue(restored.items.getStackInSlot(2).getCount()==3&&restored.energy.stored()==be.energy.stored(),"Inventory and energy persist");
+        // MMDLib's BaseMachine only ticks a machine that is in a level.
+        h.getLevel().setBlockEntity(restored);
         restored.energy.setStored(restored.energy.capacity());
         DrillBlockEntity.tick(h.getLevel(),restored.getBlockPos(),restored.getBlockState(),restored);
         h.assertTrue(be.target().equals(restored.target())&&restored.progress()==be.progress()+1&&restored.progressGoal()==be.progressGoal(),"The face and its progress are restored");

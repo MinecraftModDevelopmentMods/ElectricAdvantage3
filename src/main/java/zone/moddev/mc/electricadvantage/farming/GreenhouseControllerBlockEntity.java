@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -17,14 +16,21 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import zone.moddev.mc.lib.api.capabilities.*;
-import zone.moddev.mc.lib.gui.runtime.ScreenHost;
+import zone.moddev.mc.lib.api.automation.AutomationInventory;
+import zone.moddev.mc.lib.machine.neoforge.BaseMachine;
+import zone.moddev.mc.lib.machine.neoforge.MachineInventoryLifecycle;
 import java.util.*;
 
 /**
  * Converts electricity, water and fertilizer into greenhouse power and shares it fairly across the
  * growth chambers it touches, directly or through other touching chambers. There is no greenhouse cable.
+ *
+ * <p>Built on MMDLib's {@link BaseMachine}, which owns storage persistence, client sync and dropping contents; it stays
+ * Java because MMDLib XML machines cannot give a comparator signal or filter slots by data map. Save layout: items
+ * under {@code Items} and water under {@code Water} as in 3.0, pools top-level, the buffer under MMDLib's
+ * {@code energy} key (3.0's {@code Energy} is still read).
  */
-public final class GreenhouseControllerBlockEntity extends BlockEntity implements ScreenHost {
+public final class GreenhouseControllerBlockEntity extends BaseMachine {
     public final GreenhouseControllerSettings settings;
     public final EnergyBuffer energy;
     public final FluidStorage water=new FluidStorage();
@@ -34,13 +40,20 @@ public final class GreenhouseControllerBlockEntity extends BlockEntity implement
     private final List<BlockPos> chambers=new ArrayList<>();
     private long nextScan=Long.MIN_VALUE;
     private int rotation;
+    private final MachineInventoryLifecycle inventory;
 
     public GreenhouseControllerBlockEntity(BlockEntityType<?> type,BlockPos pos,BlockState state,GreenhouseControllerSettings settings){
         super(type,pos,state);this.settings=settings;
         energy=new EnergyBuffer(settings.energyCapacity(),settings.rate()).onChange(this::setChanged);energyInput=energy.view(IoMode.INPUT);
         water.addTank(settings.waterCapacity(),Role.INPUT,fluid->fluid.getFluid().is(FluidTags.WATER));water.onChange(this::setChanged);
         items=new ItemStorage(1).onChange(this::setChanged).role(Role.INPUT,0).filter(stack->FarmingSystems.fertilizer(stack)>0,0);
+        // No automation groups: EA3 registers this machine's capabilities itself.
+        inventory=genericInventory(new AutomationInventory(this,List.of())).items("Items",items).fluids("Water",water);
     }
+    @Override protected EnergyBuffer powerStorage(){return energy;}
+    @Override protected MachineInventoryLifecycle machineInventory(){return inventory;}
+    /** Water left in a broken Control Unit is discarded, as it always was. */
+    @Override protected void recoverResources(Level level,BlockPos pos,CompoundTag payload){}
     public IEnergyStorage energyCapability(){return energyInput;}
     public IFluidHandler fluidCapability(){return water.view(IoMode.INPUT);}
     public IItemHandler itemCapability(){return items.view(IoMode.INPUT);}
@@ -50,8 +63,9 @@ public final class GreenhouseControllerBlockEntity extends BlockEntity implement
     public List<BlockPos> chambers(){return List.copyOf(chambers);}
     public void rescan(){nextScan=Long.MIN_VALUE;}
 
-    public static void tick(Level world,BlockPos pos,BlockState state,GreenhouseControllerBlockEntity be){
-        if(!(world instanceof ServerLevel level))return;
+    public static void tick(Level world,BlockPos pos,BlockState state,GreenhouseControllerBlockEntity be){be.serverTick();}
+    @Override protected void afterMachineTick(){
+        var level=(ServerLevel)this.level;var pos=worldPosition;var be=this;
         be.refuel();
         boolean disabled=level.hasNeighborSignal(pos);
         if(!disabled){be.produce();be.distribute(level);}
@@ -126,16 +140,12 @@ public final class GreenhouseControllerBlockEntity extends BlockEntity implement
     public long screenGreenhouseCapacity(){return settings.buffer();}
     public Component screenChambers(){return Component.translatable("screen.electricadvantage.greenhouse.chambers",chambers.size(),settings.maxChambers());}
 
-    @Override protected void saveAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.saveAdditional(tag,registries);
-        tag.put("Energy",energy.serializeNBT(registries));tag.put("Water",water.serializeNBT(registries));tag.put("Items",items.serializeNBT(registries));
+    @Override protected void saveMachineData(CompoundTag tag,HolderLookup.Provider registries){
         tag.putLong("Fertilizer",fertilizer);tag.putLong("Greenhouse",greenhouse);
     }
-    @Override protected void loadAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.loadAdditional(tag,registries);
-        if(tag.contains("Energy"))energy.deserializeNBT(registries,tag.get("Energy"));
-        if(tag.contains("Water"))water.deserializeNBT(registries,tag.getCompound("Water"));
-        if(tag.contains("Items"))items.deserializeNBT(registries,tag.getCompound("Items"));
+    @Override protected void loadMachineData(CompoundTag tag,HolderLookup.Provider registries){
+        // 3.0 saved the buffer as "Energy"; MMDLib's lifecycle has already read "energy" if present.
+        if(!tag.contains("energy")&&tag.contains("Energy"))energy.deserializeNBT(registries,tag.get("Energy"));
         fertilizer=Math.max(0,tag.getLong("Fertilizer"));greenhouse=Math.clamp(tag.getLong("Greenhouse"),0,settings.buffer());
         rescan();
     }

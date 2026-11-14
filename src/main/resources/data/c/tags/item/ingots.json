@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "#c:ingots/silicon",
-    "#c:ingots/solder",
-    "#c:ingots/lithium"
+    "#c:ingots/solder"
   ]
 }

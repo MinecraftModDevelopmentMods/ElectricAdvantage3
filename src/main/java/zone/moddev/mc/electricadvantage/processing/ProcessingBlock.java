@@ -1,9 +1,7 @@
 package zone.moddev.mc.electricadvantage.processing;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -21,8 +19,5 @@ public final class ProcessingBlock extends MaterialEntityBlock<ProcessingBlockEn
     }
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){builder.add(ACTIVE,FACING,POWERED);}
     @Override public BlockState getStateForPlacement(BlockPlaceContext context){return defaultBlockState().setValue(FACING,context.getHorizontalDirection().getOpposite());}
-    @Override protected void onRemove(BlockState state,Level level,BlockPos pos,BlockState next,boolean moving){
-        if(!level.isClientSide && state.getBlock()!=next.getBlock() && level.getBlockEntity(pos) instanceof ProcessingBlockEntity be) be.items.dropAll(level,pos);
-        super.onRemove(state,level,pos,next,moving);
-    }
+    // MaterialEntityBlock drops the contents through MMDLib's BaseMachine lifecycle.
 }

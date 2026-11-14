@@ -91,5 +91,7 @@
   "screen.electricadvantage.drill.status.output_full": "Waiting: the output slots cannot hold this face's drops",
   "screen.electricadvantage.drill.status.end_of_range": "End of range: nothing to mine and no scaffold to move along",
   "screen.electricadvantage.drill.status.no_power": "Waiting for power",
-  "screen.electricadvantage.drill.status.disabled": "Stopped by a redstone signal"
+  "screen.electricadvantage.drill.status.disabled": "Stopped by a redstone signal",
+  "item.electricadvantage.item_intake_port": "Item Intake Port",
+  "item.electricadvantage.item_output_port": "Item Output Port"
 }

@@ -47,8 +47,9 @@ LED lighting, generated pump pipe, and OreSpawn 4 deposit generation are impleme
 See [infrastructure behavior and verification](docs/infrastructure.md).
 Four generation/storage machines now share data-driven settings and MMDLib XML
 screens; see [generation and storage](docs/generation-storage.md).
-The furnace, crusher, oven, distiller and refinery now share a processing core;
-see [processing behavior and remaining machines](docs/processing.md).
+The oven, distiller and refinery are MMDLib XML machines, and the furnace and crusher are
+Java machines on MMDLib's `BaseMachine`; see [processing machines](docs/processing.md) and
+[MMDLib and Power Advantage integration](docs/mmdlib-integration.md).
 The Growth Chamber and its Control Unit are redesigned data-driven greenhouse machines;
 see [growth chamber and control unit](docs/farming.md).
 The Electric Pump extends its pipe, traces connected fluid and treats large water/lava bodies as infinite;

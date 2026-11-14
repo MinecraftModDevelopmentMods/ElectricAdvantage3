@@ -6,9 +6,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -24,7 +21,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -34,15 +30,20 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import zone.moddev.mc.electricadvantage.Config;
 import zone.moddev.mc.lib.api.capabilities.*;
-import zone.moddev.mc.lib.gui.runtime.ScreenHost;
+import zone.moddev.mc.lib.machine.neoforge.BaseMachine;
 import java.util.*;
 
 /**
  * Locks onto the nearest visible target, charges, then fires a beam that hurts every living entity
  * along it up to the first solid block. The normal turret targets monsters and players outside its
  * owner's team; the hidden "evil" variant targets everything except monsters and ambient mobs.
+ *
+ * <p>Built on MMDLib's {@link BaseMachine}, which owns persistence and client sync; the turret stays Java because
+ * MMDLib XML machines cannot record their placer or give a comparator signal. Save layout: the buffer under MMDLib's
+ * {@code energy} key (3.0's {@code Energy} is still read), owner and team top-level. Clients receive only the target
+ * and charge timer.
  */
-public final class LaserTurretBlockEntity extends BlockEntity implements ScreenHost {
+public final class LaserTurretBlockEntity extends BaseMachine {
     public static final ResourceKey<net.minecraft.world.damagesource.DamageType> LASER=ResourceKey.create(Registries.DAMAGE_TYPE,ResourceLocation.parse("electricadvantage:laser"));
     public final TurretSettings settings;
     public final EnergyBuffer energy;
@@ -60,6 +61,9 @@ public final class LaserTurretBlockEntity extends BlockEntity implements ScreenH
         super(type,pos,state);this.settings=settings;
         energy=new EnergyBuffer(settings.capacity(),settings.rate()).onChange(this::setChanged);energyInput=energy.view(IoMode.INPUT);
     }
+    @Override protected EnergyBuffer powerStorage(){return energy;}
+    /** Nothing but energy is stored, so nothing is displaced when the turret breaks. */
+    @Override protected void recoverResources(Level level,BlockPos pos,CompoundTag payload){}
     public IEnergyStorage energyCapability(){return energyInput;}
     public Vec3 optic(){return Vec3.atLowerCornerOf(worldPosition).add(0.5,0.75,0.5);}
     public boolean locked(){return targetId!=Integer.MIN_VALUE;}
@@ -73,8 +77,9 @@ public final class LaserTurretBlockEntity extends BlockEntity implements ScreenH
     public void setTeam(String name){team=name==null||name.isEmpty()?null:name;setChanged();}
     private boolean active(Level level){return !level.hasNeighborSignal(worldPosition)&&energy.stored()>=settings.shotCost();}
 
-    public static void tick(Level world,BlockPos pos,BlockState state,LaserTurretBlockEntity be){
-        if(!(world instanceof ServerLevel level))return;
+    public static void tick(Level world,BlockPos pos,BlockState state,LaserTurretBlockEntity be){be.serverTick();}
+    @Override protected void afterMachineTick(){
+        var level=(ServerLevel)this.level;var pos=worldPosition;var be=this;
         if(be.attack>0)be.attack--;
         boolean active=be.active(level);
         if(active){
@@ -189,22 +194,19 @@ public final class LaserTurretBlockEntity extends BlockEntity implements ScreenH
     }
     public Component screenTeam(){if(settings.evil())return Component.translatable("screen.electricadvantage.turret.evil");return team==null?Component.translatable("screen.electricadvantage.turret.no_team"):Component.translatable("screen.electricadvantage.turret.team",team);}
 
-    @Override protected void saveAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.saveAdditional(tag,registries);
-        tag.put("Energy",energy.serializeNBT(registries));
+    @Override protected void saveMachineData(CompoundTag tag,HolderLookup.Provider registries){
         if(owner!=null)tag.putUUID("Owner",owner);
         if(team!=null)tag.putString("Team",team);
     }
-    @Override protected void loadAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.loadAdditional(tag,registries);
-        if(tag.contains("Energy"))energy.deserializeNBT(registries,tag.get("Energy"));
+    @Override protected void loadMachineData(CompoundTag tag,HolderLookup.Provider registries){
+        // 3.0 saved the buffer as "Energy"; MMDLib has already read "energy" if present.
+        if(!tag.contains("energy")&&tag.contains("Energy"))energy.deserializeNBT(registries,tag.get("Energy"));
         owner=tag.hasUUID("Owner")?tag.getUUID("Owner"):null;
         team=tag.contains("Team")?tag.getString("Team"):null;
-        if(tag.contains("Target")){targetId=tag.getInt("Target");attack=tag.getInt("Attack");}
     }
     /** Clients only need the target and charge timer; aim is derived from the target each tick. */
-    @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries){
-        var tag=new CompoundTag();tag.putInt("Target",targetId);tag.putInt("Attack",attack);return tag;
+    @Override protected void saveClientData(CompoundTag tag,HolderLookup.Provider registries){tag.putInt("Target",targetId);tag.putInt("Attack",attack);}
+    @Override protected void loadClientData(CompoundTag tag,HolderLookup.Provider registries){
+        if(tag.contains("Target")){targetId=tag.getInt("Target");attack=tag.getInt("Attack");}
     }
-    @Override public Packet<ClientGamePacketListener> getUpdatePacket(){return ClientboundBlockEntityDataPacket.create(this);}
 }

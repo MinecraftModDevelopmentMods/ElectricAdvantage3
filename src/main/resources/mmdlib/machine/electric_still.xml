@@ -1,0 +1,34 @@
+<!--
+  Electric Still: runs every Power Advantage distilling recipe on electricity instead of heat, at 16 FE per tick
+  (ElectricDistillingRecipes copies Power Advantage's poweradvantage:distilling recipes and adds the energy cost).
+  Install Power Advantage Fluid Intake and Output Pumps to pull oil in and push products out, as for Power
+  Advantage's own Distillery.
+
+  Save compatibility with 3.0: the fluid storage keeps 3.0's "Input" key, so the input tank keeps its contents.
+  3.0 saved the output tank separately, under "Output"; that fluid, a batch in progress and buffered energy are
+  not carried over.
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_powered_machine" name="Electric Still">
+  <block hardness="3"/>
+  <appearance preset="model" model="electricadvantage:block/electric_machine_casing">
+    <part id="front_on" model="electricadvantage:block/electric_still_front_on"
+          when="$processors.still.status == 'running'"/>
+    <part id="front_powered" model="electricadvantage:block/electric_still_front_powered"
+          when="$processors.still.status != 'running' &amp;&amp; $energy.energy.stored &gt;= 16"/>
+    <part id="front_off" model="electricadvantage:block/electric_still_front_off"
+          when="$processors.still.status != 'running' &amp;&amp; $energy.energy.stored &lt; 16"/>
+  </appearance>
+  <storage>
+    <energy id="energy" capacity="500" input-rate="4096"/>
+    <fluids id="Input">
+      <tank id="input" name="Input" capacity="1000" role="input"/>
+      <tank id="output" name="Output" capacity="1000" role="output"/>
+    </fluids>
+  </storage>
+  <recipe-type id="electricadvantage:electric_distilling" declare="true" name="Electric Distilling">
+    <generator class="zone.moddev.mc.electricadvantage.processing.ElectricDistillingRecipes"
+               energy-per-tick="16"/>
+  </recipe-type>
+  <processor id="still" recipe-type="electricadvantage:electric_distilling"/>
+</machine>

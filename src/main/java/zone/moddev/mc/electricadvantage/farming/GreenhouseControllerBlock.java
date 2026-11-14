@@ -28,8 +28,5 @@ public final class GreenhouseControllerBlock extends MaterialEntityBlock<Greenho
         if(level.getBlockEntity(pos) instanceof GreenhouseControllerBlockEntity be)be.rescan();
         super.neighborChanged(state,level,pos,block,from,moving);
     }
-    @Override protected void onRemove(BlockState state,Level level,BlockPos pos,BlockState next,boolean moving){
-        if(!level.isClientSide && state.getBlock()!=next.getBlock() && level.getBlockEntity(pos) instanceof GreenhouseControllerBlockEntity be) be.items.dropAll(level,pos);
-        super.onRemove(state,level,pos,next,moving);
-    }
+    // MaterialEntityBlock drops the contents through MMDLib's BaseMachine lifecycle.
 }
