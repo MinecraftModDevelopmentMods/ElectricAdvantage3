@@ -6,8 +6,8 @@ Root Java package: `zone.moddev.mc.electricadvantage`.
 Required dependencies (compile and development runtime), all from the
 ModDevZone Maven (`https://maven.moddev.zone/releases`):
 
-- `zone.moddev.mc.lib:mmdlib:2.0.0.12102+Neo` (MMDLib 2.0)
-- `zone.moddev.mc.poweradvantage:PowerAdvantage:3.1.1.121012+Neo` (Power Advantage 3.1)
+- `zone.moddev.mc.lib:mmdlib:2.0.2.121012+Neo` (MMDLib 2.0.2)
+- `zone.moddev.mc.poweradvantage:PowerAdvantage:3.2.0.121012+Neo` (Power Advantage 3.2)
 - `zone.moddev.mc.orespawn:OreSpawn:4.1.0.121012` (MMD OreSpawn 4)
 
 Dependency versions are set in `gradle.properties`. These
