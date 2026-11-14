@@ -190,8 +190,8 @@ public final class FarmingGameTests {
         var player=net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
         var chamberMenu=new zone.moddev.mc.lib.gui.runtime.MachineMenu(9,player.getInventory(),chamber);
         var controllerMenu=new zone.moddev.mc.lib.gui.runtime.MachineMenu(10,player.getInventory(),controller);
-        h.assertTrue(chamberMenu.slots.size()==13+36,"Chamber: three soils, three seeds, six outputs, one upgrade and the player inventory");
-        h.assertTrue(controllerMenu.slots.size()==1+36,"Controller: fertilizer slot and the player inventory");
+        h.assertTrue(chamberMenu.slots.size()==13+41,"Chamber: three soils, three seeds, six outputs, one upgrade and the player inventory");
+        h.assertTrue(controllerMenu.slots.size()==1+41,"Controller: fertilizer slot and the player inventory");
         h.assertTrue(chamberMenu.getSlot(12).getMaxStackSize()==1,"Upgrade slot holds one item");
         h.succeed();
     }

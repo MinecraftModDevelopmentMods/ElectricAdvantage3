@@ -1,0 +1,31 @@
+<!--
+  Petro-Plastic Refinery: 100 mB of crude or refined oil and 1,200 FE (12 FE per tick for 100 ticks) make one
+  petro-plastic ingot. Recipes are data/electricadvantage/recipe/plastic_refining.json. Install a Fluid Intake Pump
+  (Power Advantage) to pull oil in, and an Item Output Port to push plastic into neighbours.
+
+  Save compatibility with 3.0: the oil tank stays under "Input" and the output slot under "Items", as 3.0 saved them.
+  Buffered energy and refining progress from 3.0 are not carried over.
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_powered_machine" name="Petro-Plastic Refinery">
+  <block hardness="3"/>
+  <appearance preset="model" model="electricadvantage:block/electric_machine_casing">
+    <part id="front_on" model="electricadvantage:block/plastic_refinery_front_on"
+          when="$processors.refinery.status == 'running'"/>
+    <part id="front_powered" model="electricadvantage:block/plastic_refinery_front_powered"
+          when="$processors.refinery.status != 'running' &amp;&amp; $energy.energy.stored &gt;= 12"/>
+    <part id="front_off" model="electricadvantage:block/plastic_refinery_front_off"
+          when="$processors.refinery.status != 'running' &amp;&amp; $energy.energy.stored &lt; 12"/>
+  </appearance>
+  <storage>
+    <energy id="energy" capacity="500" input-rate="4096"/>
+    <items id="Items">
+      <slots id="output" name="Plastic" count="1" role="output"/>
+    </items>
+    <fluids id="Input">
+      <tank id="input" name="Oil" capacity="2000" role="input"/>
+    </fluids>
+  </storage>
+  <recipe-type id="electricadvantage:plastic_refining" declare="true" name="Plastic Refining"/>
+  <processor id="refinery" recipe-type="electricadvantage:plastic_refining"/>
+</machine>

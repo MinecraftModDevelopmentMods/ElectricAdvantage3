@@ -135,7 +135,9 @@ OTHER MATERIAL
 Drawn for this pack (Minecraft Mod Development group; LGPL 2.1): the solar
 panel, conduit, LED bar, lead-acid and nickel-metal-hydride batteries, laser
 turret base and silicon ingot (item/silicon_ingot.png, redrawn on the outline
-of the original mod's silicon ingot).
+of the original mod's silicon ingot). The Item Intake and Output Port icons
+(item/item_intake_port.png, item/item_output_port.png) are simple generated
+placeholders, drawn from scratch for this pack.
 (Hand-drawn overlays inside the [A] files are part of those files, so those
 files as a whole are CC BY-NC-SA 4.0.)
 

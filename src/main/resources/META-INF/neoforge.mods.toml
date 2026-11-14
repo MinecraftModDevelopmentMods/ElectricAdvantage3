@@ -29,14 +29,14 @@ side="BOTH"
 [[dependencies.${mod_id}]]
 modId="mmdlib"
 type="required"
-versionRange="[2.0.0-alpha,3.0.0)"
+versionRange="[2.0.2,3.0.0)"
 ordering="AFTER"
 side="BOTH"
 
 [[dependencies.${mod_id}]]
 modId="poweradvantage"
 type="required"
-versionRange="[3.1.0,4.0.0)"
+versionRange="[3.2.0,4.0.0)"
 ordering="AFTER"
 side="BOTH"
 

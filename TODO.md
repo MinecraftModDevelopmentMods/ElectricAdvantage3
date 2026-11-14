@@ -210,6 +210,8 @@ Current first-batch implementation and behavior: [processing.md](docs/processing
   - [x] One-input/one-output food-only smelting, 100-tick work, recipe/input-change checks, role-filtered slots, redstone behavior, recipe/assets and XML screen implemented.
   - [x] Non-food rejection, changed-input progress reset, redstone without energy consumption, food output, protected output insertion, menu slots and crafting verified.
   - [x] Verify interactive appearance, connected GUI synchronization, real external automation and unload/reload behavior.
+  - [x] 3.1: moved to an MMDLib XML machine (`FoodSmeltingRecipes`), item ports for export, 3.0 saves keep their items; server tests pass.
+  - [ ] 3.1: verify the conditional front, MMDLib screen and item ports in a live client.
 - [ ] `electric_fabricator` — Automated Assembler; redesigned from EA2's recursive fabricator by user direction.
   - [x] Design agreed: vanilla-style 3×3 ghost recipe grid, one real output slot, and one row of nine real parts-buffer slots consumed by crafting.
   - [x] Design agreed: dedicated assembler recipe type/catalog; import vanilla `minecraft:crafting_shaped` and `minecraft:crafting_shapeless` recipes, excluding source recipe IDs whose path ends with `_manual_only` (an ID suffix, not an item/block tag).
@@ -258,10 +260,14 @@ Current first-batch implementation and behavior: [processing.md](docs/processing
   - [x] PA3 distillation recipes, role-separated tanks, recipe-duration/energy use, saved pending output, fluid export, recipe/assets and MMDLib XML screen implemented.
   - [x] Invalid input rejection, one-time batch consumption, pending-output persistence/full-tank waiting/recovery, input drain protection, menu and crafting verified.
   - [x] Verify interactive appearance, connected GUI synchronization, real external automation and unload/reload behavior.
+  - [x] 3.1: moved to an MMDLib XML machine running copies of Power Advantage 3.2's distilling recipes (`ElectricDistillingRecipes`); fluid export via PA fluid pumps; 3.0 saves keep the input tank; server tests pass.
+  - [ ] 3.1: verify the conditional front, MMDLib screen and PA fluid pumps in a live client.
 - [x] `plastic_refinery` — Petro-Plastic Refinery (`PlasticRefinery*`); configurable accepted fluids (EA2 defaults `refined_oil` and `oil`), converts 100 mB per petro-plastic ingot over 100 processing ticks, fluid input/item output automation, and refinery GUI.
   - [x] Data-defined oil IDs, amount/timing/cost/result, fluid input and item output automation, saved progress, recipe/assets and XML screen implemented.
   - [x] Both configured PA3 oils, 100 mB/100 ticks, saved/resumed production, invalid-fluid rejection and no oil/energy loss under full-output conditions verified, along with menu/crafting.
   - [x] Verify interactive appearance, connected GUI synchronization, real external automation and unload/reload behavior.
+  - [x] 3.1: moved to an MMDLib XML machine with `plastic_refining` recipes (crude oils tag and refined oil); item ports and PA fluid pumps for automation; 3.0 saves keep plastic and oil; server tests pass.
+  - [ ] 3.1: verify the conditional front, MMDLib screen and addons in a live client.
 
 ## Blocks: hidden machine variant (1)
 
@@ -293,6 +299,12 @@ Current first-batch implementation and behavior: [processing.md](docs/processing
 - [x] Port configuration for fabricator recursion limit, laser sound, and accepted petro-plastic fluids; source [ElectricAdvantage.java](EA2/src/main/java/cyano/electricadvantage/ElectricAdvantage.java).
   - [x] Laser sound ported as server config `turret.laserSound`. Petro-plastic fluids are data-defined in the refinery JSON. The fabricator recursion limit no longer applies: the assembler was redesigned without recursion.
 - [ ] Verify progression end to end: acquire materials → components/batteries → generation/cabling → processing/automation. Check client and dedicated-server behavior.
+- [ ] 3.1: move to MMDLib 2.0.2 and Power Advantage 3.2. See [mmdlib-integration.md](docs/mmdlib-integration.md).
+  - [x] Oven, still and refinery are MMDLib XML machines; every other machine extends MMDLib's `BaseMachine`; 3.0 saves keep their contents and energy.
+  - [x] Item Intake/Output Port addons (placeholder icons) for XML machines' item groups; material item tags now come from MMDLib.
+  - [x] Server tests (72), resource validation and client smoke pass.
+  - [ ] Check the XML machines' appearance, screens and addons, and that all screens still fit MMDLib 2.0.2's 240-pixel minimum window, in a live client.
+  - [ ] Move the remaining machines to XML as MMDLib gains the features listed in mmdlib-integration.md.
 
 ## Archive discrepancies to resolve before expanding scope
 
@@ -337,3 +349,4 @@ describe that stage. Current pending work is listed under each feature above.
 | OreSpawn 4 integration | Required Maven dependency pinned to `4.1.0.121012`; packaged provider replaces all six native deposit resources; build passed. | All 10 required server tests passed with OreSpawn installed. OreSpawn reports EA3 revision 1 active with exactly 2 ores and no rocks; public API confirms active profile output blocks, Y range, frequency and host tags; native features are absent. | Actual OreSpawn deposit placement/distribution in new chunks and existing-world profile/retrogen scenarios are not yet verified. |
 | Generation and storage | Shared MMDLib factories/settings/storage, four XML screens, recipes/assets and turbine renderer implemented; build/resource checks pass; graphical client startup reached EA3_CLIENT_BOOTSTRAP_PASS with no EA3 missing-model/texture warnings. | All 18 required server tests passed, including eight generation tests covering conversion, real PA3 fluid/electric integration, weather/hydro/damage, battery aggregation/persistence/anti-cycling, recipes and bound menus. | Interactive turbine appearance and connected GUI sync, real material-provider recipes, recipe-mode solar restriction, and automation/unload stress remain pending. |
 | Processing/automation first batch | Five typed MMDLib machines, recipes/assets, role-filtered storage and XML screens implemented; build, 100-model resource validation, client bootstrap and JAR checks passed. Six other processing entries and the hidden turret remain pending. | All 25 required server tests passed. Processing regression tests cover parallel saved work, recipe/input changes, atomic output handling, food filters/redstone, distillation pending-output conservation, refinery timing/amounts/persistence, live power/item export, menus and recipes. | Interactive appearance/sync, real external automation/material providers and unload/reload stress; no claim that the entire section is complete. |
+| MMDLib 2.0.2 / PA 3.2 (3.1) | Build, resource validator (now reading the Gradle-cached dependency JARs) and client smoke pass with no EA3 model warnings. | All 72 required server tests pass, including the XML machines, item ports, 3.0 save loading and single drops. | Live-client appearance, MMDLib screens and addons; screen fit at 240 pixels. |

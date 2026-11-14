@@ -27,8 +27,5 @@ public final class GenerationBlock extends MaterialEntityBlock<GenerationBlockEn
     @Override protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         return level.getBlockEntity(pos) instanceof GenerationBlockEntity be ? be.comparator() : 0;
     }
-    @Override protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
-        if (state.getBlock() != next.getBlock() && level.getBlockEntity(pos) instanceof GenerationBlockEntity be) be.items.dropAll(level, pos);
-        super.onRemove(state, level, pos, next, moving);
-    }
+    // MaterialEntityBlock drops the contents through MMDLib's BaseMachine lifecycle.
 }

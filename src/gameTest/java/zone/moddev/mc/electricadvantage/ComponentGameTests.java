@@ -187,6 +187,23 @@ public final class ComponentGameTests {
         helper.succeed();
     }
 
+    /** MMDLib 2.0.2 tags every material's items by part; EA3 only writes the ore, silicon and solder tags itself. */
+    @GameTest(templateNamespace = ElectricAdvantage.MOD_ID, template = "infrastructure")
+    public static void materialItemTags(GameTestHelper helper) {
+        var expected = java.util.Map.of(
+                "lithium_dust", List.of("c:dusts/lithium", "c:dusts"),
+                "sulfur_dust", List.of("c:dusts/sulfur", "c:dusts"),
+                "lithium_ingot", List.of("c:ingots/lithium", "c:ingots"),
+                "lithium_nugget", List.of("c:nuggets/lithium", "c:nuggets"),
+                "lithium_ore", List.of("c:ores/lithium", "c:ores"),
+                "sulfur_ore", List.of("c:ores/sulfur", "c:ores"),
+                "silicon_ingot", List.of("c:ingots/silicon", "c:ingots"));
+        expected.forEach((item, tags) -> tags.forEach(tag -> helper.assertTrue(stack(item).is(
+                net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, ResourceLocation.parse(tag))),
+                item + " is in " + tag)));
+        helper.succeed();
+    }
+
     private static ResourceLocation id(String path) {
         return ResourceLocation.fromNamespaceAndPath(ElectricAdvantage.MOD_ID, path);
     }

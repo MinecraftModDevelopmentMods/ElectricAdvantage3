@@ -1,0 +1,23 @@
+{
+  "type": "mmdlib:machine_recipes",
+  "recipes": {
+    "crude_oil": {
+      "type": "electricadvantage:plastic_refining",
+      "inputs": {
+        "input": [{ "fluids": "#poweradvantage:crude_oils", "amount": 100 }],
+        "energy": [{ "energy": 1200 }]
+      },
+      "outputs": { "output": [{ "item": { "id": "electricadvantage:petrolplastic_ingot" } }] },
+      "time": 100
+    },
+    "refined_oil": {
+      "type": "electricadvantage:plastic_refining",
+      "inputs": {
+        "input": [{ "fluids": "poweradvantage:refined_oil", "amount": 100 }],
+        "energy": [{ "energy": 1200 }]
+      },
+      "outputs": { "output": [{ "item": { "id": "electricadvantage:petrolplastic_ingot" } }] },
+      "time": 100
+    }
+  }
+}

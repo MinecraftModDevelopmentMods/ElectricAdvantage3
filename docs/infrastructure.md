@@ -50,7 +50,7 @@ MMD OreSpawn 4 is a required separate mod. Gradle pins
 `zone.moddev.mc.orespawn:OreSpawn:4.1.0.121012` from the ModDevZone releases
 repository, filtered to the `zone.moddev.mc.orespawn` group. This target-qualified
 artifact is the Minecraft 1.21.1 NeoForge build, rather than the repository's
-cross-target `latest` version. MMDLib and Power Advantage remain local JAR dependencies.
+cross-target `latest` version. MMDLib and Power Advantage come from the same repository.
 
 The bundled ore-only provider is
 [`data/electricadvantage/orespawn/provider.json`](../src/main/resources/data/electricadvantage/orespawn/provider.json).

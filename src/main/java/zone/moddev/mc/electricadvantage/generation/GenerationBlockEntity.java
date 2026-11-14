@@ -13,7 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -22,11 +21,24 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import zone.moddev.mc.lib.api.automation.AutomationInventory;
 import zone.moddev.mc.lib.api.capabilities.*;
-import zone.moddev.mc.lib.gui.runtime.ScreenHost;
+import zone.moddev.mc.lib.machine.neoforge.BaseMachine;
+import zone.moddev.mc.lib.machine.neoforge.MachineInventoryLifecycle;
 import zone.moddev.mc.poweradvantage.init.Fluids;
 
-public final class GenerationBlockEntity extends BlockEntity implements ScreenHost {
+/**
+ * Photovoltaic, hydroelectric and steam-powered generators, and the battery array.
+ *
+ * <p>Built on MMDLib's {@link BaseMachine}, which owns storage persistence, client sync and dropping contents. These
+ * stay Java because MMDLib XML machines cannot give a comparator signal and, for the array, cannot use battery items
+ * as their energy store.
+ *
+ * <p>Save layout: items under {@code Items} and steam under {@code Steam} as in 3.0; {@code Fraction} top-level. A
+ * generator's buffer is saved under MMDLib's {@code energy} key and 3.0's {@code Energy} is still read. The array's
+ * charge stays on its batteries, so it has no buffer of its own.
+ */
+public final class GenerationBlockEntity extends BaseMachine {
     public final GenerationSettings settings;
     public final EnergyBuffer energy;
     public final FluidStorage steam = new FluidStorage();
@@ -39,6 +51,7 @@ public final class GenerationBlockEntity extends BlockEntity implements ScreenHo
     private double fraction;
     private double lastOutput;
     private int oldComparator = -1;
+    private final MachineInventoryLifecycle inventory;
 
     public GenerationBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, GenerationSettings settings) {
         super(type, pos, state);
@@ -58,7 +71,14 @@ public final class GenerationBlockEntity extends BlockEntity implements ScreenHo
             @Override public int extractEnergy(int amount, boolean simulate) { return disabled() ? 0 : transferBatteries(amount, simulate, false); }
         };
         output = energy.view(() -> disabled() ? IoMode.DISABLED : IoMode.OUTPUT);
+        // No automation groups: EA3 registers this machine's capabilities itself.
+        inventory = genericInventory(new AutomationInventory(this, java.util.List.of()))
+                .items("Items", items).fluids("Steam", steam);
     }
+    @Override protected EnergyBuffer powerStorage() { return array() ? null : energy; }
+    @Override protected MachineInventoryLifecycle machineInventory() { return inventory; }
+    /** Steam left in a broken generator is discarded, as it always was; MMDLib drops the batteries. */
+    @Override protected void recoverResources(Level level, BlockPos pos, CompoundTag payload) {}
     public boolean array() { return settings.kind().equals("array"); }
     public boolean disabled() { return level != null && level.hasNeighborSignal(worldPosition); }
     public IEnergyStorage capability() { return array() ? batteries : output; }
@@ -88,7 +108,12 @@ public final class GenerationBlockEntity extends BlockEntity implements ScreenHo
         if (state.getValue(GenerationBlock.ACTIVE)) be.rotorAngle = (be.rotorAngle + 30) % 360;
     }
     public static void tick(Level world, BlockPos pos, BlockState state, GenerationBlockEntity be) {
-        if (!(world instanceof ServerLevel level)) return;
+        be.serverTick();
+    }
+    @Override protected void afterMachineTick() {
+        tickMachine((ServerLevel) level, worldPosition, getBlockState(), this);
+    }
+    private static void tickMachine(ServerLevel level, BlockPos pos, BlockState state, GenerationBlockEntity be) {
         if (be.array()) {
             GenerationSystems.queueBackup(level, pos);
             be.setActive(!be.disabled() && be.batteryTotal(false) > 0);
@@ -169,25 +194,19 @@ public final class GenerationBlockEntity extends BlockEntity implements ScreenHo
         if (level != null && getBlockState().getValue(GenerationBlock.ACTIVE) != active)
             level.setBlock(worldPosition, getBlockState().setValue(GenerationBlock.ACTIVE, active), 3);
     }
-    public int comparator() { return (int)Math.clamp(15 * (settings.kind().equals("solar") ? lastOutput / Math.max(0.00001, settings.generation()) : screenEnergy() / (double)Math.max(1, screenCapacity())), 0, 15); }
-    public long screenEnergy() { return array() ? batteryTotal(false) : energy.stored(); }
+    public int comparator() { return (int)Math.clamp(15 * (settings.kind().equals("solar") ? lastOutput / Math.max(0.00001, settings.generation()) : screenStoredEnergy() / (double)Math.max(1, screenCapacity())), 0, 15); }
+    public long screenStoredEnergy() { return array() ? batteryTotal(false) : energy.stored(); }
     public long screenCapacity() { return array() ? batteryTotal(true) : energy.capacity(); }
     public FluidStack screenSteam() { return steam.getFluidInTank(0); }
     public int screenSteamCapacity() { return settings.steamCapacity(); }
     public double screenOutput() { return lastOutput; }
     @Override public ItemStorage screenItems() { return items; }
-    @Override protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("Energy", energy.serializeNBT(registries));
-        tag.put("Steam", steam.serializeNBT(registries));
-        tag.put("Items", items.serializeNBT(registries));
+    @Override protected void saveMachineData(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putDouble("Fraction", fraction);
     }
-    @Override protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("Energy")) energy.deserializeNBT(registries, tag.get("Energy"));
-        if (tag.contains("Steam")) steam.deserializeNBT(registries, tag.getCompound("Steam"));
-        if (tag.contains("Items")) items.deserializeNBT(registries, tag.getCompound("Items"));
+    @Override protected void loadMachineData(CompoundTag tag, HolderLookup.Provider registries) {
+        // 3.0 saved the buffer as "Energy"; MMDLib's lifecycle has already read "energy" if present.
+        if (powerStorage() != null && !tag.contains("energy") && tag.contains("Energy")) energy.deserializeNBT(registries, tag.get("Energy"));
         fraction = Math.clamp(tag.getDouble("Fraction"), 0, 0.999999999);
     }
 }

@@ -7,9 +7,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -21,13 +18,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import zone.moddev.mc.lib.api.capabilities.*;
-import zone.moddev.mc.lib.gui.runtime.ScreenHost;
+import zone.moddev.mc.lib.api.automation.AutomationInventory;
+import zone.moddev.mc.lib.machine.neoforge.BaseMachine;
+import zone.moddev.mc.lib.machine.neoforge.MachineInventoryLifecycle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +36,13 @@ import java.util.List;
  * strengths, and the drops (worked out when the face was targeted) go to its output slots. At the end
  * of its range it moves onto adjacent electric scaffold, leaving a cable where it was and a steel frame
  * in front of that.
+ *
+ * <p>Built on MMDLib's {@link BaseMachine}, which owns storage persistence, client sync and dropping contents; the
+ * drill stays Java because MMDLib XML machines only face horizontally. Save layout: items under {@code Items} as in
+ * 3.0, drill state top-level, the buffer under MMDLib's {@code energy} key (3.0's {@code Energy} is still read).
+ * Clients receive only the beam length.
  */
-public final class DrillBlockEntity extends BlockEntity implements ScreenHost {
+public final class DrillBlockEntity extends BaseMachine {
     public enum Status {IDLE,MINING,OUTPUT_FULL,END_OF_RANGE,NO_POWER,DISABLED}
     public static final ResourceKey<net.minecraft.world.damagesource.DamageType> LASER=ResourceKey.create(Registries.DAMAGE_TYPE,ResourceLocation.parse("electricadvantage:laser_drill"));
     private static final java.util.function.Supplier<Block> TRACK=block("electricadvantage:electric_track"),
@@ -55,13 +58,20 @@ public final class DrillBlockEntity extends BlockEntity implements ScreenHost {
     private Direction facing;
     private boolean endOfRange;
     private Status status=Status.IDLE;
+    private final MachineInventoryLifecycle inventory;
 
     public DrillBlockEntity(BlockEntityType<?> type,BlockPos pos,BlockState state,DrillSettings settings){
         super(type,pos,state);this.settings=settings;
         energy=new EnergyBuffer(settings.capacity(),settings.rate()).onChange(this::setChanged);energyInput=energy.view(IoMode.INPUT);
         items=new ItemStorage(6).onChange(this::setChanged);
         for(int slot=0;slot<items.getSlots();slot++)items.role(Role.OUTPUT,slot);
+        // No automation groups: EA3 registers this machine's capabilities itself.
+        inventory=genericInventory(new AutomationInventory(this,List.of())).items("Items",items);
     }
+    @Override protected EnergyBuffer powerStorage(){return energy;}
+    @Override protected MachineInventoryLifecycle machineInventory(){return inventory;}
+    /** No tanks, so nothing but items (dropped by MMDLib) is displaced when the drill breaks. */
+    @Override protected void recoverResources(Level level,BlockPos pos,CompoundTag payload){}
     private static java.util.function.Supplier<Block> block(String id){
         return com.google.common.base.Suppliers.memoize(()->BuiltInRegistries.BLOCK.get(ResourceLocation.parse(id)));
     }
@@ -75,9 +85,8 @@ public final class DrillBlockEntity extends BlockEntity implements ScreenHost {
     public int beamLength(){return beamLength;}
     private boolean powered(){return energy.stored()>settings.progressCost();}
 
-    public static void tick(Level world,BlockPos pos,BlockState state,DrillBlockEntity be){
-        if(world instanceof ServerLevel level)be.work(level);
-    }
+    public static void tick(Level world,BlockPos pos,BlockState state,DrillBlockEntity be){be.serverTick();}
+    @Override protected void afterMachineTick(){work((ServerLevel)level);}
     private void work(ServerLevel level){
         updateFacing();
         if(savedTarget!=null){
@@ -232,28 +241,24 @@ public final class DrillBlockEntity extends BlockEntity implements ScreenHost {
     private void sync(){if(level!=null&&!level.isClientSide)level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(),3);}
 
     @Override public ItemStorage screenItems(){return items;}
-    public long screenEnergy(){return energy.stored();}
+    public long screenStoredEnergy(){return energy.stored();}
     public long screenCapacity(){return energy.capacity();}
     public int screenProgress(){return progress;}
     public int screenProgressGoal(){return Math.max(1,progressGoal);}
     public Component screenStatus(){return Component.translatable("screen.electricadvantage.drill.status."+status.name().toLowerCase(java.util.Locale.ROOT));}
 
-    @Override protected void saveAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.saveAdditional(tag,registries);
-        tag.put("Energy",energy.serializeNBT(registries));tag.put("Items",items.serializeNBT(registries));
+    @Override protected void saveMachineData(CompoundTag tag,HolderLookup.Provider registries){
         tag.putString("Status",status.name());
         var saved=target!=null?target:savedTarget;
         if(saved!=null){tag.putLong("Target",saved.asLong());tag.putInt("Progress",progress);}
     }
-    @Override protected void loadAdditional(CompoundTag tag,HolderLookup.Provider registries){
-        super.loadAdditional(tag,registries);
-        if(tag.contains("Energy"))energy.deserializeNBT(registries,tag.get("Energy"));
-        if(tag.contains("Items"))items.deserializeNBT(registries,tag.getCompound("Items"));
+    @Override protected void loadMachineData(CompoundTag tag,HolderLookup.Provider registries){
+        // 3.0 saved the buffer as "Energy"; MMDLib's lifecycle has already read "energy" if present.
+        if(!tag.contains("energy")&&tag.contains("Energy"))energy.deserializeNBT(registries,tag.get("Energy"));
         if(tag.contains("Status"))try{status=Status.valueOf(tag.getString("Status"));}catch(IllegalArgumentException unknown){status=Status.IDLE;}
         if(tag.contains("Target")){savedTarget=BlockPos.of(tag.getLong("Target"));progress=Math.max(0,tag.getInt("Progress"));}
-        if(tag.contains("Beam"))beamLength=Math.max(0,tag.getInt("Beam"));
     }
     /** Clients only need the beam length; the direction comes from the block state. */
-    @Override public CompoundTag getUpdateTag(HolderLookup.Provider registries){var tag=new CompoundTag();tag.putInt("Beam",beamLength);return tag;}
-    @Override public Packet<ClientGamePacketListener> getUpdatePacket(){return ClientboundBlockEntityDataPacket.create(this);}
+    @Override protected void saveClientData(CompoundTag tag,HolderLookup.Provider registries){tag.putInt("Beam",beamLength);}
+    @Override protected void loadClientData(CompoundTag tag,HolderLookup.Provider registries){beamLength=Math.max(0,tag.getInt("Beam"));}
 }
