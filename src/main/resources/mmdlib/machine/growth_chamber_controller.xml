@@ -1,0 +1,29 @@
+<!--
+  Growth Chamber Control Unit: turns energy, water and fertilizer into greenhouse power and shares it across the
+  growth chambers it touches, directly or through other touching chambers (GreenhouseControllerProcessor). Comparators
+  read 15 when it has enough of all three for a unit.
+
+  Save compatibility with 3.0 and 3.1: fertilizer stays under "Items", water under "Water", the fertilizer and
+  greenhouse pools keep their 3.0 keys (GreenhouseControllerEntity), and 3.0's "Energy" key loads into the buffer.
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_powered_machine" name="Growth Chamber Control Unit">
+  <block hardness="3"/>
+  <appearance preset="model" model="electricadvantage:block/growth_chamber_controller_unit"/>
+  <storage>
+    <energy id="energy" capacity="10000" input-rate="4096"/>
+    <items id="Items">
+      <slots id="fertilizer" name="Fertilizer" count="1" role="input" filter-processor="controller"/>
+    </items>
+    <fluids id="Water">
+      <tank id="water" name="Water" capacity="4000" role="input" fluid-tag="minecraft:water"/>
+    </fluids>
+  </storage>
+  <redstone comparator-source="greenhouse/ready"/>
+  <processor id="controller" class="zone.moddev.mc.electricadvantage.farming.GreenhouseControllerProcessor"/>
+  <screen xmlns="https://moddev.zone/mmdlib/screen">
+    <fill name="heading">
+      <label id="details" variable="$processors.controller.details" width="150" height="32"/>
+    </fill>
+  </screen>
+</machine>

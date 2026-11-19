@@ -1,4 +1,4 @@
 {
-  "parent": "electricadvantage:block/growth_chamber_controller",
+  "parent": "electricadvantage:block/growth_chamber_controller_unit",
   "ambientocclusion": false
 }

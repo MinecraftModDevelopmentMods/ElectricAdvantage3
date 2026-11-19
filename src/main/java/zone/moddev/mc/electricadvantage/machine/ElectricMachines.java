@@ -21,6 +21,8 @@ public final class ElectricMachines {
         register("laser_turret", zone.moddev.mc.electricadvantage.turret.LaserTurretEntity::new);
         register("laser_turret_evil", zone.moddev.mc.electricadvantage.turret.LaserTurretEntity::new);
         register("electric_drill", zone.moddev.mc.electricadvantage.drill.DrillEntity::new);
+        register("growth_chamber", zone.moddev.mc.electricadvantage.farming.GrowthChamberEntity::new);
+        register("growth_chamber_controller", zone.moddev.mc.electricadvantage.farming.GreenhouseControllerEntity::new);
     }
 
     public static void register(String machine, MachineContent.EntityFactory factory) {

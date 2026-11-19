@@ -71,16 +71,6 @@ public final class ModItems {
                 event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
                 event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
             }
-            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.farming.GrowthChamberBlockEntity.class) {
-                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.farming.GrowthChamberBlockEntity.class);
-                event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
-            }
-            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.farming.GreenhouseControllerBlockEntity.class) {
-                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.farming.GreenhouseControllerBlockEntity.class);
-                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
-                event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, binding.type().get(), (be, side) -> be.fluidCapability());
-                event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
-            }
             if (handle.prepared().blockEntityClass() == ElectricBlockEntity.class) {
                 var binding = handle.binding().as(ElectricBlockEntity.class);
                 event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.input());

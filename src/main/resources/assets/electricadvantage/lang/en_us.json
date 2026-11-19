@@ -52,8 +52,8 @@
   "block.electricadvantage.growth_chamber": "Growth Chamber",
   "block.electricadvantage.growth_chamber_controller": "Growth Chamber Control Unit",
   "item.electricadvantage.shearing_upgrade": "Shearing Upgrade",
-  "screen.electricadvantage.greenhouse.power": "Greenhouse power: {value} / {max}",
-  "screen.electricadvantage.greenhouse.fertilizer": "Fertilizer: {value} / {max}",
+  "screen.electricadvantage.greenhouse.power": "Greenhouse power: %s / %s",
+  "screen.electricadvantage.greenhouse.fertilizer": "Fertilizer: %s / %s",
   "screen.electricadvantage.greenhouse.fertilizer_slot": "Fertilizer such as bone meal. Each item refills the fertilizer store.",
   "screen.electricadvantage.greenhouse.chambers": "Growth chambers connected: %s / %s",
   "screen.electricadvantage.growth_chamber.lanes": "Seed and soil (never used up)",
@@ -97,5 +97,8 @@
   "screen.electricadvantage.generator.output": "Generator output",
   "screen.electricadvantage.generator.output.description": "How full the buffer is; for a photovoltaic generator, its output as a share of full sun",
   "screen.electricadvantage.battery_array.charge": "Battery charge",
-  "screen.electricadvantage.battery_array.charge.description": "How full the batteries are"
+  "screen.electricadvantage.battery_array.charge.description": "How full the batteries are",
+  "screen.electricadvantage.growth_chamber.greenhouse": "Greenhouse power: %s / %s",
+  "screen.electricadvantage.greenhouse.ready": "Ready to make greenhouse power",
+  "screen.electricadvantage.greenhouse.ready.description": "15 when energy, water and fertilizer are all enough for a unit"
 }
