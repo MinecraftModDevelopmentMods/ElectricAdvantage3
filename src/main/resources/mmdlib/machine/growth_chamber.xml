@@ -1,0 +1,43 @@
+<!--
+  Growth Chamber: three lanes, each a soil and a seed that are never consumed, grow crops into six shared outputs on
+  greenhouse power from a touching Control Unit (GrowthChamberProcessor). Outputs are pushed into neighbours other than
+  chambers. The upgrade slot unlocks upgrade-only results.
+
+  Save compatibility with 3.0 and 3.1: items stay under "Items" in 3.0's slot order (soils, seeds, outputs, upgrade),
+  and lane progress, held harvests and greenhouse power keep their 3.0 keys (GrowthChamberEntity).
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_machine" name="Growth Chamber">
+  <block hardness="3"/>
+  <appearance preset="model" model="electricadvantage:block/electric_machine_casing">
+    <part id="front_on" model="electricadvantage:block/growth_chamber_front_on"
+          when="$processors.chamber.status == 'RUNNING'"/>
+    <part id="front_powered" model="electricadvantage:block/growth_chamber_front_powered"
+          when="$processors.chamber.status != 'RUNNING' &amp;&amp; $processors.chamber.powered"/>
+    <part id="front_off" model="electricadvantage:block/growth_chamber_front_off"
+          when="$processors.chamber.status != 'RUNNING' &amp;&amp; !$processors.chamber.powered"/>
+  </appearance>
+  <storage>
+    <items id="Items">
+      <slots id="soil" name="Soil" count="3" role="input" limit="1" filter-processor="chamber"/>
+      <slots id="seed" name="Seed" count="3" role="input" limit="1" filter-processor="chamber"/>
+      <slots id="output" name="Harvest" count="6" role="output"/>
+      <slots id="upgrade" name="Upgrade" count="1" role="manual" limit="1" automation="false"
+             item-tag="electricadvantage:growth_chamber_upgrades"/>
+    </items>
+  </storage>
+  <processor id="chamber" class="zone.moddev.mc.electricadvantage.farming.GrowthChamberProcessor"/>
+  <screen xmlns="https://moddev.zone/mmdlib/screen">
+    <fill name="heading">
+      <hbox spacing="6" align="center">
+        <progress value="zone.moddev.mc.electricadvantage.farming.GrowthChamberEntity#screenProgress0"
+                  max="zone.moddev.mc.electricadvantage.farming.GrowthChamberEntity#screenTime0"/>
+        <progress value="zone.moddev.mc.electricadvantage.farming.GrowthChamberEntity#screenProgress1"
+                  max="zone.moddev.mc.electricadvantage.farming.GrowthChamberEntity#screenTime1"/>
+        <progress value="zone.moddev.mc.electricadvantage.farming.GrowthChamberEntity#screenProgress2"
+                  max="zone.moddev.mc.electricadvantage.farming.GrowthChamberEntity#screenTime2"/>
+        <label id="details" variable="$processors.chamber.details" width="110" height="10"/>
+      </hbox>
+    </fill>
+  </screen>
+</machine>

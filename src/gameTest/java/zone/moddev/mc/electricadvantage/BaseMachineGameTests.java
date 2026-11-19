@@ -15,7 +15,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import zone.moddev.mc.lib.machine.neoforge.BaseMachine;
 
-/** The Java machines built on MMDLib's BaseMachine: 3.0 saves still load, and contents drop once. */
+/** Every Electric Advantage machine, XML or Java, on MMDLib: 3.0 saves still load, redstone stops machines, and contents drop once. */
 @GameTestHolder(ElectricAdvantage.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class BaseMachineGameTests {
@@ -24,7 +24,7 @@ public final class BaseMachineGameTests {
         "photovoltaic_generator", "hydroelectric_generator", "steam_powered_generator");
 
     @GameTest(templateNamespace = ElectricAdvantage.MOD_ID, template = "infrastructure")
-    public static void version30EnergyKeyLoadsInEveryJavaMachine(GameTestHelper h) {
+    public static void version30EnergyKeyLoadsInEveryMachine(GameTestHelper h) {
         for (String name : POWERED) {
             var be = place(h, name);
             var tag = new CompoundTag();
@@ -53,16 +53,39 @@ public final class BaseMachineGameTests {
 
     @GameTest(templateNamespace = ElectricAdvantage.MOD_ID, template = "infrastructure")
     public static void brokenMachinesDropTheirContentsOnce(GameTestHelper h) {
-        var furnace = (zone.moddev.mc.electricadvantage.processing.ProcessingBlockEntity) place(h, "electric_furnace");
+        var furnace = (zone.moddev.mc.lib.machine.neoforge.DefinedMachineEntity) place(h, "electric_furnace");
         furnace.items.setStackInSlot(0, new ItemStack(Items.RAW_IRON, 5));
         furnace.items.setStackInSlot(4, new ItemStack(Items.IRON_INGOT, 7));
         breakMachine(h);
         h.assertTrue(dropped(h, Items.RAW_IRON) == 5 && dropped(h, Items.IRON_INGOT) == 7, "The furnace drops its items exactly once");
         clearDrops(h);
-        var drill = (zone.moddev.mc.electricadvantage.drill.DrillBlockEntity) place(h, "electric_drill");
+        var drill = (zone.moddev.mc.lib.machine.neoforge.DefinedMachineEntity) place(h, "electric_drill");
         drill.items.setStackInSlot(0, new ItemStack(Items.COBBLESTONE, 9));
         breakMachine(h);
         h.assertTrue(dropped(h, Items.COBBLESTONE) == 9, "The drill drops its items exactly once");
+        h.succeed();
+    }
+
+    @GameTest(templateNamespace = ElectricAdvantage.MOD_ID, template = "infrastructure")
+    public static void machinesStopOnRedstoneByDefault(GameTestHelper h) {
+        var registries = h.getLevel().registryAccess();
+        for (String name : java.util.List.of("electric_furnace", "electric_pump", "photovoltaic_generator", "growth_chamber")) {
+            var be = place(h, name);
+            var redstone = be.screenRedstone();
+            for (int face = 0; face < 6; face++)
+                h.assertTrue(redstone.mode(face) == zone.moddev.mc.lib.api.redstone.RedstoneControl.Mode.READ,
+                    "A new machine reads redstone on every face: " + name);
+            // A 3.0 save has no redstone settings; it gets 3.0's behaviour.
+            be.loadWithComponents(new CompoundTag(), registries);
+            h.assertTrue(be.screenRedstone().mode(0) == zone.moddev.mc.lib.api.redstone.RedstoneControl.Mode.READ,
+                "A 3.0 machine reads redstone: " + name);
+            // A player's choice is saved and kept.
+            be.screenRedstone().mode(0, zone.moddev.mc.lib.api.redstone.RedstoneControl.Mode.IGNORE);
+            var saved = be.saveWithoutMetadata(registries);
+            be.loadWithComponents(saved, registries);
+            h.assertTrue(be.screenRedstone().mode(0) == zone.moddev.mc.lib.api.redstone.RedstoneControl.Mode.IGNORE,
+                "A saved redstone setting is kept: " + name);
+        }
         h.succeed();
     }
 

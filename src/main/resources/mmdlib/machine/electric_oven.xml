@@ -1,6 +1,6 @@
 <!--
   Electric Oven: cooks food from the smelting recipes whose result is food, at 4 FE per tick for 100 ticks
-  (FoodSmeltingRecipes). Install an Item Output Port in the output group to push cooked food into neighbours.
+  (ElectricSmeltingRecipes with products="food"). Install an Item Output Port in the output group to push cooked food into neighbours.
 
   Save compatibility with 3.0: items stay under "Items", input slot first, then output, as 3.0 saved them.
   Buffered energy and cooking progress from 3.0 are not carried over.
@@ -24,7 +24,7 @@
     </items>
   </storage>
   <recipe-type id="electricadvantage:oven_cooking" declare="true" name="Electric Oven">
-    <generator class="zone.moddev.mc.electricadvantage.processing.FoodSmeltingRecipes"
+    <generator class="zone.moddev.mc.electricadvantage.processing.ElectricSmeltingRecipes" products="food"
                time="100" energy-per-tick="4"/>
   </recipe-type>
   <processor id="oven" recipe-type="electricadvantage:oven_cooking"/>

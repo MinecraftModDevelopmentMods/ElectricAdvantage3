@@ -215,7 +215,7 @@ public final class XmlMachineGameTests {
     }
 
     /** An item storage as 3.0's ItemStorage saved it: {@code Items} entries with numeric {@code Slot}s. */
-    private static CompoundTag legacyItems(net.minecraft.core.HolderLookup.Provider registries, int size, Object... slotsAndStacks) {
+    static CompoundTag legacyItems(net.minecraft.core.HolderLookup.Provider registries, int size, Object... slotsAndStacks) {
         var list = new ListTag();
         for (int n = 0; n < slotsAndStacks.length; n += 2) {
             var entry = new CompoundTag();

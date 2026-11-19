@@ -69,7 +69,7 @@ public final class ElectricNetworks {
     }
 
     private int priority(CapabilityEndpoint<IEnergyStorage> endpoint) {
-        if (endpoint.cache().getCapability() instanceof zone.moddev.mc.electricadvantage.generation.BackupEnergyStorage) return 2;
+        if (zone.moddev.mc.electricadvantage.generation.BatteryArrayProcessor.isBackup(level, endpoint.position())) return 2;
         return level.getBlockState(endpoint.position()).getBlock() instanceof ElectricBlock block && block.led() ? 0 : 1;
     }
 
@@ -92,7 +92,7 @@ public final class ElectricNetworks {
             if (!networks.available(endpoint.position()) || !component.valid()) continue;
             var target = endpoint.cache().getCapability();
             if (target == null || !target.canReceive() || endpoint.position().equals(origin)
-                    || backup && target instanceof zone.moddev.mc.electricadvantage.generation.BackupEnergyStorage) continue;
+                    || backup && zone.moddev.mc.electricadvantage.generation.BatteryArrayProcessor.isBackup(level, endpoint.position())) continue;
             int allowance = budget.allowance(level.getGameTime(), new TransportNetworks.Origin(node, origin),
                     Math.min(Math.min(source.getEnergyStored(), limit - moved), source.extractEnergy(limit - moved, true)));
             if (allowance <= 0) break;

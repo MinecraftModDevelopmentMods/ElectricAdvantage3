@@ -1,0 +1,27 @@
+<!--
+  Laser Turret: locks onto the nearest visible monster, or player outside its owner's team, and fires a 4000 FE beam
+  that hurts everything along it (LaserTurretProcessor). Placing it records the owner and the owner's team.
+  Comparators read 15 while it is locked on, otherwise up to 8 for its charge.
+
+  Save compatibility with 3.0 and 3.1: 3.0's "Energy" key loads into the buffer; 3.0's owner and team are carried
+  into the processor (LaserTurretEntity).
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_powered_machine" name="Laser Turret">
+  <block hardness="3" no-occlusion="true"/>
+  <appearance preset="model" model="electricadvantage:block/laser_turret_stand"/>
+  <shapes>
+    <shape id="plate" bounds="0 0 0 16 4 16" when="true"/>
+    <shape id="shaft" bounds="4 4 4 12 16 12" when="true"/>
+  </shapes>
+  <storage>
+    <energy id="energy" capacity="8000" input-rate="4096"/>
+  </storage>
+  <redstone comparator-source="turret/state"/>
+  <processor id="turret" class="zone.moddev.mc.electricadvantage.turret.LaserTurretProcessor"/>
+  <screen xmlns="https://moddev.zone/mmdlib/screen">
+    <fill name="machine">
+      <label id="details" variable="$processors.turret.details" width="110" height="32"/>
+    </fill>
+  </screen>
+</machine>

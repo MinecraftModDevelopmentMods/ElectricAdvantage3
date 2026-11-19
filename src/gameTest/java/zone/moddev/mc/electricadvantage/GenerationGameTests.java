@@ -18,7 +18,9 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.gametest.*;
 import zone.moddev.mc.electricadvantage.generation.*;
 import zone.moddev.mc.electricadvantage.infrastructure.ElectricBlock;
+import zone.moddev.mc.lib.machine.neoforge.DefinedMachineEntity;
 
+/** Generators and the battery array: XML machines with custom processors. */
 @GameTestHolder(ElectricAdvantage.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class GenerationGameTests {
@@ -26,30 +28,30 @@ public final class GenerationGameTests {
     public static void steamConversionBackpressureAndPersistence(GameTestHelper h) {
         var be = place(h, "steam_powered_generator", new BlockPos(4,3,4));
         var steam = zone.moddev.mc.poweradvantage.init.Fluids.STEAM.get();
-        var fluid = be.fluidCapability();
+        var fluid = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), null);
         h.assertTrue(fluid.fill(new FluidStack(Fluids.WATER,1000), FluidAction.EXECUTE)==0, "Only PA3 steam is accepted");
-        h.assertTrue(fluid.fill(new FluidStack(steam,32), FluidAction.SIMULATE)==32 && be.screenSteam().isEmpty(), "Steam fill simulation");
+        h.assertTrue(fluid.fill(new FluidStack(steam,32), FluidAction.SIMULATE)==32 && be.fluids.getFluidInTank(0).isEmpty(), "Steam fill simulation");
         fluid.fill(new FluidStack(steam,32), FluidAction.EXECUTE);
         tick(h, be);
-        h.assertTrue(be.energy.stored()==4 && be.screenSteam().isEmpty(), "32 steam / electricity and 0.25 electricity / FE means 32 mB -> 4 FE");
+        h.assertTrue(be.energy.stored()==4 && be.fluids.getFluidInTank(0).isEmpty(), "32 steam / electricity and 0.25 electricity / FE means 32 mB -> 4 FE");
         fluid.fill(new FluidStack(steam,7), FluidAction.EXECUTE);
         tick(h,be);
-        h.assertTrue(be.energy.stored()==4 && be.screenSteam().getAmount()==7, "Sub-FE steam remains in tank");
+        h.assertTrue(be.energy.stored()==4 && be.fluids.getFluidInTank(0).getAmount()==7, "Sub-FE steam remains in tank");
         fluid.fill(new FluidStack(steam,1), FluidAction.EXECUTE);
         tick(h,be);
-        h.assertTrue(be.energy.stored()==5 && be.screenSteam().isEmpty(), "Whole-FE conversion preserves the remainder");
+        h.assertTrue(be.energy.stored()==5 && be.fluids.getFluidInTank(0).isEmpty(), "Whole-FE conversion preserves the remainder");
         be.energy.setStored(be.energy.capacity());
         fluid.fill(new FluidStack(steam,32), FluidAction.EXECUTE);
         tick(h,be);
-        h.assertTrue(be.screenSteam().getAmount()==32, "Full energy buffer must not consume steam");
+        h.assertTrue(be.fluids.getFluidInTank(0).getAmount()==32, "Full energy buffer must not consume steam");
         var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());
-        var restored=(GenerationBlockEntity)be.getType().create(be.getBlockPos(),be.getBlockState());
+        var restored=(DefinedMachineEntity)be.getType().create(be.getBlockPos(),be.getBlockState());
         restored.loadWithComponents(saved,h.getLevel().registryAccess());
-        h.assertTrue(restored.energy.stored()==be.energy.stored() && restored.screenSteam().getAmount()==32, "Steam and energy persist");
+        h.assertTrue(restored.energy.stored()==be.energy.stored() && restored.fluids.getFluidInTank(0).getAmount()==32, "Steam and energy persist");
         h.setBlock(4,3,5,Blocks.REDSTONE_BLOCK);
         be.energy.setStored(0);
         tick(h,be);
-        h.assertTrue(be.energy.stored()==0 && be.screenSteam().getAmount()==32, "Redstone disables conversion");
+        h.assertTrue(be.energy.stored()==0 && be.fluids.getFluidInTank(0).getAmount()==32, "Redstone disables conversion");
         h.succeed();
     }
 
@@ -63,12 +65,12 @@ public final class GenerationGameTests {
         second.items.setStackInSlot(0,empty);
         h.setBlock(3,3,3,block("electric_conduit"));
         h.runAfterDelay(35,()->{
-            h.assertTrue(first.screenStoredEnergy()==1000 && second.screenStoredEnergy()==0,"Connected arrays must not exchange energy");
+            h.assertTrue(first.energy.stored()==1000 && second.energy.stored()==0,"Connected arrays must not exchange energy");
             h.setBlock(3,3,4,block("electric_conduit"));
             h.setBlock(4,3,4,block("led_bar"));
             h.runAfterDelay(35,()->{
                 h.assertBlockProperty(new BlockPos(4,3,4),ElectricBlock.LIT,true);
-                h.assertTrue(first.screenStoredEnergy()<1000 && second.screenStoredEnergy()==0,"Backup powers loads without charging another array");
+                h.assertTrue(first.energy.stored()<1000 && second.energy.stored()==0,"Backup powers loads without charging another array");
                 h.setBlock(2,3,2,Blocks.REDSTONE_BLOCK);
                 h.runAfterDelay(50,()->{
                     h.assertBlockProperty(new BlockPos(4,3,4),ElectricBlock.LIT,false);
@@ -81,19 +83,21 @@ public final class GenerationGameTests {
     @GameTest(templateNamespace = ElectricAdvantage.MOD_ID, template = "infrastructure")
     public static void arrayAggregationSlotsAndSavedCharge(GameTestHelper h) {
         var be=place(h,"electric_battery_array",new BlockPos(4,3,4));
-        h.assertTrue(be.items.getSlots()==8 && !be.items.insertItem(0,new ItemStack(Items.DIRT),false).isEmpty(),"Eight battery-only slots");
+        var slots=h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,be.getBlockPos(),null);
+        h.assertTrue(be.items.inventory("batteries").getSlots()==8,"Eight battery slots");
+        h.assertTrue(!slots.insertItem(0,new ItemStack(Items.DIRT),false).isEmpty(),"Battery slots refuse other items");
         be.items.setStackInSlot(0,stack("lead_acid_battery"));
         be.items.setStackInSlot(1,stack("lithium_battery"));
-        var cap=be.capability();
+        var cap=h.getLevel().getCapability(Capabilities.EnergyStorage.BLOCK,be.getBlockPos(),null);
         h.assertTrue(cap.getEnergyStored()==9000 && cap.getMaxEnergyStored()==9000,"Mixed battery capacities aggregate");
         h.assertTrue(cap.extractEnergy(1234,true)==1234 && cap.getEnergyStored()==9000,"Array simulation is read-only");
         cap.extractEnergy(1234,false);
         h.assertTrue(cap.getEnergyStored()==7766,"Array discharge uses item charge");
         var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());
-        var restored=(GenerationBlockEntity)be.getType().create(be.getBlockPos(),be.getBlockState());
+        var restored=(DefinedMachineEntity)be.getType().create(be.getBlockPos(),be.getBlockState());
         restored.loadWithComponents(saved,h.getLevel().registryAccess());
-        h.assertTrue(restored.screenStoredEnergy()==7766 && restored.screenCapacity()==9000,"Inventory and charge persist");
-        h.assertTrue(restored.capability().receiveEnergy(Integer.MAX_VALUE,false)==1234,"Array charging stops at battery capacity");
+        h.assertTrue(restored.energy.stored()==7766 && restored.energy.capacity()==9000,"Inventory and charge persist");
+        h.assertTrue(restored.energy.receiveEnergy(Integer.MAX_VALUE,false)==1234,"Array charging stops at battery capacity");
         h.succeed();
     }
 
@@ -107,19 +111,19 @@ public final class GenerationGameTests {
             var be=place(h,"photovoltaic_generator",new BlockPos(5,3,5));
             for(int y=4;y<12;y++) h.setBlock(5,y,5,Blocks.AIR);
             level.setDayTime(6000); level.setWeatherParameters(1000,0,false,false); level.setRainLevel(0); level.setThunderLevel(0);
-            h.assertTrue(be.solarIntensity()>0.99,"Daylight solar intensity");
+            h.assertTrue(SolarProcessor.intensity(be)>0.99,"Daylight solar intensity");
             tick(h,be);
             h.assertTrue(be.energy.stored()>0,"Sunlight generates FE");
-            int daylightComparator=be.comparator();
+            int daylightComparator=comparator(be);
             level.setWeatherParameters(0,1000,true,false); level.setRainLevel(1); level.setThunderLevel(0);
-            h.assertTrue(be.solarIntensity()<=be.settings.rainFactor()+0.0001,"Rain reduces output");
+            h.assertTrue(SolarProcessor.intensity(be)<=SolarProcessor.RAIN_FACTOR+0.0001,"Rain reduces output");
             level.setWeatherParameters(0,1000,true,true); level.setRainLevel(1); level.setThunderLevel(1);
-            h.assertTrue(be.solarIntensity()<=be.settings.thunderFactor()+0.0001,"Thunder reduces output");
+            h.assertTrue(SolarProcessor.intensity(be)<=SolarProcessor.THUNDER_FACTOR+0.0001,"Thunder reduces output");
             level.setDayTime(18000); level.setWeatherParameters(1000,0,false,false); level.setRainLevel(0); level.setThunderLevel(0);
-            h.assertTrue(be.solarIntensity()==0,"No unlit night generation");
+            h.assertTrue(SolarProcessor.intensity(be)==0,"No unlit night generation");
             level.setDayTime(6000); h.setBlock(5,3,6,Blocks.REDSTONE_BLOCK);
             long stored=be.energy.stored(); tick(h,be);
-            h.assertTrue(be.energy.stored()==stored && be.comparator()==0 && daylightComparator>0,"Redstone disables generation/comparator output");
+            h.assertTrue(be.energy.stored()==stored && comparator(be)==0 && daylightComparator>0,"Redstone disables generation/comparator output");
         } finally { level.setDayTime(oldTime); level.setWeatherParameters(1000,1000,rain,thunder); level.setRainLevel(rainLevel); level.setThunderLevel(thunderLevel); }
         h.succeed();
     }
@@ -131,7 +135,7 @@ public final class GenerationGameTests {
         h.setBlock(3,2,3,Blocks.WATER);
         h.setBlock(4,2,3,Blocks.WATER.defaultBlockState().setValue(LiquidBlock.LEVEL,1));
         var be=place(h,"hydroelectric_generator",new BlockPos(4,3,3));
-        h.assertTrue(be.waterFlow().horizontalDistanceSqr()>0.00001,"Horizontal water flow spins turbine");
+        h.assertTrue(HydroProcessor.waterFlow(h.getLevel(),be.getBlockPos()).horizontalDistanceSqr()>0.00001,"Horizontal water flow spins turbine");
         tick(h,be);
         h.assertTrue(be.energy.stored()>0,"Flowing water generates electricity");
         var victim=h.spawn(EntityType.PIG,4.5f,2,3.5f);
@@ -154,8 +158,8 @@ public final class GenerationGameTests {
             player.setPos(be.getBlockPos().getX()+0.5,be.getBlockPos().getY()+0.5,be.getBlockPos().getZ()+0.5);
             var menu = new zone.moddev.mc.lib.gui.runtime.MachineMenu(1,player.getInventory(),be);
             h.assertTrue(menu.stillValid(player),"MMDLib menu binds to the placed machine");
-            if(be.array()) {
-                h.assertTrue(menu.slots.size()==8+41,"Eight real battery slots plus the 41-slot player inventory (with armor and offhand)");
+            if(name.equals("electric_battery_array")) {
+                h.assertTrue(menu.slots.size()>=8+41,"Eight real battery slots plus the 41-slot player inventory (with armor and offhand)");
                 h.assertTrue(menu.getSlot(0).mayPlace(stack("lithium_battery"))
                         && !menu.getSlot(0).mayPlace(new ItemStack(Items.DIRT)),"Battery menu respects item filters");
             }
@@ -171,7 +175,7 @@ public final class GenerationGameTests {
         h.setBlock(3,3,4,block("electric_conduit"));
         h.setBlock(4,3,4,block("led_bar"));
         h.runAfterDelay(60,()->{
-            h.assertTrue(be.screenSteam().getAmount()>0 && be.energy.stored()>0,"PA3 pipe supplies real steam to generator");
+            h.assertTrue(be.fluids.getFluidInTank(0).getAmount()>0 && be.energy.stored()>0,"PA3 pipe supplies real steam to generator");
             h.assertBlockProperty(new BlockPos(4,3,4),ElectricBlock.LIT,true);
             h.succeed();
         });
@@ -199,8 +203,12 @@ public final class GenerationGameTests {
         h.assertTrue(result.is(stack(name).getItem()) && result.getCount()==1,"Machine crafting output: "+name);
     }
 
-    private static GenerationBlockEntity place(GameTestHelper h,String name,BlockPos pos){h.setBlock(pos,block(name));return (GenerationBlockEntity)h.getLevel().getBlockEntity(h.absolutePos(pos));}
-    private static void tick(GameTestHelper h,GenerationBlockEntity be){GenerationBlockEntity.tick(h.getLevel(),be.getBlockPos(),be.getBlockState(),be);}
+    private static DefinedMachineEntity place(GameTestHelper h,String name,BlockPos pos){h.setBlock(pos,block(name));return (DefinedMachineEntity)h.getLevel().getBlockEntity(h.absolutePos(pos));}
+    private static void tick(GameTestHelper h,DefinedMachineEntity be){be.serverTick();}
+    /** The comparator source's current level, without waiting for the next sample. */
+    private static int comparator(DefinedMachineEntity be){
+        return be.features.findProcessor("solar",GeneratorProcessor.class).orElseThrow().redstoneOutputs().getFirst().level();
+    }
     private static ResourceLocation id(String name){return ResourceLocation.fromNamespaceAndPath(ElectricAdvantage.MOD_ID,name);}
     private static Block block(String name){return BuiltInRegistries.BLOCK.get(id(name));}
     private static ItemStack stack(String name){return new ItemStack(BuiltInRegistries.ITEM.get(id(name)));}

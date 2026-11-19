@@ -25,12 +25,8 @@ public final class ModItems {
     public ModItems(IEventBus modBus) {
         Infrastructure.register();
         zone.moddev.mc.electricadvantage.assembler.AssemblerSystems.register(modBus);
-        zone.moddev.mc.electricadvantage.processing.ProcessingSystems.register();
         zone.moddev.mc.electricadvantage.generation.GenerationSystems.register();
         zone.moddev.mc.electricadvantage.farming.FarmingSystems.register(modBus);
-        zone.moddev.mc.electricadvantage.pump.PumpSystems.register();
-        zone.moddev.mc.electricadvantage.turret.TurretSystems.register();
-        zone.moddev.mc.electricadvantage.drill.DrillSystems.register();
         zone.moddev.mc.electricadvantage.trades.TradeSystems.register();
         blockEntities = DeferredRegister.create(
                 Registries.BLOCK_ENTITY_TYPE, ElectricAdvantage.MOD_ID);
@@ -45,11 +41,6 @@ public final class ModItems {
         modBus.addListener(this::capabilities);
         // Generated pump shafts retain EA2's search-only item visibility.
         modBus.addListener((net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent event) -> {
-                // XML machines are registered by MMDLib rather than this registrar, so they join its tab here.
-                if (event.getTabKey().location().equals(ResourceLocation.fromNamespaceAndPath(ElectricAdvantage.MOD_ID, "materials")))
-                    zone.moddev.mc.lib.machine.neoforge.MachineContent.definitions().keySet().stream()
-                            .filter(id -> id.getNamespace().equals(ElectricAdvantage.MOD_ID)).sorted()
-                            .forEach(id -> event.accept(zone.moddev.mc.lib.machine.neoforge.MachineContent.item(id)));
                 event.getParentEntries().stream().filter(stack -> stack.getItem() instanceof net.minecraft.world.item.BlockItem item
                         && item.getBlock() instanceof zone.moddev.mc.electricadvantage.infrastructure.PumpPipeBlock)
                         .toList().forEach(stack -> event.remove(stack, net.minecraft.world.item.CreativeModeTab.TabVisibility.PARENT_TAB_ONLY));
@@ -75,44 +66,8 @@ public final class ModItems {
 
     private void capabilities(RegisterCapabilitiesEvent event) {
         runtime.blockEntityHandles().values().forEach(handle -> {
-            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.generation.GenerationBlockEntity.class) {
-                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.generation.GenerationBlockEntity.class);
-                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.capability());
-                event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, binding.type().get(),
-                        (be, side) -> be.settings.kind().equals("steam") ? be.fluidCapability() : null);
-                event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.array() ? be.items : null);
-            }
-            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.processing.ProcessingBlockEntity.class) {
-                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.processing.ProcessingBlockEntity.class);
-                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
-                event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
-            }
             if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.assembler.AssemblerBlockEntity.class) {
                 var binding = handle.binding().as(zone.moddev.mc.electricadvantage.assembler.AssemblerBlockEntity.class);
-                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
-                event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
-            }
-            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.farming.GrowthChamberBlockEntity.class) {
-                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.farming.GrowthChamberBlockEntity.class);
-                event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
-            }
-            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.farming.GreenhouseControllerBlockEntity.class) {
-                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.farming.GreenhouseControllerBlockEntity.class);
-                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
-                event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, binding.type().get(), (be, side) -> be.fluidCapability());
-                event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
-            }
-            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.pump.PumpBlockEntity.class) {
-                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.pump.PumpBlockEntity.class);
-                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
-                event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, binding.type().get(), (be, side) -> be.fluidCapability());
-            }
-            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.turret.LaserTurretBlockEntity.class) {
-                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.turret.LaserTurretBlockEntity.class);
-                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
-            }
-            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.drill.DrillBlockEntity.class) {
-                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.drill.DrillBlockEntity.class);
                 event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
                 event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
             }

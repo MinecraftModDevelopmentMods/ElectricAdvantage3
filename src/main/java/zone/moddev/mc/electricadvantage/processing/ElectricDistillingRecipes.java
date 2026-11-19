@@ -40,9 +40,7 @@ public final class ElectricDistillingRecipes implements MachineRecipeGenerator {
             var builder = MachineRecipeBuilder.recipe(context.recipeType());
             recipe.inputs().forEach((group, parts) -> parts.forEach(part -> builder.input(group, part)));
             recipe.outputs().forEach((group, products) -> products.forEach(product -> builder.output(group, product)));
-            var id = ResourceLocation.fromNamespaceAndPath(type.getNamespace(),
-                "generated/" + type.getPath() + "/" + holder.id().getNamespace() + "/" + holder.id().getPath());
-            output.accept(id, builder.inputEnergy(energy, perTick * recipe.time()).time(recipe.time()).build());
+            output.accept(GeneratedIds.copy(type, holder.id()), builder.inputEnergy(energy, perTick * recipe.time()).time(recipe.time()).build());
         }
     }
 

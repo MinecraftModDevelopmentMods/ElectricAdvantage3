@@ -13,6 +13,7 @@ public final class ElectricAdvantage {
 
     public ElectricAdvantage(IEventBus modBus, net.neoforged.fml.ModContainer container) {
         container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, Config.SPEC);
+        zone.moddev.mc.electricadvantage.machine.ElectricMachines.register();
         new ModItems(modBus);
         LOGGER.info("Initializing Electric Advantage");
     }

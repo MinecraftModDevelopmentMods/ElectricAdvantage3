@@ -67,29 +67,5 @@ public final class FarmingSystems {
     public static void register(IEventBus bus){
         TYPES.register(bus);SERIALIZERS.register(bus);
         bus.addListener((RegisterDataMapTypesEvent event)->{event.register(SOIL_FERTILITY);event.register(FERTILIZER);});
-        var chamber=id("growth_chamber");
-        MaterialExtensions.GLOBAL.registerBlockImplementation(chamber,new BlockImplementation<GrowthChamberBlock>(){
-            @Override public Class<GrowthChamberBlock> blockClass(){return GrowthChamberBlock.class;}
-            @Override public GrowthChamberBlock create(MMDMaterial material,MMDBlock block){throw new UnsupportedOperationException("BlockContext required");}
-            @Override public GrowthChamberBlock create(BlockContext context){return new GrowthChamberBlock(context.properties(),context.blockEntity().orElseThrow().as(GrowthChamberBlockEntity.class));}
-        });
-        zone.moddev.mc.lib.util.Registries.BLOCK_ENTITY_FACTORIES.register(chamber,new BlockEntityFactory<GrowthChamberBlockEntity,GrowthChamberSettings>(){
-            @Override public Class<GrowthChamberBlockEntity> blockEntityClass(){return GrowthChamberBlockEntity.class;}
-            @Override public Codec<GrowthChamberSettings> settingsCodec(){return GrowthChamberSettings.CODEC;}
-            @Override public GrowthChamberBlockEntity create(BlockEntityType<GrowthChamberBlockEntity> type,BlockPos pos,BlockState state,MMDBlockEntity definition,GrowthChamberSettings settings){return new GrowthChamberBlockEntity(type,pos,state,settings);}
-            @Override public BlockEntityTicker<GrowthChamberBlockEntity> ticker(Level level,MMDBlockEntity definition,GrowthChamberSettings settings){return level.isClientSide?null:GrowthChamberBlockEntity::tick;}
-        });
-        var controller=id("greenhouse_controller");
-        MaterialExtensions.GLOBAL.registerBlockImplementation(controller,new BlockImplementation<GreenhouseControllerBlock>(){
-            @Override public Class<GreenhouseControllerBlock> blockClass(){return GreenhouseControllerBlock.class;}
-            @Override public GreenhouseControllerBlock create(MMDMaterial material,MMDBlock block){throw new UnsupportedOperationException("BlockContext required");}
-            @Override public GreenhouseControllerBlock create(BlockContext context){return new GreenhouseControllerBlock(context.properties(),context.blockEntity().orElseThrow().as(GreenhouseControllerBlockEntity.class));}
-        });
-        zone.moddev.mc.lib.util.Registries.BLOCK_ENTITY_FACTORIES.register(controller,new BlockEntityFactory<GreenhouseControllerBlockEntity,GreenhouseControllerSettings>(){
-            @Override public Class<GreenhouseControllerBlockEntity> blockEntityClass(){return GreenhouseControllerBlockEntity.class;}
-            @Override public Codec<GreenhouseControllerSettings> settingsCodec(){return GreenhouseControllerSettings.CODEC;}
-            @Override public GreenhouseControllerBlockEntity create(BlockEntityType<GreenhouseControllerBlockEntity> type,BlockPos pos,BlockState state,MMDBlockEntity definition,GreenhouseControllerSettings settings){return new GreenhouseControllerBlockEntity(type,pos,state,settings);}
-            @Override public BlockEntityTicker<GreenhouseControllerBlockEntity> ticker(Level level,MMDBlockEntity definition,GreenhouseControllerSettings settings){return level.isClientSide?null:GreenhouseControllerBlockEntity::tick;}
-        });
     }
 }

@@ -1,4 +1,4 @@
 {
-  "parent": "electricadvantage:block/photovoltaic_generator",
+  "parent": "electricadvantage:block/photovoltaic_panel",
   "ambientocclusion": false
 }

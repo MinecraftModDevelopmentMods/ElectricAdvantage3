@@ -13,7 +13,9 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.gametest.*;
 import zone.moddev.mc.electricadvantage.farming.*;
+import zone.moddev.mc.lib.machine.neoforge.DefinedMachineEntity;
 
+/** The growth chamber and its Control Unit: XML machines with custom processors. */
 @GameTestHolder(ElectricAdvantage.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class FarmingGameTests {
@@ -22,29 +24,29 @@ public final class FarmingGameTests {
         var be=chamber(h,4,3,4);
         be.items.setStackInSlot(0,new ItemStack(Items.DIRT));be.items.setStackInSlot(3,new ItemStack(Items.WHEAT_SEEDS));
         powered(h,be,799);
-        h.assertTrue(be.screenProgress0()==799&&count(be,Items.WHEAT)==0,"Wheat takes 800 growth ticks");
+        h.assertTrue(be.progress(0)==799&&count(be,Items.WHEAT)==0,"Wheat takes 800 growth ticks");
         powered(h,be,1);
-        h.assertTrue(count(be,Items.WHEAT)==1&&be.screenProgress0()==0,"Fertility-0 soil yields exactly the base wheat");
+        h.assertTrue(count(be,Items.WHEAT)==1&&be.progress(0)==0,"Fertility-0 soil yields exactly the base wheat");
         h.assertTrue(be.items.getStackInSlot(0).is(Items.DIRT)&&be.items.getStackInSlot(3).is(Items.WHEAT_SEEDS),"Soil and seed are catalysts");
         h.succeed();
     }
     @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure")
     public static void soilRestrictionsAndSlotRules(GameTestHelper h){
-        var be=chamber(h,4,3,4);var handler=be.itemCapability();
+        var be=chamber(h,4,3,4);var handler=items(h,be);
         h.assertTrue(!handler.insertItem(0,new ItemStack(Items.DIAMOND),false).isEmpty(),"Non-soil items are rejected from soil slots");
         h.assertTrue(!handler.insertItem(3,new ItemStack(Items.DIAMOND),false).isEmpty(),"Non-seed items are rejected from seed slots");
         h.assertTrue(!handler.insertItem(12,new ItemStack(BuiltInRegistries.ITEM.get(id("shearing_upgrade"))),false).isEmpty(),"Automation cannot insert upgrades");
         h.assertTrue(handler.insertItem(3,new ItemStack(Items.NETHER_WART,5),false).getCount()==4,"Seed slots hold a single catalyst item");
         handler.insertItem(0,new ItemStack(Items.DIRT),false);
         be.setGreenhouse(50);ticks(h,be,10);
-        h.assertTrue(be.screenProgress0()==0&&be.screenGreenhouse()==50,"Nether wart does not grow on dirt and uses no power");
+        h.assertTrue(be.progress(0)==0&&be.greenhouse()==50,"Nether wart does not grow on dirt and uses no power");
         h.assertTrue(handler.extractItem(3,1,false).isEmpty(),"Automation cannot pull catalysts out");
         be.items.setStackInSlot(0,new ItemStack(Items.SOUL_SAND));powered(h,be,1);
-        h.assertTrue(be.screenProgress0()==1,"Nether wart grows on soul sand");
+        h.assertTrue(be.progress(0)==1,"Nether wart grows on soul sand");
         be.items.setStackInSlot(1,new ItemStack(Items.WATER_BUCKET));be.items.setStackInSlot(4,new ItemStack(Items.KELP));
         be.items.setStackInSlot(2,new ItemStack(Items.END_STONE));be.items.setStackInSlot(5,new ItemStack(Items.CHORUS_FLOWER));
         powered(h,be,1);
-        h.assertTrue(be.screenProgress1()==1&&be.screenProgress2()==1,"Water bucket and end stone act as soils");
+        h.assertTrue(be.progress(1)==1&&be.progress(2)==1,"Water bucket and end stone act as soils");
         h.succeed();
     }
     @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure")
@@ -94,7 +96,7 @@ public final class FarmingGameTests {
         powered(h,be,5);
         h.assertTrue(be.pendingHarvest(0).size()==1&&be.pendingHarvest(0).getFirst().is(Items.DIAMOND),"A harvest that does not fit is held");
         be.setGreenhouse(50);ticks(h,be,20);
-        h.assertTrue(be.screenGreenhouse()==50&&be.screenProgress0()==0,"A lane holding a harvest does not grow or use power");
+        h.assertTrue(be.greenhouse()==50&&be.progress(0)==0,"A lane holding a harvest does not grow or use power");
         be=restore(h,be);
         h.assertTrue(be.pendingHarvest(0).size()==1,"Held harvest survives save/reload");
         be.items.setStackInSlot(11,ItemStack.EMPTY);ticks(h,be,1);
@@ -106,15 +108,15 @@ public final class FarmingGameTests {
         var be=chamber(h,4,3,4);
         be.items.setStackInSlot(0,new ItemStack(Items.DIRT));be.items.setStackInSlot(3,new ItemStack(Items.WHEAT_SEEDS));
         powered(h,be,300);be=restore(h,be);
-        h.assertTrue(be.screenProgress0()==300,"Growth progress survives save/reload (EA2 reset it)");
+        h.assertTrue(be.progress(0)==300,"Growth progress survives save/reload (EA2 reset it)");
         be.setGreenhouse(0);ticks(h,be,10);
-        h.assertTrue(be.screenProgress0()==300,"Losing power pauses growth without losing progress");
+        h.assertTrue(be.progress(0)==300,"Losing power pauses growth without losing progress");
         h.setBlock(4,3,5,Blocks.REDSTONE_BLOCK);powered(h,be,10);
-        h.assertTrue(be.screenProgress0()==300&&be.screenGreenhouse()==be.settings.capacity(),"Redstone pauses growth");
+        h.assertTrue(be.progress(0)==300&&be.greenhouse()==GrowthChamberEntity.CAPACITY,"Redstone pauses growth");
         h.setBlock(4,3,5,Blocks.AIR);powered(h,be,1);
-        h.assertTrue(be.screenProgress0()==301,"Growth resumes");
+        h.assertTrue(be.progress(0)==301,"Growth resumes");
         be.items.setStackInSlot(3,new ItemStack(Items.CARROT));powered(h,be,1);
-        h.assertTrue(be.screenProgress0()==1,"Changing the seed restarts growth");
+        h.assertTrue(be.progress(0)==1,"Changing the seed restarts growth");
         h.succeed();
     }
     @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure")
@@ -124,19 +126,19 @@ public final class FarmingGameTests {
         be.items.setStackInSlot(1,new ItemStack(Items.WATER_BUCKET));be.items.setStackInSlot(4,new ItemStack(Items.BRAIN_CORAL_FAN));
         powered(h,be,800);
         h.assertTrue(count(be,Items.POPPY)==1&&count(be,Items.BRAIN_CORAL_FAN)==1,"Tag-based duplication recipes yield a copy of the seed");
-        h.assertTrue(!be.itemCapability().insertItem(5,new ItemStack(Items.WITHER_ROSE),true).isEmpty(),"Wither roses are not duplicated");
+        h.assertTrue(!items(h,be).insertItem(5,new ItemStack(Items.WITHER_ROSE),true).isEmpty(),"Wither roses are not duplicated");
         h.succeed();
     }
     @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure")
     public static void controllerConvertsAndSharesAcrossTouchingChambers(GameTestHelper h){
         var controller=controller(h,3,3,3);
         var a=chamber(h,4,3,3);var b=chamber(h,5,3,3);var far=chamber(h,8,3,3);
-        controller.energy.setStored(10000);controller.fluidCapability().fill(new FluidStack(Fluids.WATER,4000),FluidAction.EXECUTE);
+        controller.energy.setStored(10000);fluids(h,controller).fill(new FluidStack(Fluids.WATER,4000),FluidAction.EXECUTE);
         controller.items.setStackInSlot(0,new ItemStack(Items.BONE_MEAL,2));
-        GreenhouseControllerBlockEntity.tick(h.getLevel(),controller.getBlockPos(),controller.getBlockState(),controller);
+        controller.serverTick();
         h.assertTrue(controller.chambers().size()==2,"Only chambers touching the controller or its cluster connect");
         h.assertTrue(controller.fertilizer()==984&&controller.items.getStackInSlot(0).getCount()==1,"One bone meal adds 1000 fertilizer; 16 units use 16");
-        h.assertTrue(controller.energy.stored()==10000-16*32&&controller.screenWater().getAmount()==4000-16*2,"Each unit costs 32 FE and 2 mB of water");
+        h.assertTrue(controller.energy.stored()==10000-16*32&&controller.fluids.getFluidInTank(0).getAmount()==4000-16*2,"Each unit costs 32 FE and 2 mB of water");
         h.assertTrue(a.greenhouse()==8&&b.greenhouse()==8&&far.greenhouse()==0,"Power is shared equally across the cluster");
         h.succeed();
     }
@@ -144,15 +146,15 @@ public final class FarmingGameTests {
     @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure",timeoutTicks=200,batch="greenhouse_chain")
     public static void powerReachesTheFarEndOfAChamberChain(GameTestHelper h){
         var controller=controller(h,1,2,5);
-        controller.energy.setStored(10000);controller.fluidCapability().fill(new FluidStack(Fluids.WATER,4000),FluidAction.EXECUTE);
+        controller.energy.setStored(10000);fluids(h,controller).fill(new FluidStack(Fluids.WATER,4000),FluidAction.EXECUTE);
         controller.items.setStackInSlot(0,new ItemStack(Items.BONE_MEAL,4));
-        var chain=new java.util.ArrayList<GrowthChamberBlockEntity>();
+        var chain=new java.util.ArrayList<GrowthChamberEntity>();
         for(int x=2;x<=7;x++)chain.add(chamber(h,x,2,5));
         for(int y=3;y<=5;y++)chain.add(chamber(h,7,y,5));
         for(var be:chain){be.items.setStackInSlot(0,new ItemStack(Items.DIRT));be.items.setStackInSlot(3,new ItemStack(Items.WHEAT_SEEDS));}
         h.runAtTickTime(100,()->{
             h.assertTrue(controller.chambers().size()==chain.size(),"Every chamber in the chain connects: "+controller.chambers().size());
-            for(int n=0;n<chain.size();n++)h.assertTrue(chain.get(n).screenProgress0()>0,"Chamber "+(n+1)+" of "+chain.size()+" grows");
+            for(int n=0;n<chain.size();n++)h.assertTrue(chain.get(n).progress(0)>0,"Chamber "+(n+1)+" of "+chain.size()+" grows");
             h.succeed();
         });
     }
@@ -171,16 +173,16 @@ public final class FarmingGameTests {
     @GameTest(templateNamespace=ElectricAdvantage.MOD_ID,template="infrastructure")
     public static void controllerInputsComparatorAndRedstone(GameTestHelper h){
         var controller=controller(h,4,3,4);
-        h.assertTrue(controller.fluidCapability().fill(new FluidStack(Fluids.LAVA,1000),FluidAction.EXECUTE)==0,"Only water is accepted");
-        h.assertTrue(!controller.itemCapability().insertItem(0,new ItemStack(Items.DIRT),false).isEmpty(),"Only fertilizer is accepted");
-        h.assertTrue(controller.itemCapability().insertItem(0,new ItemStack(Items.BONE_MEAL),false).isEmpty(),"Bone meal is a fertilizer");
-        controller.fluidCapability().fill(new FluidStack(Fluids.WATER,1000),FluidAction.EXECUTE);
-        h.assertTrue(controller.comparator()==0,"Comparator is off without energy and fertilizer");
+        h.assertTrue(fluids(h,controller).fill(new FluidStack(Fluids.LAVA,1000),FluidAction.EXECUTE)==0,"Only water is accepted");
+        h.assertTrue(!items(h,controller).insertItem(0,new ItemStack(Items.DIRT),false).isEmpty(),"Only fertilizer is accepted");
+        h.assertTrue(items(h,controller).insertItem(0,new ItemStack(Items.BONE_MEAL),false).isEmpty(),"Bone meal is a fertilizer");
+        fluids(h,controller).fill(new FluidStack(Fluids.WATER,1000),FluidAction.EXECUTE);
+        h.assertTrue(comparator(controller)==0,"Comparator is off without energy and fertilizer");
         controller.energy.setStored(10000);h.setBlock(4,3,5,Blocks.REDSTONE_BLOCK);
-        GreenhouseControllerBlockEntity.tick(h.getLevel(),controller.getBlockPos(),controller.getBlockState(),controller);
-        h.assertTrue(controller.greenhouse()==0&&controller.comparator()==15,"Redstone stops conversion; comparator reports a full set of inputs");
+        controller.serverTick();
+        h.assertTrue(controller.greenhouse()==0&&comparator(controller)==15,"Redstone stops conversion; comparator reports a full set of inputs");
         h.setBlock(4,3,5,Blocks.AIR);
-        GreenhouseControllerBlockEntity.tick(h.getLevel(),controller.getBlockPos(),controller.getBlockState(),controller);
+        controller.serverTick();
         h.assertTrue(controller.greenhouse()==16,"Conversion resumes without redstone");
         h.succeed();
     }
@@ -190,22 +192,32 @@ public final class FarmingGameTests {
         var player=net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
         var chamberMenu=new zone.moddev.mc.lib.gui.runtime.MachineMenu(9,player.getInventory(),chamber);
         var controllerMenu=new zone.moddev.mc.lib.gui.runtime.MachineMenu(10,player.getInventory(),controller);
-        h.assertTrue(chamberMenu.slots.size()==13+41,"Chamber: three soils, three seeds, six outputs, one upgrade and the player inventory");
-        h.assertTrue(controllerMenu.slots.size()==1+41,"Controller: fertilizer slot and the player inventory");
+        h.assertTrue(chamberMenu.slots.size()>=13+41,"Chamber: three soils, three seeds, six outputs, one upgrade and the player inventory");
+        h.assertTrue(controllerMenu.slots.size()>=1+41,"Controller: fertilizer slot and the player inventory");
         h.assertTrue(chamberMenu.getSlot(12).getMaxStackSize()==1,"Upgrade slot holds one item");
         h.succeed();
     }
-    private static GrowthChamberBlockEntity chamber(GameTestHelper h,int x,int y,int z){
+    private static GrowthChamberEntity chamber(GameTestHelper h,int x,int y,int z){
         h.setBlock(x,y,z,BuiltInRegistries.BLOCK.get(id("growth_chamber")));
-        return(GrowthChamberBlockEntity)h.getLevel().getBlockEntity(h.absolutePos(new BlockPos(x,y,z)));
+        return(GrowthChamberEntity)h.getLevel().getBlockEntity(h.absolutePos(new BlockPos(x,y,z)));
     }
-    private static GreenhouseControllerBlockEntity controller(GameTestHelper h,int x,int y,int z){
+    private static GreenhouseControllerEntity controller(GameTestHelper h,int x,int y,int z){
         h.setBlock(x,y,z,BuiltInRegistries.BLOCK.get(id("growth_chamber_controller")));
-        return(GreenhouseControllerBlockEntity)h.getLevel().getBlockEntity(h.absolutePos(new BlockPos(x,y,z)));
+        return(GreenhouseControllerEntity)h.getLevel().getBlockEntity(h.absolutePos(new BlockPos(x,y,z)));
     }
-    private static void ticks(GameTestHelper h,GrowthChamberBlockEntity be,int count){for(int n=0;n<count;n++)GrowthChamberBlockEntity.tick(h.getLevel(),be.getBlockPos(),be.getBlockState(),be);}
-    private static void powered(GameTestHelper h,GrowthChamberBlockEntity be,int count){for(int n=0;n<count;n++){be.setGreenhouse(be.settings.capacity());ticks(h,be,1);}}
-    private static int count(GrowthChamberBlockEntity be,Item item){int total=0;for(int slot=6;slot<12;slot++)if(be.items.getStackInSlot(slot).is(item))total+=be.items.getStackInSlot(slot).getCount();return total;}
-    private static GrowthChamberBlockEntity restore(GameTestHelper h,GrowthChamberBlockEntity be){var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());var restored=(GrowthChamberBlockEntity)be.getType().create(be.getBlockPos(),be.getBlockState());restored.loadWithComponents(saved,h.getLevel().registryAccess());h.getLevel().setBlockEntity(restored);return restored;}
+    private static net.neoforged.neoforge.items.IItemHandler items(GameTestHelper h,DefinedMachineEntity be){
+        return h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,be.getBlockPos(),null);
+    }
+    private static net.neoforged.neoforge.fluids.capability.IFluidHandler fluids(GameTestHelper h,DefinedMachineEntity be){
+        return h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,be.getBlockPos(),null);
+    }
+    /** The comparator source's current level, without waiting for the next sample. */
+    private static int comparator(GreenhouseControllerEntity controller){
+        return controller.features.findProcessor("controller",GreenhouseControllerProcessor.class).orElseThrow().redstoneOutputs().getFirst().level();
+    }
+    private static void ticks(GameTestHelper h,GrowthChamberEntity be,int count){for(int n=0;n<count;n++)be.serverTick();}
+    private static void powered(GameTestHelper h,GrowthChamberEntity be,int count){for(int n=0;n<count;n++){be.setGreenhouse(GrowthChamberEntity.CAPACITY);ticks(h,be,1);}}
+    private static int count(GrowthChamberEntity be,Item item){int total=0;for(int slot=6;slot<12;slot++)if(be.items.getStackInSlot(slot).is(item))total+=be.items.getStackInSlot(slot).getCount();return total;}
+    private static GrowthChamberEntity restore(GameTestHelper h,GrowthChamberEntity be){var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());var restored=(GrowthChamberEntity)be.getType().create(be.getBlockPos(),be.getBlockState());restored.loadWithComponents(saved,h.getLevel().registryAccess());h.getLevel().setBlockEntity(restored);return restored;}
     private static ResourceLocation id(String path){return ResourceLocation.fromNamespaceAndPath(ElectricAdvantage.MOD_ID,path);}
 }

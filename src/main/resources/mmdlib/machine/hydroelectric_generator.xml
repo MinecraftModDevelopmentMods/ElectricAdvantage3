@@ -1,0 +1,21 @@
+<!--
+  Hydroelectric Generator: 4 FE per tick while water flows sideways through the block below, where its turbine hangs
+  (HydroProcessor); the blades hurt anything in that block. It pushes its buffer into neighbouring conduits and
+  machines. Comparators read how full the buffer is.
+
+  Save compatibility with 3.0 and 3.1: 3.0's "Energy" key loads into the buffer.
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_powered_machine" name="Hydroelectric Generator">
+  <block hardness="3"/>
+  <appearance preset="cube-front" front="electricadvantage:block/machine_side" side="electricadvantage:block/machine_side"
+              top="electricadvantage:block/hydroelectric_generator_off" bottom="electricadvantage:block/machine_top">
+    <face-texture id="turning" face="top" texture="electricadvantage:block/hydroelectric_generator_on"
+                  when="$processors.hydro.status == 'RUNNING'"/>
+  </appearance>
+  <storage>
+    <energy id="energy" capacity="1000" input-rate="0" output-rate="4096"/>
+  </storage>
+  <redstone comparator-source="generator/output"/>
+  <processor id="hydro" class="zone.moddev.mc.electricadvantage.generation.HydroProcessor"/>
+</machine>

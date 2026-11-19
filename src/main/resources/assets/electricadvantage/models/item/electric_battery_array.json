@@ -1,4 +1,4 @@
 {
-  "parent": "electricadvantage:block/electric_battery_array",
+  "parent": "electricadvantage:block/battery_array_casing",
   "ambientocclusion": false
 }
