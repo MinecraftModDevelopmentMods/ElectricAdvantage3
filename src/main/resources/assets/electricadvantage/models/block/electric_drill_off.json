@@ -1,5 +1,5 @@
 {
-  "parent": "electricadvantage:block/electric_drill_base",
+  "parent": "electricadvantage:block/electric_drill_body",
   "textures": {
     "top": "electricadvantage:block/electric_drill_off",
     "bottom": "electricadvantage:block/laser_drill_optic"
