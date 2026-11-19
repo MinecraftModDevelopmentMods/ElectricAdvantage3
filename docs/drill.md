@@ -46,7 +46,7 @@ are kept on purpose; the few differences are listed at the end.
   Once the drill has moved, items stay in its slots until they fill and it
   stalls.
 - **Redstone.** A signal stops the drill, resets progress, drops the target and
-  stops export.
+  stops export. Each face can be changed in the redstone drawer.
 - **Beam damage.** While the drill is working on a face, every living entity in
   the box from the face's corner to the far corner of the drill is set on fire
   for 3 s and takes 2 `electricadvantage:laser_drill` damage each power update.
@@ -55,21 +55,26 @@ are kept on purpose; the few differences are listed at the end.
   between them.
 - **Comparator.** None. EA2's comparator counted input slots and the drill has
   none, so it always read 0.
-- **Screen.** Energy, mining progress, the six output slots, and status: idle,
-  mining, output full, end of range, waiting for power, or redstone.
+- **Screen.** MMDLib's machine screen: energy, mining progress, the six output
+  slots, and status: idle, mining, output full, end of range, waiting for power,
+  or redstone.
+- **Upgrades.** MMDLib's Gearbox Upgrade runs the drill's work more often,
+  mining and power updates alike, at the same FE per tick of mining.
 
 ## Rendering
 
 [LaserDrillRenderer](../src/main/java/zone/moddev/mc/electricadvantage/client/LaserDrillRenderer.java)
 draws EA2's beam: two crossed full-bright quads from the centre of the drill to
-the centre of the face, using EA2's `laser_beam` texture. The server sends only
-the beam length, when it changes. The block model, textures and the six
-`facing` × `active` blockstates are EA2's.
+the centre of the face, using EA2's `laser_beam` texture. The beam length is
+processor state synced to clients when it changes. The textures are EA2's; the
+model is split into a casing and on/off end faces, which MMDLib picks by power
+and redstone, and MMDLib generates the six facing blockstates.
 
 ## Differences from EA2
 
 - **Progress survives a reload.** EA2 saved the target but started its
-  progress from zero after a reload.
+  progress from zero after a reload. (A drill from EA3 3.0 or 3.1 starts its
+  face again once.)
 - **Moving costs energy.** EA2 took the move cost from the old drill after
   copying its energy to the new one, so in practice moving was free.
 - **No overflow loss.** EA2 checked each drop on its own and threw away
@@ -82,10 +87,16 @@ the beam length, when it changes. The block model, textures and the six
 
 ## Configuration
 
-Every number is `block_entity_data` in
-`mmdlib/standalone/block/electric_drill.json`: capacity, input rate, mining and
-move costs, range, mining time factor, power update interval, beam damage and
-burn time. The recipe is EA2's: power supply unit and block of diamond over
+The drill is an MMDLib XML machine,
+[electric_drill.xml](../src/main/resources/mmdlib/machine/electric_drill.xml),
+which sets the capacity and input rate.
+[DrillProcessor](../src/main/java/zone/moddev/mc/electricadvantage/drill/DrillProcessor.java)
+holds the mining and move costs, range, mining time factor, power update
+interval, beam damage and burn time as constants, and
+[DrillEntity](../src/main/java/zone/moddev/mc/electricadvantage/drill/DrillEntity.java)
+makes the moves after the processor's tick. Saves from 3.0 and 3.1 keep the
+items (`Items`) and, through 3.0's `Energy` key, the buffer; the drill targets
+its face again on the first power update. The recipe is EA2's: power supply unit and block of diamond over
 steel plate, steel frame, steel plate.
 
 ## Verification

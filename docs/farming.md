@@ -10,7 +10,7 @@ Garden Cloche, powered by a separate Control Unit, as in EA2.
 | 0–2 | Soil, one per growth lane. Never consumed. Automation may insert, not extract. |
 | 3–5 | Seed, one per lane, above its soil. Never consumed. Same automation rules. |
 | 6–11 | Shared harvest outputs, exported to neighbours (16 items/tick) and extractable. Other growth chambers are never export targets, so clustered chambers don't fill each other's seed and soil slots. |
-| 12 | Upgrade, in the screen's right-hand side tab. Player-only. |
+| 12 | Upgrade. Player-only. |
 
 Each lane looks up an `electricadvantage:growing` recipe for its seed and soil.
 Every tick a lane with a recipe uses one unit of greenhouse power and gains one
@@ -22,6 +22,11 @@ is broken.
 Losing power or a redstone signal pauses a lane but keeps its progress.
 Changing a lane's seed, soil or recipe restarts it. Progress survives
 save/reload; EA2 lost it.
+
+The soil and seed slots admit only items some growing recipe uses there, and
+the upgrade slot only `#electricadvantage:growth_chamber_upgrades`. The screen
+is MMDLib's machine screen, with a progress bar per lane and the greenhouse
+power at the top.
 
 ## Growth Chamber Control Unit (`electricadvantage:growth_chamber_controller`)
 
@@ -35,13 +40,17 @@ per bone meal.
 
 There is no greenhouse cable. Each tick the Control Unit shares its buffer
 equally between the chambers it touches, directly or through other touching
-chambers, up to 16 chambers. The cluster is rescanned every 20 ticks and when
-a neighbour of the Control Unit changes. A redstone signal stops conversion
-and distribution. The comparator outputs 15 when there is enough energy, water
-and fertilizer for a unit, as in EA2, and 0 otherwise.
+chambers, up to 16 chambers. The cluster is rescanned every 20 ticks. A
+redstone signal stops conversion and distribution; fertilizer is still taken
+in. The comparator outputs 15 when there is enough energy, water and fertilizer
+for a unit, as in EA2, and 0 otherwise. The fertilizer slot admits only items in
+the `electricadvantage:fertilizer` data map.
 
-All numbers are `block_entity_data` in the two
-`mmdlib/standalone/block/growth_chamber*.json` files.
+Both are MMDLib XML machines. `GrowthChamberProcessor` and
+`GreenhouseControllerProcessor` do the work and hold the numbers as constants;
+`GrowthChamberEntity` and `GreenhouseControllerEntity` keep the lanes, held
+harvests and pools under 3.0's save keys, so chambers and Control Units from
+3.0 and 3.1 keep their growth, harvests, fertilizer and greenhouse power.
 
 ## Recipes: `electricadvantage:growing`
 

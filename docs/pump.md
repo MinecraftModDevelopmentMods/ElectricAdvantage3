@@ -5,7 +5,8 @@
 1. **Pipe.** While the block under the lowest pump pipe is air, the pump places
    another `pump_pipe_electric` segment there. Each segment costs 400 FE
    (EA2: 100 electricity) and takes 11 ticks. Breaking the pump, or any segment,
-   removes the pipe below it. Pipes have no drops.
+   removes the pipe below it: a segment with neither the pump nor more pipe
+   above it goes, taking the rest of the column. Pipes have no drops.
 2. **Find a source.** When the pipe reaches something that isn't air, the pump
    checks the pipe tip, then the four blocks beside the lowest pipe. For the
    first one holding fluid, Power Advantage's `FluidSearch.findSourceBlock`
@@ -30,14 +31,18 @@
    between buckets. Each bucket costs 4,000 FE plus 128 FE per block between
    the pump and the source (EA2: 1,000 + 32 per block, in electricity).
 5. **Tank and output.** The tank holds 4,000 mB of one fluid. The pump pumps
-   only while another whole bucket of the same fluid fits. Each tick it pushes
-   up to 1,000 mB into adjacent fluid handlers, including Power Advantage 3
-   pipes. The tank can be drained but not filled from outside.
+   only while another whole bucket of the same fluid fits. The tank can be
+   drained but not filled from outside. To push its fluid into neighbours,
+   including Power Advantage 3 pipes, install a Power Advantage Fluid Output
+   Pump in the tank group's addon slot (3.0 pushed up to 1,000 mB a tick on its
+   own).
 
-A redstone signal stops the pump. The comparator follows the tank level. The
-screen shows energy, the tank, the pipe depth and the current status:
-extending, tracing, pumping (finite or infinite), no fluid, tank blocked,
-waiting for power, or stopped by redstone.
+A redstone signal stops the pump, as in 3.0; each face can be changed in the
+redstone drawer. The comparator follows the tank level. The screen is MMDLib's
+machine screen: energy, the tank, and a label with the current status
+(extending, pumping finite or infinite, no fluid, tank blocked, waiting for
+power) and the pipe depth. MMDLib's Gearbox Upgrade shortens the intervals, at
+the same FE per segment and bucket.
 
 ## Configuration
 
@@ -51,8 +56,8 @@ Server config `electricadvantage-server.toml`:
 
 Which fluids can be infinite is the fluid tag
 `data/electricadvantage/tags/fluid/pump_infinite.json`. Every other number
-(costs, intervals, tank size, trace limits, recheck time) is in
-`mmdlib/standalone/block/electric_pump.json`.
+(costs, intervals, recheck time) is a constant on `PumpProcessor`; the tank size
+is in `mmdlib/machine/electric_pump.xml`.
 
 ## Code
 
@@ -60,8 +65,12 @@ Which fluids can be infinite is the fluid tag
   Power Advantage 3.1.0, so EA3 now requires PA3 3.1.0 or later. The
   `electricadvantage:pump_infinite` tag and the threshold config stay in EA3
   and are passed in.
-- [PumpBlockEntity](../src/main/java/zone/moddev/mc/electricadvantage/pump/PumpBlockEntity.java)
-  handles pipe extension, pumping, costs, the tank and export.
+- The pump is an MMDLib XML machine,
+  [electric_pump.xml](../src/main/resources/mmdlib/machine/electric_pump.xml).
+  [PumpProcessor](../src/main/java/zone/moddev/mc/electricadvantage/pump/PumpProcessor.java)
+  handles pipe extension, pumping and costs, and is the comparator source.
+- Saves from 3.0 and 3.1 keep the tank (`Tank`) and, through 3.0's `Energy`
+  key, the buffer. The pipe's depth is measured again on the first tick.
 
 ## Verification
 

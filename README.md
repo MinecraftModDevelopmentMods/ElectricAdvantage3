@@ -6,7 +6,7 @@ Root Java package: `zone.moddev.mc.electricadvantage`.
 Required dependencies (compile and development runtime), all from the
 ModDevZone Maven (`https://maven.moddev.zone/releases`):
 
-- `zone.moddev.mc.lib:mmdlib:2.0.2.121012+Neo` (MMDLib 2.0.2)
+- `zone.moddev.mc.lib:mmdlib:2.0.3.121012+Neo` (MMDLib 2.0.3)
 - `zone.moddev.mc.poweradvantage:PowerAdvantage:3.2.0.121012+Neo` (Power Advantage 3.2)
 - `zone.moddev.mc.orespawn:OreSpawn:4.1.0.121012` (MMD OreSpawn 4)
 
@@ -45,12 +45,11 @@ All batteries use the same MMDLib-backed energy core; see [batteries](docs/batte
 Cable/scaffold/switch electricity transport uses the PA3 shared transport core;
 LED lighting, generated pump pipe, and OreSpawn 4 deposit generation are implemented.
 See [infrastructure behavior and verification](docs/infrastructure.md).
-Four generation/storage machines now share data-driven settings and MMDLib XML
-screens; see [generation and storage](docs/generation-storage.md).
-The oven, distiller and refinery are MMDLib XML machines, and the furnace and crusher are
-Java machines on MMDLib's `BaseMachine`; see [processing machines](docs/processing.md) and
+Every machine except the Electric Fabricator is an MMDLib XML machine; see
 [MMDLib and Power Advantage integration](docs/mmdlib-integration.md).
-The Growth Chamber and its Control Unit are redesigned data-driven greenhouse machines;
+See [generation and storage](docs/generation-storage.md) for the generators and battery array, and
+[processing machines](docs/processing.md) for the furnace, crusher, oven, still and refinery.
+The Growth Chamber and its Control Unit are redesigned greenhouse machines;
 see [growth chamber and control unit](docs/farming.md).
 The Electric Pump extends its pipe, traces connected fluid and treats large water/lava bodies as infinite;
 see [electric pump](docs/pump.md).

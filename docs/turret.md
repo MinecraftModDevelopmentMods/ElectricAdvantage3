@@ -25,15 +25,17 @@ converted at 4 FE per unit.
   fires along the line to the target's centre, out to 32 blocks or the first
   solid block. It then fires every 30 ticks while the lock holds. Every living
   entity the beam crosses takes 7 `electricadvantage:laser` damage and burns
-  for 3 seconds. Fire is placed under victims standing on solid ground. That
-  is EA2 behaviour; set `ignite_ground` to false to stop it.
+  for 3 seconds. Fire is placed under victims standing on solid ground, as in
+  EA2.
 - **Owner.** Victims are set to retaliate against the owner, as EA2 did. The
   death message then names the owner ("X was vaporized by Y's laser turret").
   Kills don't count as player kills.
 - **Comparator.** 15 while locked on a target, otherwise up to 8 in
   proportion to stored energy.
-- **Screen.** Energy, status (scanning, target name, waiting for power,
-  redstone) and team.
+- **Screen.** MMDLib's machine screen: energy, and a label with the status
+  (scanning, target name, waiting for power) and the team. A redstone stop
+  shows in MMDLib's information drawer, and each face can be changed in the
+  redstone drawer.
 
 ## Rendering
 
@@ -41,18 +43,24 @@ converted at 4 FE per unit.
 draws EA2's half-block head from `textures/entity/laser_turret.png`. The lens
 is dark when the turret isn't working. While locked, the beam is two crossed
 full-bright quads. Animation runs on the client, as in EA2: an idle sweep at
-2°/tick, tracking the target at 9°/tick, and drooping to -30° when off. The
-server sends only the target ID and the charge timer, when they change. The
-block model is EA2's base plate and shaft.
+2°/tick, tracking the target at 9°/tick, and drooping to -30° when off
+(`LaserTurretEntity`). The target ID and the tick the charge started are
+processor state synced to clients when they change. The block model is EA2's
+base plate and shaft (`laser_turret_stand`); the block's shape is declared in
+the XML.
 
 ## Configuration
 
 - Server config `turret.laserSound` (EA2's `laser_sound` option): the sound
   played when a turret fires, default `minecraft:block.note_block.bass`.
   Unknown IDs fall back to the enderman teleport sound, as in EA2.
-- Everything else is `block_entity_data` in
-  `mmdlib/standalone/block/laser_turret*.json`: costs, damage, burn time,
-  ranges, timings, scan interval, `ignite_ground` and `evil`.
+- Both turrets are MMDLib XML machines; `laser_turret_evil.xml` extends
+  `laser_turret.xml` and swaps in `LaserTurretProcessor$Evil`. Costs, damage,
+  burn time, ranges, timings and scan interval are constants on
+  [LaserTurretProcessor](../src/main/java/zone/moddev/mc/electricadvantage/turret/LaserTurretProcessor.java).
+- Placing a turret records the owner through MMDLib's placement hook. Saves
+  from 3.0 and 3.1 carry their `Owner` and `Team` into the processor, and 3.0's
+  `Energy` key into the buffer.
 
 ## Verification
 
@@ -64,7 +72,8 @@ block model is EA2's base plate and shaft.
   targeting and the idle drain
 - the evil variant preferring a cow over a closer zombie, and appearing in no
   creative tab
-- team rules, creative-player immunity, and owner/team persistence
+- team rules, creative-player immunity, and owner/team persistence, including
+  a 3.0 save
 
 Each test runs in its own batch so turrets can't reach neighbouring tests. The
 client bootstrap smoke passes with no EA3 model or texture warnings.
