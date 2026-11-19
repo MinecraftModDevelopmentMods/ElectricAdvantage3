@@ -53,7 +53,7 @@ public final class BaseMachineGameTests {
 
     @GameTest(templateNamespace = ElectricAdvantage.MOD_ID, template = "infrastructure")
     public static void brokenMachinesDropTheirContentsOnce(GameTestHelper h) {
-        var furnace = (zone.moddev.mc.electricadvantage.processing.ProcessingBlockEntity) place(h, "electric_furnace");
+        var furnace = (zone.moddev.mc.lib.machine.neoforge.DefinedMachineEntity) place(h, "electric_furnace");
         furnace.items.setStackInSlot(0, new ItemStack(Items.RAW_IRON, 5));
         furnace.items.setStackInSlot(4, new ItemStack(Items.IRON_INGOT, 7));
         breakMachine(h);

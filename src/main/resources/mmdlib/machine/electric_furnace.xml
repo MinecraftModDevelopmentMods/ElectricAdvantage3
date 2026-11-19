@@ -1,0 +1,42 @@
+<!--
+  Electric Arc Furnace: four lanes, each smelting one item from its own input slot at 8 FE per tick for 200 ticks,
+  into six shared output slots (ElectricSmeltingRecipes copies every smelting recipe). Install an Item Output Port in
+  the output group to push results into neighbours.
+
+  Save compatibility with 3.0 and 3.1: items stay under "Items" in 3.0's slot order (the four inputs, then the six
+  outputs), and 3.0's "Energy" key loads into the buffer. Progress in a lane is not carried over.
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_powered_machine" name="Electric Arc Furnace">
+  <block hardness="3"/>
+  <appearance preset="model" model="electricadvantage:block/electric_machine_casing">
+    <part id="front_on" model="electricadvantage:block/electric_furnace_front_on"
+          when="$processors.lane_0.status == 'running' || $processors.lane_1.status == 'running' || $processors.lane_2.status == 'running' || $processors.lane_3.status == 'running'"/>
+    <part id="front_powered" model="electricadvantage:block/electric_furnace_front_powered"
+          when="!($processors.lane_0.status == 'running' || $processors.lane_1.status == 'running' || $processors.lane_2.status == 'running' || $processors.lane_3.status == 'running') &amp;&amp; $energy.energy.stored &gt;= 8"/>
+    <part id="front_off" model="electricadvantage:block/electric_furnace_front_off"
+          when="!($processors.lane_0.status == 'running' || $processors.lane_1.status == 'running' || $processors.lane_2.status == 'running' || $processors.lane_3.status == 'running') &amp;&amp; $energy.energy.stored &lt; 8"/>
+  </appearance>
+  <storage>
+    <energy id="energy" capacity="500" input-rate="4096"/>
+    <items id="Items">
+      <slots id="input_0" name="Input 1" count="1" role="input" color="input.primary"/>
+      <slots id="input_1" name="Input 2" count="1" role="input" color="input.primary"/>
+      <slots id="input_2" name="Input 3" count="1" role="input" color="input.primary"/>
+      <slots id="input_3" name="Input 4" count="1" role="input" color="input.primary"/>
+      <slots id="output" name="Output" count="6" role="output" color="output.primary"/>
+    </items>
+  </storage>
+  <recipe-type id="electricadvantage:arc_smelting" declare="true" name="Electric Arc Furnace">
+    <generator class="zone.moddev.mc.electricadvantage.processing.ElectricSmeltingRecipes"
+               time="200" energy-per-tick="8"/>
+  </recipe-type>
+  <processor id="lane_0" primary="true" name="Lane 1" recipe-type="electricadvantage:arc_smelting"
+             bindings="input=input_0 output=output"/>
+  <processor id="lane_1" name="Lane 2" recipe-type="electricadvantage:arc_smelting"
+             bindings="input=input_1 output=output"/>
+  <processor id="lane_2" name="Lane 3" recipe-type="electricadvantage:arc_smelting"
+             bindings="input=input_2 output=output"/>
+  <processor id="lane_3" name="Lane 4" recipe-type="electricadvantage:arc_smelting"
+             bindings="input=input_3 output=output"/>
+</machine>

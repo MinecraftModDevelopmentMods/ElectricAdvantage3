@@ -1,0 +1,39 @@
+<!--
+  Electric Rock Crusher: three lanes, each crushing one item from its own input slot at 12 FE per tick for 200 ticks,
+  into six shared output slots (ElectricCrushingRecipes copies every MMDLib crushing recipe). Install an Item Output
+  Port in the output group to push results into neighbours.
+
+  Save compatibility with 3.0 and 3.1: items stay under "Items" in 3.0's slot order (the three inputs, then the six
+  outputs), and 3.0's "Energy" key loads into the buffer. Progress in a lane is not carried over.
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_powered_machine" name="Electric Rock Crusher">
+  <block hardness="3"/>
+  <appearance preset="model" model="electricadvantage:block/electric_machine_casing">
+    <part id="front_on" model="electricadvantage:block/electric_crusher_front_on"
+          when="$processors.lane_0.status == 'running' || $processors.lane_1.status == 'running' || $processors.lane_2.status == 'running'"/>
+    <part id="front_powered" model="electricadvantage:block/electric_crusher_front_powered"
+          when="!($processors.lane_0.status == 'running' || $processors.lane_1.status == 'running' || $processors.lane_2.status == 'running') &amp;&amp; $energy.energy.stored &gt;= 12"/>
+    <part id="front_off" model="electricadvantage:block/electric_crusher_front_off"
+          when="!($processors.lane_0.status == 'running' || $processors.lane_1.status == 'running' || $processors.lane_2.status == 'running') &amp;&amp; $energy.energy.stored &lt; 12"/>
+  </appearance>
+  <storage>
+    <energy id="energy" capacity="500" input-rate="4096"/>
+    <items id="Items">
+      <slots id="input_0" name="Input 1" count="1" role="input" color="input.primary"/>
+      <slots id="input_1" name="Input 2" count="1" role="input" color="input.primary"/>
+      <slots id="input_2" name="Input 3" count="1" role="input" color="input.primary"/>
+      <slots id="output" name="Output" count="6" role="output" color="output.primary"/>
+    </items>
+  </storage>
+  <recipe-type id="electricadvantage:electric_crushing" declare="true" name="Electric Rock Crusher">
+    <generator class="zone.moddev.mc.electricadvantage.processing.ElectricCrushingRecipes"
+               time="200" energy-per-tick="12"/>
+  </recipe-type>
+  <processor id="lane_0" primary="true" name="Lane 1" recipe-type="electricadvantage:electric_crushing"
+             bindings="input=input_0 output=output"/>
+  <processor id="lane_1" name="Lane 2" recipe-type="electricadvantage:electric_crushing"
+             bindings="input=input_1 output=output"/>
+  <processor id="lane_2" name="Lane 3" recipe-type="electricadvantage:electric_crushing"
+             bindings="input=input_2 output=output"/>
+</machine>
