@@ -1,0 +1,34 @@
+<!--
+  Electric Drill: faces into the block it was placed against, mines the 3x3 face of the first solid block ahead into
+  its output slots, pushes one item a second into the inventory behind it, and moves along electric scaffold at the end
+  of its range (DrillProcessor, DrillEntity).
+
+  Save compatibility with 3.0 and 3.1: items stay under "Items", and 3.0's "Energy" key loads into the buffer. The
+  drill targets its face again on the first power update.
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_powered_machine" name="Electric Drill">
+  <block hardness="3" facing="all" no-occlusion="true"/>
+  <appearance preset="model" model="electricadvantage:block/electric_drill_casing">
+    <part id="ends_on" model="electricadvantage:block/electric_drill_ends_on"
+          when="$energy.energy.stored &gt; 96 &amp;&amp; !$processors.drill.held"/>
+    <part id="ends_off" model="electricadvantage:block/electric_drill_ends_off"
+          when="$energy.energy.stored &lt;= 96 || $processors.drill.held"/>
+  </appearance>
+  <storage>
+    <energy id="energy" capacity="2000" input-rate="4096"/>
+    <items id="Items">
+      <slots id="output" name="Output" count="6" role="output"/>
+    </items>
+  </storage>
+  <processor id="drill" class="zone.moddev.mc.electricadvantage.drill.DrillProcessor"/>
+  <screen xmlns="https://moddev.zone/mmdlib/screen">
+    <fill name="machine">
+      <vbox spacing="4" align="center">
+        <progress value="zone.moddev.mc.electricadvantage.drill.DrillProcessor#screenProgress"
+                  max="zone.moddev.mc.electricadvantage.drill.DrillProcessor#screenProgressGoal"/>
+        <label id="details" variable="$processors.drill.details" width="100" height="12"/>
+      </vbox>
+    </fill>
+  </screen>
+</machine>

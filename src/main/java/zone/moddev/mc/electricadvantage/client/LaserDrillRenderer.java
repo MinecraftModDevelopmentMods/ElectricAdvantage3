@@ -13,26 +13,27 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import zone.moddev.mc.electricadvantage.drill.DrillBlock;
-import zone.moddev.mc.electricadvantage.drill.DrillBlockEntity;
-import zone.moddev.mc.lib.common.runtime.RuntimeContentRegistrar;
+import zone.moddev.mc.electricadvantage.drill.DrillEntity;
+import zone.moddev.mc.electricadvantage.drill.DrillProcessor;
+import zone.moddev.mc.lib.api.capabilities.RelativeFace;
+import zone.moddev.mc.lib.machine.neoforge.DefinedMachineEntity;
+import zone.moddev.mc.lib.machine.neoforge.MachineContent;
 
 /** EA2's drill beam: two crossed full-bright quads from the drill's centre to the centre of the targeted face. */
 @EventBusSubscriber(modid = "electricadvantage", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public final class LaserDrillRenderer implements BlockEntityRenderer<DrillBlockEntity> {
+public final class LaserDrillRenderer implements BlockEntityRenderer<DefinedMachineEntity> {
     private static final ResourceLocation TEXTURE = ResourceLocation.parse("electricadvantage:textures/entity/laser_beam.png");
     private static final float BEAM = 0.125f;
 
     @SubscribeEvent public static void register(EntityRenderersEvent.RegisterRenderers event) {
-        RuntimeContentRegistrar.instances().forEach(registrar -> registrar.blockEntityHandles().values().forEach(handle -> {
-            if (handle.prepared().blockEntityClass() == DrillBlockEntity.class)
-                event.registerBlockEntityRenderer(handle.binding().as(DrillBlockEntity.class).type().get(), context -> new LaserDrillRenderer());
-        }));
+        event.registerBlockEntityRenderer(MachineContent.entityType(ResourceLocation.parse("electricadvantage:electric_drill")),
+                context -> new LaserDrillRenderer());
     }
-    @Override public void render(DrillBlockEntity be, float partial, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
-        int length = be.beamLength();
+    @Override public void render(DefinedMachineEntity machine, float partial, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+        if (!(machine instanceof DrillEntity be)) return;
+        int length = be.drill().beamLength();
         if (length <= 0) return;
-        var facing = be.getBlockState().getValue(DrillBlock.FACING);
+        var facing = RelativeFace.facing(be.getBlockState());
         var beam = buffers.getBuffer(RenderType.entityTranslucentEmissive(TEXTURE));
         var p = pose.last();
         float dx = facing.getStepX() * length, dy = facing.getStepY() * length, dz = facing.getStepZ() * length;
@@ -55,7 +56,7 @@ public final class LaserDrillRenderer implements BlockEntityRenderer<DrillBlockE
         vc.addVertex(p, x, y, z).setColor(-1).setUv(u, v).setOverlay(overlay).setLight(LightTexture.FULL_BRIGHT)
                 .setNormal(p, normal.getStepX(), normal.getStepY(), normal.getStepZ());
     }
-    @Override public boolean shouldRenderOffScreen(DrillBlockEntity be) { return true; }
+    @Override public boolean shouldRenderOffScreen(DefinedMachineEntity be) { return true; }
     @Override public int getViewDistance() { return 128; }
-    @Override public AABB getRenderBoundingBox(DrillBlockEntity be) { return new AABB(be.getBlockPos()).inflate(be.settings.range() + 1); }
+    @Override public AABB getRenderBoundingBox(DefinedMachineEntity be) { return new AABB(be.getBlockPos()).inflate(DrillProcessor.RANGE + 1); }
 }

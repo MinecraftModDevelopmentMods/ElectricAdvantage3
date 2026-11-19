@@ -59,7 +59,7 @@ public final class BaseMachineGameTests {
         breakMachine(h);
         h.assertTrue(dropped(h, Items.RAW_IRON) == 5 && dropped(h, Items.IRON_INGOT) == 7, "The furnace drops its items exactly once");
         clearDrops(h);
-        var drill = (zone.moddev.mc.electricadvantage.drill.DrillBlockEntity) place(h, "electric_drill");
+        var drill = (zone.moddev.mc.lib.machine.neoforge.DefinedMachineEntity) place(h, "electric_drill");
         drill.items.setStackInSlot(0, new ItemStack(Items.COBBLESTONE, 9));
         breakMachine(h);
         h.assertTrue(dropped(h, Items.COBBLESTONE) == 9, "The drill drops its items exactly once");
