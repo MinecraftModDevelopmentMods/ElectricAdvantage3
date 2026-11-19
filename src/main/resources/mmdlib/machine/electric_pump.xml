@@ -1,0 +1,32 @@
+<!--
+  Electric Pump: extends a pipe down to a fluid and pumps a bucket every second into its tank (PumpProcessor). Install
+  a Power Advantage Fluid Output Pump in the tank group to push the fluid into neighbours. Comparators read the tank.
+
+  Save compatibility with 3.0 and 3.1: the tank stays under "Tank", and 3.0's "Energy" key loads into the buffer. The
+  pipe's depth is measured again on the first tick.
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_powered_machine" name="Electric Pump">
+  <block hardness="3"/>
+  <appearance preset="model" model="electricadvantage:block/electric_machine_casing">
+    <part id="front_on" model="electricadvantage:block/electric_pump_front_on"
+          when="$processors.pump.status == 'RUNNING'"/>
+    <part id="front_powered" model="electricadvantage:block/electric_pump_front_powered"
+          when="$processors.pump.status != 'RUNNING' &amp;&amp; $energy.energy.stored &gt;= 4000"/>
+    <part id="front_off" model="electricadvantage:block/electric_pump_front_off"
+          when="$processors.pump.status != 'RUNNING' &amp;&amp; $energy.energy.stored &lt; 4000"/>
+  </appearance>
+  <storage>
+    <energy id="energy" capacity="40000" input-rate="4096"/>
+    <fluids id="Tank">
+      <tank id="tank" name="Tank" capacity="4000" role="output"/>
+    </fluids>
+  </storage>
+  <redstone comparator-source="pump/tank"/>
+  <processor id="pump" class="zone.moddev.mc.electricadvantage.pump.PumpProcessor"/>
+  <screen xmlns="https://moddev.zone/mmdlib/screen">
+    <fill name="machine">
+      <label id="details" variable="$processors.pump.details" width="100" height="22"/>
+    </fill>
+  </screen>
+</machine>

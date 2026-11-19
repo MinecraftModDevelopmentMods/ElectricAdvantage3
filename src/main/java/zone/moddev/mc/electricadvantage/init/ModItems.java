@@ -27,7 +27,6 @@ public final class ModItems {
         zone.moddev.mc.electricadvantage.assembler.AssemblerSystems.register(modBus);
         zone.moddev.mc.electricadvantage.generation.GenerationSystems.register();
         zone.moddev.mc.electricadvantage.farming.FarmingSystems.register(modBus);
-        zone.moddev.mc.electricadvantage.pump.PumpSystems.register();
         zone.moddev.mc.electricadvantage.turret.TurretSystems.register();
         zone.moddev.mc.electricadvantage.drill.DrillSystems.register();
         zone.moddev.mc.electricadvantage.trades.TradeSystems.register();
@@ -90,11 +89,6 @@ public final class ModItems {
                 event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
                 event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, binding.type().get(), (be, side) -> be.fluidCapability());
                 event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.itemCapability());
-            }
-            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.pump.PumpBlockEntity.class) {
-                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.pump.PumpBlockEntity.class);
-                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
-                event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, binding.type().get(), (be, side) -> be.fluidCapability());
             }
             if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.turret.LaserTurretBlockEntity.class) {
                 var binding = handle.binding().as(zone.moddev.mc.electricadvantage.turret.LaserTurretBlockEntity.class);

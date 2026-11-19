@@ -10,7 +10,7 @@ public final class ElectricMachines {
 
     /** Machines that need nothing beyond {@link ElectricMachineEntity}. */
     private static final String[] MACHINES = {
-        "electric_oven", "electric_still", "plastic_refinery", "electric_furnace", "electric_crusher",
+        "electric_oven", "electric_still", "plastic_refinery", "electric_furnace", "electric_crusher", "electric_pump",
     };
 
     /** Called from the mod constructor, before MMDLib loads machine definitions. */
