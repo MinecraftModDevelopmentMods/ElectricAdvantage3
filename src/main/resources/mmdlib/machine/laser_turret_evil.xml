@@ -1,0 +1,8 @@
+<!--
+  The hidden Laser Turret variant: targets players and passive mobs, ignores monsters and ambient mobs. It is in no
+  creative tab.
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="electricadvantage:laser_turret" name="Laser Turret">
+  <processor id="turret" class="zone.moddev.mc.electricadvantage.turret.LaserTurretProcessor$Evil"/>
+</machine>

@@ -18,6 +18,8 @@ public final class ElectricMachines {
     public static void register() {
         for (var machine : MACHINES) register(machine, ElectricMachineEntity::new);
         register("hydroelectric_generator", zone.moddev.mc.electricadvantage.generation.HydroGeneratorEntity::new);
+        register("laser_turret", zone.moddev.mc.electricadvantage.turret.LaserTurretEntity::new);
+        register("laser_turret_evil", zone.moddev.mc.electricadvantage.turret.LaserTurretEntity::new);
     }
 
     public static void register(String machine, MachineContent.EntityFactory factory) {

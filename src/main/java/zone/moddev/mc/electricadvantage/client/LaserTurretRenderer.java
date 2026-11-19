@@ -13,26 +13,27 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import zone.moddev.mc.electricadvantage.turret.LaserTurretBlock;
-import zone.moddev.mc.electricadvantage.turret.LaserTurretBlockEntity;
-import zone.moddev.mc.lib.common.runtime.RuntimeContentRegistrar;
+import zone.moddev.mc.electricadvantage.turret.LaserTurretEntity;
+import zone.moddev.mc.electricadvantage.turret.LaserTurretProcessor;
+import zone.moddev.mc.lib.machine.neoforge.DefinedMachineEntity;
+import zone.moddev.mc.lib.machine.neoforge.MachineContent;
 
 /** EA2's turret head (a half-block cube on the optic) and full-bright beam, from the EA2 64x64 texture. */
 @EventBusSubscriber(modid = "electricadvantage", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public final class LaserTurretRenderer implements BlockEntityRenderer<LaserTurretBlockEntity> {
+public final class LaserTurretRenderer implements BlockEntityRenderer<DefinedMachineEntity> {
     private static final ResourceLocation TEXTURE = ResourceLocation.parse("electricadvantage:textures/entity/laser_turret.png");
     private static final float R = 0.25f, BEAM = 0.125f;
 
     @SubscribeEvent public static void register(EntityRenderersEvent.RegisterRenderers event) {
-        RuntimeContentRegistrar.instances().forEach(registrar -> registrar.blockEntityHandles().values().forEach(handle -> {
-            if (handle.prepared().blockEntityClass() == LaserTurretBlockEntity.class)
-                event.registerBlockEntityRenderer(handle.binding().as(LaserTurretBlockEntity.class).type().get(), context -> new LaserTurretRenderer());
-        }));
+        for (var turret : new String[]{"laser_turret", "laser_turret_evil"})
+            event.registerBlockEntityRenderer(MachineContent.entityType(ResourceLocation.fromNamespaceAndPath("electricadvantage", turret)),
+                    context -> new LaserTurretRenderer());
     }
-    @Override public void render(LaserTurretBlockEntity be, float partial, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+    @Override public void render(DefinedMachineEntity machine, float partial, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+        if (!(machine instanceof LaserTurretEntity be)) return;
         float yaw = -(be.oldYaw + (be.yaw - be.oldYaw) * partial) - 90;
         float pitch = be.oldPitch + (be.pitch - be.oldPitch) * partial;
-        boolean active = be.getBlockState().getValue(LaserTurretBlock.ACTIVE);
+        boolean active = be.active();
         pose.pushPose();
         pose.translate(0.5, 0.75, 0.5);
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
@@ -47,7 +48,7 @@ public final class LaserTurretRenderer implements BlockEntityRenderer<LaserTurre
         quad(head, p, light, overlay, 1, 0, 0, R, R, R, R, -R, R, R, -R, -R, R, R, -R, 0, 0, 0.5f, 0.5f);
         quad(head, p, light, overlay, 0, 1, 0, -R, R, -R, -R, R, R, R, R, R, R, R, -R, 0, 0, 0.5f, 0.5f);
         quad(head, p, light, overlay, 0, -1, 0, -R, -R, R, -R, -R, -R, R, -R, -R, R, -R, R, 0, 0, 0.5f, 0.5f);
-        if (be.showBeam() && be.beamLength > 0) {
+        if (be.turret().showBeam(be.getLevel()) && be.beamLength > 0) {
             var beam = buffers.getBuffer(RenderType.entityTranslucentEmissive(TEXTURE));
             float l = (float) -be.beamLength;
             int full = LightTexture.FULL_BRIGHT;
@@ -69,7 +70,7 @@ public final class LaserTurretRenderer implements BlockEntityRenderer<LaserTurre
     private static void vertex(VertexConsumer vc, PoseStack.Pose p, float x, float y, float z, float u, float v, int light, int overlay, float nx, float ny, float nz) {
         vc.addVertex(p, x, y, z).setColor(-1).setUv(u, v).setOverlay(overlay).setLight(light).setNormal(p, nx, ny, nz);
     }
-    @Override public boolean shouldRenderOffScreen(LaserTurretBlockEntity be) { return true; }
+    @Override public boolean shouldRenderOffScreen(DefinedMachineEntity be) { return true; }
     @Override public int getViewDistance() { return 96; }
-    @Override public AABB getRenderBoundingBox(LaserTurretBlockEntity be) { return new AABB(be.getBlockPos()).inflate(be.settings.attackRange()); }
+    @Override public AABB getRenderBoundingBox(DefinedMachineEntity be) { return new AABB(be.getBlockPos()).inflate(LaserTurretProcessor.ATTACK_RANGE); }
 }
