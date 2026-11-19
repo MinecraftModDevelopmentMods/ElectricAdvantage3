@@ -51,7 +51,8 @@ public final class PumpProcessor extends StoredProcessor implements IRedstoneOut
             ResourceLocation.fromNamespaceAndPath("electricadvantage", "pump_infinite"));
     private static final ResourceLocation PIPE = ResourceLocation.fromNamespaceAndPath("electricadvantage", "pump_pipe_electric");
 
-    private final ProcessorState.Key<Integer> cooldown = variables.define("cooldown", Codec.INT, 0);
+    private final ProcessorState.Key<Integer> cooldown = variables.define("cooldown", Codec.INT, 0,
+            UnaryOperator.identity(), false, false);
     private final ProcessorState.Key<Integer> depth = variables.define("depth", Codec.INT, 0,
             UnaryOperator.identity(), false, true);
     private final ProcessorState.Key<String> status = variables.define("pump_status", Codec.STRING, Status.IDLE.name(),

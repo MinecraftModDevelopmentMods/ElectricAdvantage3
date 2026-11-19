@@ -1,0 +1,26 @@
+<!--
+  Steam Powered Generator: turns Power Advantage steam into FE at 8 mB per FE, up to 4096 FE per tick
+  (SteamProcessor). Pipes fill its tank; it pushes its buffer into neighbouring conduits and machines. Comparators read
+  how full the buffer is.
+
+  Save compatibility with 3.0 and 3.1: the steam tank stays under "Steam", and 3.0's "Energy" key loads into the
+  buffer.
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_powered_machine" name="Steam Powered Generator">
+  <block hardness="3"/>
+  <appearance preset="model" model="electricadvantage:block/electric_machine_casing">
+    <part id="front_on" model="electricadvantage:block/steam_powered_generator_front_on"
+          when="$processors.steam.status == 'RUNNING'"/>
+    <part id="front_off" model="electricadvantage:block/steam_powered_generator_front_off"
+          when="$processors.steam.status != 'RUNNING'"/>
+  </appearance>
+  <storage>
+    <energy id="energy" capacity="1000" input-rate="0" output-rate="4096"/>
+    <fluids id="Steam">
+      <tank id="steam" name="Steam" capacity="32000" role="input" fluid="poweradvantage:steam"/>
+    </fluids>
+  </storage>
+  <redstone comparator-source="generator/output"/>
+  <processor id="steam" class="zone.moddev.mc.electricadvantage.generation.SteamProcessor"/>
+</machine>

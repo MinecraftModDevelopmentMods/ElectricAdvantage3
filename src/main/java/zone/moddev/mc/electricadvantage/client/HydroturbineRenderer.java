@@ -14,12 +14,13 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import zone.moddev.mc.electricadvantage.generation.GenerationBlockEntity;
-import zone.moddev.mc.lib.common.runtime.RuntimeContentRegistrar;
+import zone.moddev.mc.electricadvantage.generation.HydroGeneratorEntity;
+import zone.moddev.mc.lib.machine.neoforge.DefinedMachineEntity;
+import zone.moddev.mc.lib.machine.neoforge.MachineContent;
 
 /** A BE-owned turbine avoids detached/duplicated world entities across chunk reloads. */
 @EventBusSubscriber(modid = "electricadvantage", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public final class HydroturbineRenderer implements BlockEntityRenderer<GenerationBlockEntity> {
+public final class HydroturbineRenderer implements BlockEntityRenderer<DefinedMachineEntity> {
     private static final ResourceLocation TEXTURE = ResourceLocation.parse("electricadvantage:textures/hydroturbine.png");
     private final ModelPart shaft;
     private final ModelPart rotor;
@@ -34,23 +35,21 @@ public final class HydroturbineRenderer implements BlockEntityRenderer<Generatio
         rotor = LayerDefinition.create(rotorMesh, 16, 16).bakeRoot();
     }
     @SubscribeEvent public static void register(EntityRenderersEvent.RegisterRenderers event) {
-        RuntimeContentRegistrar.instances().forEach(registrar -> registrar.blockEntityHandles().values().forEach(handle -> {
-            if (handle.prepared().blockEntityClass() == GenerationBlockEntity.class)
-                event.registerBlockEntityRenderer(handle.binding().as(GenerationBlockEntity.class).type().get(), context -> new HydroturbineRenderer());
-        }));
+        event.registerBlockEntityRenderer(MachineContent.entityType(ResourceLocation.parse("electricadvantage:hydroelectric_generator")),
+                context -> new HydroturbineRenderer());
     }
-    @Override public void render(GenerationBlockEntity be, float partial, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
-        if (!be.settings.kind().equals("hydro")) return;
+    @Override public void render(DefinedMachineEntity machine, float partial, PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+        if (!(machine instanceof HydroGeneratorEntity be)) return;
         pose.pushPose();
         pose.translate(0.5, -0.5, 0.5);
         pose.mulPose(Axis.YP.rotation(be.rotorYaw));
         var vertices = buffers.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
         shaft.render(pose, vertices, light, overlay);
         pose.translate(0, 0, -0.25);
-        float rotation = be.previousRotorAngle + (be.getBlockState().getValue(zone.moddev.mc.electricadvantage.generation.GenerationBlock.ACTIVE) ? 30 * partial : 0);
+        float rotation = be.previousRotorAngle + (be.spinning() ? 30 * partial : 0);
         pose.mulPose(Axis.ZP.rotationDegrees(rotation));
         rotor.render(pose, vertices, light, overlay);
         pose.popPose();
     }
-    @Override public AABB getRenderBoundingBox(GenerationBlockEntity be) { return new AABB(be.getBlockPos()).expandTowards(0, -1, 0); }
+    @Override public AABB getRenderBoundingBox(DefinedMachineEntity be) { return new AABB(be.getBlockPos()).expandTowards(0, -1, 0); }
 }

@@ -93,5 +93,9 @@
   "screen.electricadvantage.drill.status.no_power": "Waiting for power",
   "screen.electricadvantage.drill.status.disabled": "Stopped by a redstone signal",
   "item.electricadvantage.item_intake_port": "Item Intake Port",
-  "item.electricadvantage.item_output_port": "Item Output Port"
+  "item.electricadvantage.item_output_port": "Item Output Port",
+  "screen.electricadvantage.generator.output": "Generator output",
+  "screen.electricadvantage.generator.output.description": "How full the buffer is; for a photovoltaic generator, its output as a share of full sun",
+  "screen.electricadvantage.battery_array.charge": "Battery charge",
+  "screen.electricadvantage.battery_array.charge.description": "How full the batteries are"
 }

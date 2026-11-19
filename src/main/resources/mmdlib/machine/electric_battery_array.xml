@@ -1,0 +1,21 @@
+<!--
+  Electric Battery Array: eight battery slots whose charge is the machine's energy store (BatteryArrayProcessor), so
+  batteries carry their charge in and out. The electric network charges it last and never from another array; it
+  feeds loads once everything else has run. A redstone signal stops it giving energy out. Comparators read how full
+  the batteries are.
+
+  Save compatibility with 3.0 and 3.1: the batteries stay under "Items".
+-->
+<machine xmlns="https://moddev.zone/mmdlib/machine" version="1"
+         extends="mmdlib:base_powered_machine" name="Electric Battery Array">
+  <block hardness="3"/>
+  <appearance preset="model" model="electricadvantage:block/battery_array_casing"/>
+  <storage>
+    <energy id="energy" provider="batteries" capacity="1" input-rate="4096" output-rate="4096"/>
+    <items id="Items">
+      <slots id="batteries" name="Batteries" count="8" role="storage" limit="1" filter-processor="batteries"/>
+    </items>
+  </storage>
+  <redstone comparator-source="batteries/charge"/>
+  <processor id="batteries" class="zone.moddev.mc.electricadvantage.generation.BatteryArrayProcessor"/>
+</machine>

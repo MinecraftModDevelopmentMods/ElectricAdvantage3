@@ -68,13 +68,6 @@ public final class ModItems {
 
     private void capabilities(RegisterCapabilitiesEvent event) {
         runtime.blockEntityHandles().values().forEach(handle -> {
-            if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.generation.GenerationBlockEntity.class) {
-                var binding = handle.binding().as(zone.moddev.mc.electricadvantage.generation.GenerationBlockEntity.class);
-                event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.capability());
-                event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, binding.type().get(),
-                        (be, side) -> be.settings.kind().equals("steam") ? be.fluidCapability() : null);
-                event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, binding.type().get(), (be, side) -> be.array() ? be.items : null);
-            }
             if (handle.prepared().blockEntityClass() == zone.moddev.mc.electricadvantage.assembler.AssemblerBlockEntity.class) {
                 var binding = handle.binding().as(zone.moddev.mc.electricadvantage.assembler.AssemblerBlockEntity.class);
                 event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, binding.type().get(), (be, side) -> be.energyCapability());
